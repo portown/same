@@ -1,7 +1,11 @@
 *.aps
 /same.dat
 /same.exe
-*.ncb
 *.suo
 /replay*
 !/replay.cpp
+Debug/
+Release/
+ipch/
+*.sdf
+*.user
