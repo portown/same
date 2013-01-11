@@ -1,11 +1,9 @@
-*.aps
-/same.dat
-/same.exe
-*.suo
-/replay*
-!/replay.cpp
 Debug/
 Release/
-ipch/
-*.sdf
+*.aps
 *.user
+
+/ipch/
+/same.suo
+/same.sdf
+/same.opensdf
