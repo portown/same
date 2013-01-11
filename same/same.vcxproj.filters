@@ -15,48 +15,48 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="game.cpp">
+    <ResourceCompile Include="same.rc">
+      <Filter>リソース ファイル</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="game.cxx">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="gtips.cpp">
+    <ClCompile Include="gtips.cxx">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="main.cpp">
+    <ClCompile Include="main.cxx">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="menu.cpp">
+    <ClCompile Include="menu.cxx">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="mt19937ar.cpp">
+    <ClCompile Include="mt19937ar.cxx">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="replay.cpp">
+    <ClCompile Include="replay.cxx">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="tips.cpp">
+    <ClCompile Include="tips.cxx">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="common.h">
+    <ClInclude Include="common.hxx">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="defines.h">
+    <ClInclude Include="defines.hxx">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="funcs.h">
+    <ClInclude Include="funcs.hxx">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="structs.hxx">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="resource.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="structs.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <ResourceCompile Include="same.rc">
-      <Filter>リソース ファイル</Filter>
-    </ResourceCompile>
   </ItemGroup>
 </Project>

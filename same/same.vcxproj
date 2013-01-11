@@ -78,23 +78,23 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="game.cpp" />
-    <ClCompile Include="gtips.cpp" />
-    <ClCompile Include="main.cpp" />
-    <ClCompile Include="menu.cpp" />
-    <ClCompile Include="mt19937ar.cpp" />
-    <ClCompile Include="replay.cpp" />
-    <ClCompile Include="tips.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="common.h" />
-    <ClInclude Include="defines.h" />
-    <ClInclude Include="funcs.h" />
-    <ClInclude Include="resource.h" />
-    <ClInclude Include="structs.h" />
-  </ItemGroup>
-  <ItemGroup>
     <ResourceCompile Include="same.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="game.cxx" />
+    <ClCompile Include="gtips.cxx" />
+    <ClCompile Include="main.cxx" />
+    <ClCompile Include="menu.cxx" />
+    <ClCompile Include="mt19937ar.cxx" />
+    <ClCompile Include="replay.cxx" />
+    <ClCompile Include="tips.cxx" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="common.hxx" />
+    <ClInclude Include="defines.hxx" />
+    <ClInclude Include="funcs.hxx" />
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="structs.hxx" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
