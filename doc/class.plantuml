@@ -1,0 +1,164 @@
+@startuml class.png
+
+abstract class CGAME {
+  #m_hBm : HBITMAP
+  #m_hDC : HDC
+  #m_Level : unsigned char
+
+  +{abstract} Draw( hDC : HDC ) : void
+  +{abstract} Select( point : POINT ) : void
+  +{abstract} Click() : unsigned char
+  +{abstract} KeyDown( wParam : WPARAM ) : unsigned char
+  #LoadStatus() : void
+  #SaveStatus() : void
+}
+
+class CSAME {
+  -m_Played : vector<unsigned char>
+  -m_bx : unsigned short
+  -m_by : unsigned short
+  -m_Num : unsigned short
+  -m_Tries : unsigned short
+  -m_Width : unsigned short
+  -m_Height : unsigned short
+  -m_Area : unsigned char*
+  -m_Pieces : unsigned char
+  -m_Groups : unsigned char
+  -m_Status : unsigned char
+  -m_HighScore : unsigned long
+  -m_Score : unsigned long
+  -m_GameNum : unsigned long
+  -m_rcArea : RECT
+  -m_bDraw : bool
+  -m_bReGame : bool
+  -m_cMaskNum : char
+
+  +Draw( hDC : HDC ) : void
+  +Select( pt : POINT ) : void
+  +Click() : unsigned char
+  +KeyDown( key : WPARAM ) : unsigned char
+  -Unselect() : void
+  -Explore( pos : unsigned short, piece : unsigned char ) : void
+  -Inexplore( pos : unsigned short ) : void
+  -Exexplore( pos : unsigned short ) : void
+  -Check() : void
+  -VShift( pos : unsigned short ) : void
+  -HShift( pos : unsigned short ) : void
+  -EndCheck() : unsigned char
+  -CntGroups() : bool
+  -AddScore( add : unsigned long ) : void
+  -LoadStatus() : void
+  -SaveStatus() : void
+  -SaveReplay( num : char ) : void
+}
+
+class CMENU {
+  -m_Width : unsigned short
+  -m_Height : unsigned short
+  -m_Sel : unsigned char
+  -m_MaskNum : char
+  -m_RepNum : char
+  -m_hMenuBm : HBITMAP
+  -m_rcMenu : RECT
+  -m_rcLeft : RECT
+  -m_rcRight : RECT
+  -m_hMenuDC : HDC
+
+  +Draw( hDC : HDC ) : void
+  +Select( pt : POINT ) : void
+  +Click() : unsigned char
+  +KeyDown( key : WPARAM ) : unsigned char
+}
+
+class CREPLAY {
+  -m_Played : vector<unsigned char>
+  -m_by : unsigned short m_bx,
+  -m_Num : unsigned short
+  -m_Tries : unsigned short
+  -m_Width : unsigned short
+  -m_Height : unsigned short
+  -*m_Area : unsigned char
+  -m_Pieces : unsigned char
+  -m_Groups : unsigned char
+  -m_Status : unsigned char
+  -m_Score : unsigned long
+  -m_GameNum : unsigned long
+  -m_hCurBm : HBITMAP
+  -m_rcArea : RECT
+  -m_hWnd : HWND
+  -m_hCurDC : HDC
+  -m_cRepNum : char
+  -m_bErase : bool
+
+  +Draw( hDC : HDC ) : void
+  +Select( pt : POINT ) : void
+  +Click() : unsigned char
+  +KeyDown( key : WPARAM ) : unsigned char
+  +Replay() : void
+  -Onselect( pos : unsigned short ) : void
+  -Unselect() : void
+  -Explore( pos : unsigned short, piece : unsigned char ) : void
+  -Inexplore( pos : unsigned short ) : void
+  -Exexplore( pos : unsigned short ) : void
+  -Onclick() : unsigned char
+  -Check() : void
+  -VShift( pos : unsigned short ) : void
+  -HShift( pos : unsigned short ) : void
+  -EndCheck() : unsigned char
+  -CntGroups() : bool
+  -AddScore( add : unsigned long ) : void
+  -LoadReplay( num : char ) : bool
+  -SaveReplay( num : char ) : void
+}
+
+
+CGAME <|-- CSAME
+CGAME <|-- CMENU
+CGAME <|-- CREPLAY
+
+
+enum CLICKRESULT {
+  CR_NOSTATUS
+  CR_ENDGAME
+  CR_TITLEMENU
+  CR_BEGINNORMAL
+  CR_BEGINMASK1
+  CR_BEGINMASK2
+  CR_BEGINMASK3
+  CR_BEGINMASK4
+  CR_CLEAR
+  CR_ALLCLEAR
+  CR_REPLAY
+  CR_REPLAY0
+  CR_REPLAY1
+  CR_REPLAY2
+  CR_REPLAY3
+  CR_REPLAY4
+  CR_REPLAY5
+  CR_REPLAY6
+  CR_REPLAY7
+  CR_REPLAY8
+  CR_REPLAY9
+  CR_CRITICALERROR
+}
+
+enum GAMESTATUS {
+  GS_NOSTATUS
+  GS_TITLEMENU
+  GS_PLAYING
+  GS_CLEAR
+  GS_ALLCLEAR
+  GS_NOREPLAY
+  GS_CRITICALERROR
+}
+
+
+CSAME ..> CLICKRESULT
+CMENU ..> CLICKRESULT
+CREPLAY ..> CLICKRESULT
+
+CSAME ..> GAMESTATUS
+CREPLAY ..> GAMESTATUS
+
+
+@enduml
