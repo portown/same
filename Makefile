@@ -1,10 +1,10 @@
 # Makefile
 
 ifeq ($(RELEASE),1)
-	CXXFLAGS += -O3
+	CXXFLAGS += -O3 -DNDEBUG -D_NDEBUG
 	LDFLAGS += -mwindows -static-libgcc -static-libstdc++
 else
-	CXXFLAGS += -g -O0
+	CXXFLAGS += -g -O0 -DDEBUG -D_DEBUG
 endif
 
 CXXFLAGS += -pipe -std=c++11 -Wall -Wextra -pedantic-errors
