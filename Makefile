@@ -12,18 +12,19 @@ CXXFLAGS += -I$(BOOST_ROOT)\include
 LDFLAGS += -L$(BOOST_ROOT)\lib
 
 MAIN_BIN = same.exe
-MAIN_DIRS = same
+MAIN_DIRS = src
 MAIN_SOURCES = $(wildcard $(addsuffix /*.cxx,$(MAIN_DIRS)))
 MAIN_OBJECTS = $(MAIN_SOURCES:.cxx=.o)
 MAIN_DEPENDS = $(MAIN_SOURCES:.cxx=.d)
 MAIN_LIBS = -lgdi32 -lshlwapi -lwinmm
 
-MAIN_RESOURCES = same/resources.o
-MAIN_RCS = same/same.rc
-MAIN_RC_DEPENDS = same/resource.h
+MAIN_RESOURCES = src/resources.o
+MAIN_RCS = src/same.rc
+MAIN_RC_DEPENDS = src/resource.h
 
 TEST_BIN = test.exe
-TEST_SOURCES = $(wildcard sameTest/*.cxx)
+TEST_DIRS = test
+TEST_SOURCES = $(wildcard $(addsuffix /*.cxx,$(TEST_DIRS)))
 TEST_OBJECTS = $(TEST_SOURCES:.cxx=.o)
 TEST_DEPENDS = $(TEST_SOURCES:.cxx=.d)
 TEST_LIBS = -lboost_unit_test_framework-mgw48-mt-1_55
