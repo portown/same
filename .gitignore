@@ -1,10 +1,5 @@
-Debug/
-Release/
-*.aps
-*.user
-
-/ipch/
-/same.suo
-/same.sdf
-/same.opensdf
+*.o
+*.d
+/*.exe
+/same.dat
 /doc/class.png

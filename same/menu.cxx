@@ -186,7 +186,7 @@ unsigned char CMENU::Click( void )
 
 		case 10:
 			PlaySound( ERSWAV, NULL, SND_FILENAME | SND_ASYNC );
-			if ( ++m_MaskNum > min( m_Level, MASKMAX ) ) m_MaskNum = min( m_Level, MASKMAX );
+			if ( ++m_MaskNum > min<char>( m_Level, MASKMAX ) ) m_MaskNum = min<char>( m_Level, MASKMAX );
 			break;
 
 		case 11:
