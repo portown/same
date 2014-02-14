@@ -176,12 +176,6 @@ namespace
             _DELETE(s_pcGame);
             s_pcGame = new CREPLAY(hWnd, GAMEX, GAMEY, ucRet - CR_REPLAY0);
             break;
-
-          case CR_CRITICALERROR:
-            MessageBox(hWnd, "致命的なエラーが発生しました",
-                "強制終了", MB_OK | MB_ICONEXCLAMATION);
-            DestroyWindow(hWnd);
-            break;
         }
         InvalidateRect(hWnd, NULL, FALSE);
         break;

@@ -49,7 +49,6 @@ enum CLICKRESULT
   CR_REPLAY7,
   CR_REPLAY8,
   CR_REPLAY9,
-  CR_CRITICALERROR = 0xff
 };
 
 // ÉQÅ[ÉÄÇÃèÛë‘
@@ -61,7 +60,6 @@ enum GAMESTATUS
   GS_CLEAR,
   GS_ALLCLEAR,
   GS_NOREPLAY,
-  GS_CRITICALERROR = 0xff
 };
 
 
