@@ -8,31 +8,30 @@
 // ==============================================
 
 // 簡易メッセージボックス
-int Mes( LPCTSTR lpText, LPCTSTR lpCaption, UINT uType, HWND hWnd )
+int Mes(LPCTSTR lpText, LPCTSTR lpCaption, UINT uType, HWND hWnd)
 {
-  return MessageBox( hWnd, lpText, lpCaption, uType );
+    return MessageBox(hWnd, lpText, lpCaption, uType);
 }
 
 // カレントディレクトリの修正
-bool SetCurDir( void )
+bool SetCurDir(void)
 {
-  LPTSTR pstrDir;
-  TCHAR strDir[MAX_PATH];
+    LPTSTR pstrDir;
+    TCHAR  strDir[MAX_PATH];
 
-  if ( !GetModuleFileName( NULL, strDir, MAX_PATH ) )
-    return false;
+    if (!GetModuleFileName(NULL, strDir, MAX_PATH))
+        return false;
 
-  pstrDir = StrRChr( strDir, NULL, '\\' );
-  if ( !pstrDir )
-    return false;
+    pstrDir = StrRChr(strDir, NULL, '\\');
+    if (!pstrDir)
+        return false;
 
-  lstrcpy( pstrDir, "" );
+    lstrcpy(pstrDir, "");
 
-  if ( !SetCurrentDirectory( strDir ) )
-    return false;
+    if (!SetCurrentDirectory(strDir))
+        return false;
 
-  return true;
+    return true;
 }
-
 
 // EOF
