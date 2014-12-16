@@ -1,4 +1,8 @@
 // main.cxx
 
-#define BOOST_TEST_MODULE sameTest
-#include <boost/test/unit_test.hpp>
+#include <CppUTest/CommandLineTestRunner.h>
+
+
+int main(int const argC, char* argV[]) {
+    return RUN_ALL_TESTS(argC, argV);
+}

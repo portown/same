@@ -8,8 +8,6 @@ else
 endif
 
 CXXFLAGS += -pipe -std=c++11 -Wall -Wextra -pedantic-errors
-CXXFLAGS += -I$(BOOST_ROOT)\include
-LDFLAGS += -L$(BOOST_ROOT)\lib
 
 MAIN_BIN = same.exe
 MAIN_DIRS = src
@@ -27,7 +25,7 @@ TEST_DIRS = test
 TEST_SOURCES = $(wildcard $(addsuffix /*.cxx,$(TEST_DIRS)))
 TEST_OBJECTS = $(TEST_SOURCES:.cxx=.o)
 TEST_DEPENDS = $(TEST_SOURCES:.cxx=.d)
-TEST_LIBS = -lboost_unit_test_framework-mgw48-mt-1_55
+TEST_LIBS = -lCppUTest -lCppUTestExt
 
 .PHONY: all
 all: $(MAIN_BIN)
