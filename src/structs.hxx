@@ -64,12 +64,12 @@ class CSAME : public CGAME
 
 public:
     CSAME(unsigned short, unsigned short, char);
-    void Draw(HDC);
-    void Select(POINT);
-    unsigned char Click(void);
+    void Draw(HDC) override;
+    void Select(POINT) override;
+    unsigned char Click(void) override;
 
-    unsigned char KeyDown(WPARAM);
-    ~CSAME(void);
+    unsigned char KeyDown(WPARAM) override;
+    ~CSAME(void) override;
 };
 
 // タイトルメニュークラス
@@ -88,12 +88,12 @@ class CMENU : public CGAME
 
 public:
     CMENU(unsigned short, unsigned short);
-    void Draw(HDC);
-    void Select(POINT);
-    unsigned char Click(void);
+    void Draw(HDC) override;
+    void Select(POINT) override;
+    unsigned char Click(void) override;
 
-    unsigned char KeyDown(WPARAM);
-    ~CMENU(void);
+    unsigned char KeyDown(WPARAM) override;
+    ~CMENU(void) override;
 };
 
 // リプレイ再生クラス
@@ -135,14 +135,14 @@ class CREPLAY : public CGAME
 
 public:
     CREPLAY(HWND, unsigned short, unsigned short, char);
-    void Draw(HDC);
-    void Select(POINT);
-    unsigned char Click(void);
+    void Draw(HDC) override;
+    void Select(POINT) override;
+    unsigned char Click(void) override;
 
-    unsigned char KeyDown(WPARAM);
+    unsigned char KeyDown(WPARAM) override;
     void Replay(void);
 
-    ~CREPLAY(void);
+    ~CREPLAY(void) override;
 };
 
 
