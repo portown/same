@@ -22,10 +22,4 @@ using namespace std;
 #include "funcs.hxx"
 
 
-#pragma comment( lib, "shlwapi.lib" )
-#pragma comment( lib, "winmm.lib" )
-
-#pragma warning( disable:4312 )
-
-
 // EOF
