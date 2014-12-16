@@ -14,8 +14,6 @@
 #include <shlwapi.h>
 #include <mmsystem.h>
 
-using namespace std;
-
 #include "defines.hxx"
 #include "resource.h"
 #include "structs.hxx"
