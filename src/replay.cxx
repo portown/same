@@ -151,7 +151,7 @@ void CREPLAY::Draw(HDC hDC)
 }
 
 // ƒ}ƒEƒXˆÚ“®
-void CREPLAY::Select(POINT pt)
+void CREPLAY::Select(POINT)
 {
 }
 
