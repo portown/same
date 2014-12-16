@@ -17,8 +17,6 @@ CSAME::CSAME(unsigned short wx, unsigned short wy, char cMaskNum)
 
 CSAME::CSAME(unsigned short wx, unsigned short wy, char cMaskNum, unsigned long gameNum)
 {
-    unsigned short i, j;
-
     m_hDC = CreateCompatibleDC(NULL);
     m_hBm = Load_Bmp(DATA(system.bmp));
     SelectObject(m_hDC, m_hBm);
@@ -48,16 +46,7 @@ CSAME::CSAME(unsigned short wx, unsigned short wy, char cMaskNum, unsigned long 
     m_Score  = 0;
 
     m_GameNum = gameNum;
-    init_genrand(m_GameNum);
-
-    m_Area = new unsigned char [m_Width * m_Height];
-    for (i = 0; i < m_Height; ++i)
-    {
-        for (j = 0; j < m_Width; ++j)
-        {
-            m_Area[i * m_Width + j] = ( unsigned char )(genrand_int32() % 5 + 1);
-        }
-    }
+    m_Area    = makeArea(m_Width, m_Height, m_GameNum);
 
     CntGroups();
 
@@ -580,7 +569,30 @@ void CSAME::SaveReplay(char cNum)
     CloseHandle(hFile);
 }
 
-bool CSAME::selectsAt(unsigned short const x, unsigned short const y)
+unsigned char* CSAME::makeArea(unsigned short const width,
+                               unsigned short const height,
+                               unsigned long const gameNumber) const
+{
+    unsigned char* const area = new unsigned char [width * height];
+
+    init_genrand(gameNumber);
+    for (auto y = 0; y < height; ++y)
+    {
+        for (auto x = 0; x < width; ++x)
+        {
+            area[x + y * m_Width] = static_cast<unsigned char>(genrand_int32() % 5 + 1);
+        }
+    }
+
+    return area;
+}
+
+unsigned char CSAME::getAt(unsigned short const x, unsigned short const y) const
+{
+    return m_Area[x + y * m_Width];
+}
+
+bool CSAME::selectsAt(unsigned short const x, unsigned short const y) const
 {
     return (m_Area[x + y * m_Width] & 0x80) != 0;
 }

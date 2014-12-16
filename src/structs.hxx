@@ -73,7 +73,9 @@ public:
 
 public:     // for tests
     CSAME(unsigned short wx, unsigned short wy, char cMaskNum, unsigned long gameNum);
-    bool selectsAt(unsigned short x, unsigned short y);
+    unsigned char* makeArea(unsigned short width, unsigned short height, unsigned long gameNumber) const;
+    unsigned char  getAt(unsigned short x, unsigned short y) const;
+    bool           selectsAt(unsigned short x, unsigned short y) const;
 };
 
 // タイトルメニュークラス
