@@ -171,7 +171,6 @@ void CREPLAY::Onselect(unsigned short pos)
     x = pos % m_Width;
     y = pos / m_Width;
 
-    if (pos < 0) return;
     if (pos >= m_Width * m_Height) return;
     if (m_Area[pos] == 0) return;
     Explore(pos, m_Area[pos]);

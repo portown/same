@@ -190,7 +190,6 @@ void CSAME::Select(POINT pt)
         m_by = y;
 
         pos = y * m_Width + x;
-        if (pos < 0) return;
         if (pos >= m_Width * m_Height) return;
         if (m_Area[pos] == 0)
         {
