@@ -8,7 +8,6 @@
 // ==============================================
 
 #include <math.h>
-#include <time.h>
 #include <vector>
 #include <windows.h>
 #include <shlwapi.h>

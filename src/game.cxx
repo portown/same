@@ -2,6 +2,8 @@
 
 #include "common.hxx"
 
+#include <ctime>
+
 
 // ==============================================
 // é¿ëï
@@ -9,6 +11,11 @@
 
 // èâä˙âª
 CSAME::CSAME(unsigned short wx, unsigned short wy, char cMaskNum)
+    : CSAME(wx, wy, cMaskNum, static_cast<unsigned long>(std::time(nullptr)))
+{
+}
+
+CSAME::CSAME(unsigned short wx, unsigned short wy, char cMaskNum, unsigned long gameNum)
 {
     unsigned short i, j;
 
@@ -40,7 +47,7 @@ CSAME::CSAME(unsigned short wx, unsigned short wy, char cMaskNum)
     m_Groups = 0;
     m_Score  = 0;
 
-    m_GameNum = ( unsigned long )time(NULL);
+    m_GameNum = gameNum;
     init_genrand(m_GameNum);
 
     m_Area = new unsigned char [m_Width * m_Height];
@@ -78,7 +85,7 @@ void CSAME::Draw(HDC hDC)
                     --tmp;
                     if (m_cMaskNum == 3) tmp &= 0x80;
 
-                    if (tmp & ( unsigned char )0x80)
+                    if (selectsAt(j, i))
                     {
                         if (m_cMaskNum == 1) continue;
 
@@ -205,7 +212,7 @@ void CSAME::Select(POINT pt)
 
         if (m_Num == 1) Unselect();
 
-        if (m_Area[pos] & 0x80)
+        if (selectsAt(x, y))
         {
             if (!(m_Area[s_sBef] & 0x80))
             {
@@ -571,6 +578,11 @@ void CSAME::SaveReplay(char cNum)
     }
 
     CloseHandle(hFile);
+}
+
+bool CSAME::selectsAt(unsigned short const x, unsigned short const y)
+{
+    return (m_Area[x + y * m_Width] & 0x80) != 0;
 }
 
 // EOF

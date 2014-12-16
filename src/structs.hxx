@@ -70,6 +70,10 @@ public:
 
     unsigned char KeyDown(WPARAM) override;
     ~CSAME(void) override;
+
+public:     // for tests
+    CSAME(unsigned short wx, unsigned short wy, char cMaskNum, unsigned long gameNum);
+    bool selectsAt(unsigned short x, unsigned short y);
 };
 
 // タイトルメニュークラス
