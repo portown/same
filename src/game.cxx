@@ -511,7 +511,7 @@ void CSAME::LoadStatus(void)
     dwSize = sizeof(unsigned long);
     ReadFile(hFile, ( LPVOID )&m_HighScore, dwSize, &dwRead, NULL);
     data = ( char* )&m_HighScore;
-    for (i = 0; i < sizeof(unsigned long); ++i)
+    for (i = 0; i < static_cast<int>(sizeof(unsigned long)); ++i)
         data[i] -= CODE(i + 1);
 
     CloseHandle(hFile);
@@ -526,7 +526,7 @@ void CSAME::SaveStatus(void)
     int    i;
 
     data = ( char* )&m_HighScore;
-    for (i = 0; i < sizeof(unsigned long); ++i)
+    for (i = 0; i < static_cast<int>(sizeof(unsigned long)); ++i)
         data[i] += CODE(i + 1);
 
     hFile = CreateFile(DATFILE, GENERIC_WRITE, 0, NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
