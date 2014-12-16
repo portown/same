@@ -21,7 +21,7 @@ void    RelsSurface(HDC&, HBITMAP&);
 HBITMAP Load_Bmp(const char*);
 
 void PaintRect(HDC, LPRECT, COLORREF);
-bool PutText(HDC, int, int, int, COLORREF, char*, int = 0);
+bool PutText(HDC, int, int, int, COLORREF, char const*, int = 0);
 
 
 // EOF

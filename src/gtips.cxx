@@ -88,7 +88,7 @@ void PaintRect(HDC hDC, LPRECT lprc, COLORREF col)
 
 // •¶Žš‚Ì•`‰æ
 bool PutText(HDC hDC, int x, int y, int f_size,
-             COLORREF col, char* str, int iLen)
+             COLORREF col, char const* str, int iLen)
 {
     COLORREF clOld;
     HFONT    hFont, hOldFont;
