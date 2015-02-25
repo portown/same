@@ -20,7 +20,6 @@ bool SetCurDir(void);
 // gtips.cpp
 std::shared_ptr<same::ui::Surface> InitSurface(unsigned short, unsigned short);
 
-void PaintRect(HDC, LPRECT, COLORREF);
 bool PutText(HDC, int, int, int, COLORREF, char const*, int = 0);
 
 

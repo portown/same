@@ -2,7 +2,31 @@
 
 #include "common.hxx"
 
-#include <stdexcept>
+
+namespace
+{
+    void PaintRect(std::shared_ptr<same::ui::Surface> const& surface, LPRECT lprc, COLORREF col)
+    {
+        auto const hBrush = CreateSolidBrush(col);
+
+        auto const hOld = SelectObject(surface->dcHandle_, hBrush);
+        if (lprc == nullptr)
+        {
+            RECT rc;
+            SetRect(&rc, 0, 0, 640, 480);
+            PatBlt(surface->dcHandle_, rc.left, rc.top, rc.right - rc.left,
+                    rc.bottom - rc.top, PATCOPY);
+        }
+        else
+        {
+            PatBlt(surface->dcHandle_, lprc->left, lprc->top, lprc->right - lprc->left,
+                    lprc->bottom - lprc->top, PATCOPY);
+        }
+        SelectObject(surface->dcHandle_, hOld);
+
+        DeleteObject(hBrush);
+    }
+}
 
 
 // デバイスコンテキスト・ビットマップハンドルの初期化
@@ -14,35 +38,9 @@ std::shared_ptr<same::ui::Surface> InitSurface(unsigned short w, unsigned short 
     rc.left   = rc.top = 0;
     rc.right  = w;
     rc.bottom = h;
-    PaintRect(surface->dcHandle_, &rc, RGB(0, 0, 0));
+    PaintRect(surface, &rc, RGB(0, 0, 0));
 
     return surface;
-}
-
-// 矩形塗りつぶし
-void PaintRect(HDC hDC, LPRECT lprc, COLORREF col)
-{
-    HBRUSH hBrush, hOld;
-
-    hBrush = CreateSolidBrush(col);
-
-    hOld = ( HBRUSH )SelectObject(hDC, hBrush);
-    if (lprc == NULL)
-    {
-        lprc = new RECT;
-        SetRect(lprc, 0, 0, 640, 480);
-        PatBlt(hDC, lprc->left, lprc->top, lprc->right - lprc->left,
-               lprc->bottom - lprc->top, PATCOPY);
-        delete lprc;
-    }
-    else
-    {
-        PatBlt(hDC, lprc->left, lprc->top, lprc->right - lprc->left,
-               lprc->bottom - lprc->top, PATCOPY);
-    }
-    SelectObject(hDC, hOld);
-
-    DeleteObject(hBrush);
 }
 
 // 文字の描画
