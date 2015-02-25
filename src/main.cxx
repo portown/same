@@ -120,13 +120,12 @@ namespace
         {
             case WM_CREATE:
                 backSurface = same::ui::Surface::create(WINX, WINY);
-                backSurface->paint(RGB(0, 0, 0));
-                s_pcGame = new CMENU(WINX, WINY);
+                s_pcGame    = new CMENU(WINX, WINY);
                 break;
 
             case WM_PAINT:
                 hDC = BeginPaint(hWnd, &ps);
-                PatBlt(backSurface->dcHandle_, 0, 0, WINX, WINY, BLACKNESS);
+                backSurface->paint(RGB(0, 0, 0));
                 s_pcGame->Draw(backSurface->dcHandle_);
                 BitBlt(hDC, 0, 0, WINX, WINY, backSurface->dcHandle_, 0, 0, SRCCOPY);
                 EndPaint(hWnd, &ps);
