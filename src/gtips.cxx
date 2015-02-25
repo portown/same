@@ -12,10 +12,7 @@ namespace
         auto const hOld = SelectObject(surface->dcHandle_, hBrush);
         if (lprc == nullptr)
         {
-            RECT rc;
-            SetRect(&rc, 0, 0, 640, 480);
-            PatBlt(surface->dcHandle_, rc.left, rc.top, rc.right - rc.left,
-                    rc.bottom - rc.top, PATCOPY);
+            PatBlt(surface->dcHandle_, 0, 0, surface->getWidth(), surface->getHeight(), PATCOPY);
         }
         else
         {
@@ -34,11 +31,7 @@ std::shared_ptr<same::ui::Surface> InitSurface(unsigned short w, unsigned short 
 {
     auto const surface = same::ui::Surface::create(w, h);
 
-    RECT rc;
-    rc.left   = rc.top = 0;
-    rc.right  = w;
-    rc.bottom = h;
-    PaintRect(surface, &rc, RGB(0, 0, 0));
+    PaintRect(surface, nullptr, RGB(0, 0, 0));
 
     return surface;
 }

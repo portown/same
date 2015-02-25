@@ -63,3 +63,19 @@ same::ui::Surface::Surface(HDC const dcHandle, HBITMAP const bitmapHandle)
 {
     SelectObject(dcHandle, bitmapHandle);
 }
+
+unsigned int same::ui::Surface::getWidth() const
+{
+    BITMAP bitmap;
+    GetObject(bitmapHandle_, sizeof(BITMAP), &bitmap);
+
+    return static_cast<unsigned int>(bitmap.bmWidth);
+}
+
+unsigned int same::ui::Surface::getHeight() const
+{
+    BITMAP bitmap;
+    GetObject(bitmapHandle_, sizeof(BITMAP), &bitmap);
+
+    return static_cast<unsigned int>(bitmap.bmHeight);
+}
