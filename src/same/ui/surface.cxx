@@ -45,6 +45,43 @@ namespace
         HDC     dcHandle_;
         HBITMAP bitmapHandle_;
     };
+
+    class SurfacePaintImpl : public same::ui::SurfaceImpl
+    {
+    public:
+        explicit SurfacePaintImpl(HWND const windowHandle, PAINTSTRUCT& paintStruct)
+            : windowHandle_ { windowHandle }, paintStruct_ { paintStruct }
+        {
+            dcHandle_ = BeginPaint(windowHandle, &paintStruct);
+            GetClientRect(windowHandle, &clientRect_);
+        }
+
+        ~SurfacePaintImpl() override
+        {
+            EndPaint(windowHandle_, &paintStruct_);
+        }
+
+        unsigned int getWidth() const override
+        {
+            return clientRect_.right - clientRect_.left;
+        }
+
+        unsigned int getHeight() const override
+        {
+            return clientRect_.bottom - clientRect_.top;
+        }
+
+        HDC getDC() const override
+        {
+            return dcHandle_;
+        }
+
+    private:
+        HWND         windowHandle_;
+        PAINTSTRUCT& paintStruct_;
+        HDC          dcHandle_;
+        RECT         clientRect_;
+    };
 }
 
 
@@ -86,6 +123,14 @@ auto same::ui::Surface::fromBitmapResource(
                                                              LR_SHARED | LR_DEFAULTSIZE));
 
     return create<SurfaceDDBImpl>(dcHandle, bitmapHandle);
+}
+
+auto same::ui::Surface::onPaint(
+    HWND const windowHandle,
+    PAINTSTRUCT & paintStruct)
+->std::shared_ptr<Surface>
+{
+    return create<SurfacePaintImpl>(windowHandle, paintStruct);
 }
 
 void same::ui::Surface::paint(COLORREF const color)

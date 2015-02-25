@@ -29,6 +29,7 @@ namespace same
             static auto create(unsigned int width, unsigned int height)->std::shared_ptr<Surface>;
             static auto fromBitmapFile(std::string const & fileName)->std::shared_ptr<Surface>;
             static auto fromBitmapResource(HINSTANCE instanceHandle, WORD resourceId)->std::shared_ptr<Surface>;
+            static auto onPaint(HWND windowHandle, PAINTSTRUCT & paintStruct)->std::shared_ptr<Surface>;
 
             unsigned int getWidth() const { return impl_->getWidth(); }
             unsigned int getHeight() const { return impl_->getHeight(); }
