@@ -19,12 +19,6 @@ std::shared_ptr<same::ui::Surface> InitSurface(unsigned short w, unsigned short 
     return surface;
 }
 
-// デバイスコンテキスト・ビットマップハンドルの解放
-void RelsSurface(std::shared_ptr<same::ui::Surface>& p)
-{
-    p.reset();
-}
-
 // 矩形塗りつぶし
 void PaintRect(HDC hDC, LPRECT lprc, COLORREF col)
 {

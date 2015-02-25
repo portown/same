@@ -488,7 +488,6 @@ CSAME::~CSAME(void)
 {
     SaveStatus();
 
-    RelsSurface(surface_);
     delete [] m_Area;
 }
 

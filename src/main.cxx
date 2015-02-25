@@ -215,7 +215,7 @@ namespace
 
             case WM_DESTROY:
                 _DELETE(s_pcGame);
-                RelsSurface(backSurface);
+                backSurface.reset();
                 PostQuitMessage(0);
                 break;
 

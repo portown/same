@@ -464,8 +464,6 @@ CREPLAY::~CREPLAY(void)
 {
     KillTimer(m_hWnd, MINE_TIMER);
 
-    RelsSurface(cursorSurface_);
-    RelsSurface(surface_);
     delete [] m_Area;
 }
 

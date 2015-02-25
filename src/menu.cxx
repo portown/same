@@ -210,9 +210,6 @@ unsigned char CMENU::KeyDown(WPARAM key)
 CMENU::~CMENU(void)
 {
     SaveStatus();
-
-    RelsSurface(menuSurface_);
-    RelsSurface(surface_);
 }
 
 // ステータス読み込み
