@@ -126,8 +126,8 @@ namespace
             case WM_PAINT:
                 hDC = BeginPaint(hWnd, &ps);
                 backSurface->paint(RGB(0, 0, 0));
-                s_pcGame->Draw(backSurface->dcHandle_);
-                BitBlt(hDC, 0, 0, WINX, WINY, backSurface->dcHandle_, 0, 0, SRCCOPY);
+                s_pcGame->Draw(backSurface->getDC());
+                BitBlt(hDC, 0, 0, WINX, WINY, backSurface->getDC(), 0, 0, SRCCOPY);
                 EndPaint(hWnd, &ps);
                 break;
 

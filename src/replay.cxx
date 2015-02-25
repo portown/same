@@ -90,13 +90,13 @@ void CREPLAY::Draw(HDC hDC)
                 {
                     tmp = tmp ^ ( unsigned char )0x80;
 
-                    BitBlt(hDC, j * PIX, i * PIY, PIX, PIY, surface_->dcHandle_, tmp * PIX, PIY * 2, SRCAND);
-                    BitBlt(hDC, j * PIX, i * PIY, PIX, PIY, surface_->dcHandle_, tmp * PIX, PIY, SRCPAINT);
+                    BitBlt(hDC, j * PIX, i * PIY, PIX, PIY, surface_->getDC(), tmp * PIX, PIY * 2, SRCAND);
+                    BitBlt(hDC, j * PIX, i * PIY, PIX, PIY, surface_->getDC(), tmp * PIX, PIY, SRCPAINT);
                 }
                 else
                 {
-                    BitBlt(hDC, j * PIX, i * PIY, PIX, PIY, surface_->dcHandle_, tmp * 32, PIY * 2, SRCAND);
-                    BitBlt(hDC, j * PIX, i * PIY, PIX, PIY, surface_->dcHandle_, tmp * 32, 0, SRCPAINT);
+                    BitBlt(hDC, j * PIX, i * PIY, PIX, PIY, surface_->getDC(), tmp * 32, PIY * 2, SRCAND);
+                    BitBlt(hDC, j * PIX, i * PIY, PIX, PIY, surface_->getDC(), tmp * 32, 0, SRCPAINT);
                 }
             }
         }
@@ -105,8 +105,8 @@ void CREPLAY::Draw(HDC hDC)
     // ÉJÅ[É\ÉãÇÃï`âÊ
     if (m_bx < m_Width && m_by < m_Height)
     {
-        BitBlt(hDC, m_bx * 32 + PIX / 2, m_by * 32 + PIY / 2, 32, 32, cursorSurface_->dcHandle_, 32, 0, SRCAND);
-        BitBlt(hDC, m_bx * 32 + PIX / 2, m_by * 32 + PIY / 2, 32, 32, cursorSurface_->dcHandle_, 0, 0, SRCPAINT);
+        BitBlt(hDC, m_bx * 32 + PIX / 2, m_by * 32 + PIY / 2, 32, 32, cursorSurface_->getDC(), 32, 0, SRCAND);
+        BitBlt(hDC, m_bx * 32 + PIX / 2, m_by * 32 + PIY / 2, 32, 32, cursorSurface_->getDC(), 0, 0, SRCPAINT);
     }
 
     // ÇªÇÃëºÇÃï`âÊ

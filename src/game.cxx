@@ -78,15 +78,15 @@ void CSAME::Draw(HDC hDC)
 
                         tmp = tmp ^ ( unsigned char )0x80;
 
-                        BitBlt(hDC, j * PIX, i * PIY, PIX, PIY, surface_->dcHandle_, tmp * PIX, PIY * 2, SRCAND);
-                        BitBlt(hDC, j * PIX, i * PIY, PIX, PIY, surface_->dcHandle_, tmp * PIX, PIY, SRCPAINT);
+                        BitBlt(hDC, j * PIX, i * PIY, PIX, PIY, surface_->getDC(), tmp * PIX, PIY * 2, SRCAND);
+                        BitBlt(hDC, j * PIX, i * PIY, PIX, PIY, surface_->getDC(), tmp * PIX, PIY, SRCPAINT);
                     }
                     else
                     {
                         if (m_cMaskNum == 2) continue;
 
-                        BitBlt(hDC, j * PIX, i * PIY, PIX, PIY, surface_->dcHandle_, tmp * 32, PIY * 2, SRCAND);
-                        BitBlt(hDC, j * PIX, i * PIY, PIX, PIY, surface_->dcHandle_, tmp * 32, 0, SRCPAINT);
+                        BitBlt(hDC, j * PIX, i * PIY, PIX, PIY, surface_->getDC(), tmp * 32, PIY * 2, SRCAND);
+                        BitBlt(hDC, j * PIX, i * PIY, PIX, PIY, surface_->getDC(), tmp * 32, 0, SRCPAINT);
                     }
                 }
             }

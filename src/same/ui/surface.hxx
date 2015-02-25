@@ -4,6 +4,7 @@
 
 #include <memory>
 #include <string>
+#include <utility>
 
 #include <windows.h>
 
@@ -12,6 +13,16 @@ namespace same
 {
     namespace ui
     {
+        struct SurfaceImpl
+        {
+            virtual ~SurfaceImpl() {}
+
+            virtual unsigned int getWidth() const  = 0;
+            virtual unsigned int getHeight() const = 0;
+
+            virtual HDC getDC() const = 0;
+        };
+
         class Surface
         {
         public:
@@ -19,26 +30,27 @@ namespace same
             static auto fromBitmapFile(std::string const & fileName)->std::shared_ptr<Surface>;
             static auto fromBitmapResource(HINSTANCE instanceHandle, WORD resourceId)->std::shared_ptr<Surface>;
 
-            Surface(Surface const&)            = delete;
-            Surface& operator=(Surface const&) = delete;
+            unsigned int getWidth() const { return impl_->getWidth(); }
+            unsigned int getHeight() const { return impl_->getHeight(); }
 
-            Surface(Surface&&)            = default;
-            Surface& operator=(Surface&&) = default;
-
-            unsigned int getWidth() const;
-            unsigned int getHeight() const;
+            HDC getDC() const { return impl_->getDC(); }
 
             void paint(COLORREF color);
 
         private:
-            static auto create(HDC dcHandle, HBITMAP bitmapHandle)->std::shared_ptr<Surface>;
-            static void destroy(Surface*);
+            template <class T, class ... Args>
+            static auto create(Args ... args)->std::shared_ptr<Surface>
+            {
+                std::unique_ptr<SurfaceImpl> impl(new T(args ...));
+                std::shared_ptr<Surface>     surface(new Surface(std::move(impl)));
+                return surface;
+            }
 
-            explicit Surface(HDC dcHandle, HBITMAP bitmapHandle);
+            explicit Surface(std::unique_ptr<SurfaceImpl> impl) : impl_ { std::move(impl) }
+            {}
 
-        public:
-            HDC     dcHandle_;
-            HBITMAP bitmapHandle_;
+        private:
+            std::unique_ptr<SurfaceImpl> impl_;
         };
     }
 }

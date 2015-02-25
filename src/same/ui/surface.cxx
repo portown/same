@@ -3,6 +3,51 @@
 #include "surface.hxx"
 
 
+namespace
+{
+    class SurfaceDDBImpl : public same::ui::SurfaceImpl
+    {
+    public:
+        explicit SurfaceDDBImpl(HDC const dcHandle, HBITMAP const bitmapHandle)
+            : dcHandle_ { dcHandle }, bitmapHandle_ { bitmapHandle }
+        {
+            SelectObject(dcHandle, bitmapHandle);
+        }
+
+        ~SurfaceDDBImpl() override
+        {
+            DeleteObject(bitmapHandle_);
+            DeleteDC(dcHandle_);
+        }
+
+        unsigned int getWidth() const override
+        {
+            BITMAP bitmap;
+            GetObject(bitmapHandle_, sizeof(BITMAP), &bitmap);
+
+            return static_cast<unsigned int>(bitmap.bmWidth);
+        }
+
+        unsigned int getHeight() const override
+        {
+            BITMAP bitmap;
+            GetObject(bitmapHandle_, sizeof(BITMAP), &bitmap);
+
+            return static_cast<unsigned int>(bitmap.bmHeight);
+        }
+
+        HDC getDC() const override
+        {
+            return dcHandle_;
+        }
+
+    private:
+        HDC     dcHandle_;
+        HBITMAP bitmapHandle_;
+    };
+}
+
+
 auto same::ui::Surface::create(
     unsigned int const width,
     unsigned int const height)
@@ -18,7 +63,7 @@ auto same::ui::Surface::create(
         return nullptr;
     }
 
-    return create(dcHandle, bitmapHandle);
+    return create<SurfaceDDBImpl>(dcHandle, bitmapHandle);
 }
 
 auto same::ui::Surface::fromBitmapFile(std::string const & fileName)->std::shared_ptr<Surface>
@@ -27,7 +72,7 @@ auto same::ui::Surface::fromBitmapFile(std::string const & fileName)->std::share
                                                              LR_CREATEDIBSECTION | LR_LOADFROMFILE));
     auto const dcHandle = CreateCompatibleDC(nullptr);
 
-    return create(dcHandle, bitmapHandle);
+    return create<SurfaceDDBImpl>(dcHandle, bitmapHandle);
 }
 
 auto same::ui::Surface::fromBitmapResource(
@@ -40,53 +85,17 @@ auto same::ui::Surface::fromBitmapResource(
                                                              MAKEINTRESOURCE(resourceId), IMAGE_BITMAP, 0, 0,
                                                              LR_SHARED | LR_DEFAULTSIZE));
 
-    return create(dcHandle, bitmapHandle);
-}
-
-auto same::ui::Surface::create(HDC const dcHandle, HBITMAP const bitmapHandle)->std::shared_ptr<Surface>
-{
-    std::shared_ptr<Surface> p(new Surface(dcHandle, bitmapHandle), &Surface::destroy);
-
-    return p;
-}
-
-void same::ui::Surface::destroy(Surface* const p)
-{
-    DeleteObject(p->bitmapHandle_);
-    DeleteDC(p->dcHandle_);
-
-    delete p;
-}
-
-same::ui::Surface::Surface(HDC const dcHandle, HBITMAP const bitmapHandle)
-    : dcHandle_ { dcHandle }, bitmapHandle_ { bitmapHandle }
-{
-    SelectObject(dcHandle, bitmapHandle);
-}
-
-unsigned int same::ui::Surface::getWidth() const
-{
-    BITMAP bitmap;
-    GetObject(bitmapHandle_, sizeof(BITMAP), &bitmap);
-
-    return static_cast<unsigned int>(bitmap.bmWidth);
-}
-
-unsigned int same::ui::Surface::getHeight() const
-{
-    BITMAP bitmap;
-    GetObject(bitmapHandle_, sizeof(BITMAP), &bitmap);
-
-    return static_cast<unsigned int>(bitmap.bmHeight);
+    return create<SurfaceDDBImpl>(dcHandle, bitmapHandle);
 }
 
 void same::ui::Surface::paint(COLORREF const color)
 {
     auto const colorBrush = CreateSolidBrush(color);
 
-    auto const originalBrush = SelectObject(dcHandle_, colorBrush);
-    PatBlt(dcHandle_, 0, 0, getWidth(), getHeight(), PATCOPY);
-    SelectObject(dcHandle_, originalBrush);
+    auto const dcHandle      = getDC();
+    auto const originalBrush = SelectObject(dcHandle, colorBrush);
+    PatBlt(dcHandle, 0, 0, getWidth(), getHeight(), PATCOPY);
+    SelectObject(dcHandle, originalBrush);
 
     DeleteObject(colorBrush);
 }
