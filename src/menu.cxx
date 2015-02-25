@@ -24,13 +24,8 @@ CMENU::CMENU(unsigned short width, unsigned short height)
     SetRect(&m_rcLeft, m_rcMenu.right, m_rcMenu.top, m_rcMenu.right + 20, m_rcMenu.bottom);
     SetRect(&m_rcRight, m_rcLeft.left + 80, m_rcLeft.top, m_rcLeft.right + 80, m_rcLeft.bottom);
 
-    surface_.dcHandle_     = CreateCompatibleDC(NULL);
-    surface_.bitmapHandle_ = Load_Bmp(DATA(title.bmp));
-    SelectObject(surface_.dcHandle_, surface_.bitmapHandle_);
-
-    menuSurface_.dcHandle_     = CreateCompatibleDC(NULL);
-    menuSurface_.bitmapHandle_ = Load_Bmp(DATA(menu.bmp));
-    SelectObject(menuSurface_.dcHandle_, menuSurface_.bitmapHandle_);
+    surface_     = same::ui::Surface::fromBitmapFile(DATA(title.bmp));
+    menuSurface_ = same::ui::Surface::fromBitmapFile(DATA(menu.bmp));
 }
 
 // •`‰æ

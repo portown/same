@@ -51,9 +51,7 @@ CREPLAY::CREPLAY(HWND hWnd, unsigned short wx, unsigned short wy, char cNum)
 
     CntGroups();
 
-    surface_.dcHandle_     = CreateCompatibleDC(NULL);
-    surface_.bitmapHandle_ = Load_Bmp(DATA(system.bmp));
-    SelectObject(surface_.dcHandle_, surface_.bitmapHandle_);
+    surface_ = same::ui::Surface::fromBitmapFile(DATA(system.bmp));
 
     cursorSurface_.dcHandle_     = CreateCompatibleDC(surface_.dcHandle_);
     cursorSurface_.bitmapHandle_ = ( HBITMAP )LoadImage(( HINSTANCE )GetWindowLongPtr(hWnd, GWLP_HINSTANCE),

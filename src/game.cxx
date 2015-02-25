@@ -17,9 +17,7 @@ CSAME::CSAME(unsigned short wx, unsigned short wy, char cMaskNum)
 
 CSAME::CSAME(unsigned short wx, unsigned short wy, char cMaskNum, unsigned long gameNum)
 {
-    surface_.dcHandle_     = CreateCompatibleDC(NULL);
-    surface_.bitmapHandle_ = Load_Bmp(DATA(system.bmp));
-    SelectObject(surface_.dcHandle_, surface_.bitmapHandle_);
+    surface_ = same::ui::Surface::fromBitmapFile(DATA(system.bmp));
 
     m_Level     = 0;
     m_HighScore = 0;
