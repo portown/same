@@ -109,26 +109,25 @@ namespace
 
     LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
     {
-        static HBITMAP s_hBackBm;
-        static CGAME*  s_pcGame = NULL;
-        static HDC     s_hBackDC;
-        PAINTSTRUCT    ps;
-        POINT          pt;
-        HDC            hDC;
-        unsigned char  ucRet;
+        static CGAME*                             s_pcGame = NULL;
+        static std::shared_ptr<same::ui::Surface> backSurface;
+        PAINTSTRUCT                               ps;
+        POINT                                     pt;
+        HDC                                       hDC;
+        unsigned char                             ucRet;
 
         switch (msg)
         {
             case WM_CREATE:
-                InitSurface(s_hBackDC, s_hBackBm, WINX, WINY);
-                s_pcGame = new CMENU(WINX, WINY);
+                backSurface = same::ui::Surface::create(WINX, WINY);
+                s_pcGame    = new CMENU(WINX, WINY);
                 break;
 
             case WM_PAINT:
                 hDC = BeginPaint(hWnd, &ps);
-                PatBlt(s_hBackDC, 0, 0, WINX, WINY, BLACKNESS);
-                s_pcGame->Draw(s_hBackDC);
-                BitBlt(hDC, 0, 0, WINX, WINY, s_hBackDC, 0, 0, SRCCOPY);
+                backSurface->paint(RGB(0, 0, 0));
+                s_pcGame->Draw(backSurface->dcHandle_);
+                BitBlt(hDC, 0, 0, WINX, WINY, backSurface->dcHandle_, 0, 0, SRCCOPY);
                 EndPaint(hWnd, &ps);
                 break;
 
@@ -216,7 +215,7 @@ namespace
 
             case WM_DESTROY:
                 _DELETE(s_pcGame);
-                RelsSurface(s_hBackDC, s_hBackBm);
+                backSurface.reset();
                 PostQuitMessage(0);
                 break;
 
