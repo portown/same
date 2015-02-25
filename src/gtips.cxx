@@ -8,26 +8,15 @@
 // デバイスコンテキスト・ビットマップハンドルの初期化
 std::shared_ptr<same::ui::Surface> InitSurface(unsigned short w, unsigned short h)
 {
-    auto const hTemp = GetDC(nullptr);
-
-    auto const dcHandle     = CreateCompatibleDC(hTemp);
-    auto const bitmapHandle = CreateCompatibleBitmap(hTemp, w, h);
-    if (bitmapHandle == nullptr)
-    {
-        Mes("サーフェイスを正しく作成できませんでした");
-        return {};
-    }
-    SelectObject(dcHandle, bitmapHandle);
-
-    ReleaseDC(nullptr, hTemp);
+    auto const surface = same::ui::Surface::create(w, h);
 
     RECT rc;
     rc.left   = rc.top = 0;
     rc.right  = w;
     rc.bottom = h;
-    PaintRect(dcHandle, &rc, RGB(0, 0, 0));
+    PaintRect(surface->dcHandle_, &rc, RGB(0, 0, 0));
 
-    return std::make_shared<same::ui::Surface>(dcHandle, bitmapHandle);
+    return surface;
 }
 
 // デバイスコンテキスト・ビットマップハンドルの解放
