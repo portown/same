@@ -3,35 +3,12 @@
 #include "common.hxx"
 
 
-namespace
-{
-    void PaintRect(std::shared_ptr<same::ui::Surface> const& surface, LPRECT lprc, COLORREF col)
-    {
-        auto const hBrush = CreateSolidBrush(col);
-
-        auto const hOld = SelectObject(surface->dcHandle_, hBrush);
-        if (lprc == nullptr)
-        {
-            PatBlt(surface->dcHandle_, 0, 0, surface->getWidth(), surface->getHeight(), PATCOPY);
-        }
-        else
-        {
-            PatBlt(surface->dcHandle_, lprc->left, lprc->top, lprc->right - lprc->left,
-                    lprc->bottom - lprc->top, PATCOPY);
-        }
-        SelectObject(surface->dcHandle_, hOld);
-
-        DeleteObject(hBrush);
-    }
-}
-
-
 // デバイスコンテキスト・ビットマップハンドルの初期化
 std::shared_ptr<same::ui::Surface> InitSurface(unsigned short w, unsigned short h)
 {
     auto const surface = same::ui::Surface::create(w, h);
 
-    PaintRect(surface, nullptr, RGB(0, 0, 0));
+    surface->paint(RGB(0, 0, 0));
 
     return surface;
 }

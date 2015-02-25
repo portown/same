@@ -28,6 +28,8 @@ namespace same
             unsigned int getWidth() const;
             unsigned int getHeight() const;
 
+            void paint(COLORREF color);
+
         private:
             static auto create(HDC dcHandle, HBITMAP bitmapHandle)->std::shared_ptr<Surface>;
             static void destroy(Surface*);

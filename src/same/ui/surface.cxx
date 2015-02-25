@@ -79,3 +79,14 @@ unsigned int same::ui::Surface::getHeight() const
 
     return static_cast<unsigned int>(bitmap.bmHeight);
 }
+
+void same::ui::Surface::paint(COLORREF const color)
+{
+    auto const colorBrush = CreateSolidBrush(color);
+
+    auto const originalBrush = SelectObject(dcHandle_, colorBrush);
+    PatBlt(dcHandle_, 0, 0, getWidth(), getHeight(), PATCOPY);
+    SelectObject(dcHandle_, originalBrush);
+
+    DeleteObject(colorBrush);
+}
