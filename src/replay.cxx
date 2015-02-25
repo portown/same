@@ -53,11 +53,9 @@ CREPLAY::CREPLAY(HWND hWnd, unsigned short wx, unsigned short wy, char cNum)
 
     surface_ = same::ui::Surface::fromBitmapFile(DATA(system.bmp));
 
-    cursorSurface_                = std::make_shared<same::ui::Surface>();
-    cursorSurface_->dcHandle_     = CreateCompatibleDC(surface_->dcHandle_);
-    cursorSurface_->bitmapHandle_ = ( HBITMAP )LoadImage(( HINSTANCE )GetWindowLongPtr(hWnd, GWLP_HINSTANCE),
-                                                         MAKEINTRESOURCE(IDB_SAMECUR), IMAGE_BITMAP, 64, 32, LR_SHARED);
-    SelectObject(cursorSurface_->dcHandle_, cursorSurface_->bitmapHandle_);
+    cursorSurface_ = same::ui::Surface::fromBitmapResource(
+        reinterpret_cast<HINSTANCE>(GetWindowLongPtr(hWnd, GWLP_HINSTANCE)),
+        IDB_SAMECUR);
 
     m_hWnd = hWnd;
     SetTimer(m_hWnd, MINE_TIMER, 1000, NULL);

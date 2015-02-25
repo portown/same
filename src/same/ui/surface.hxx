@@ -16,8 +16,8 @@ namespace same
         {
         public:
             static auto fromBitmapFile(std::string const & fileName)->std::shared_ptr<Surface>;
+            static auto fromBitmapResource(HINSTANCE instanceHandle, WORD resourceId)->std::shared_ptr<Surface>;
 
-            explicit Surface() = default;
             explicit Surface(HDC dcHandle, HBITMAP bitmapHandle);
 
             Surface(Surface const&)            = delete;
