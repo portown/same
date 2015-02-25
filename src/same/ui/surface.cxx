@@ -18,9 +18,7 @@ auto same::ui::Surface::create(
         return nullptr;
     }
 
-    std::shared_ptr<Surface> p(new Surface(dcHandle, bitmapHandle));
-
-    return p;
+    return create(dcHandle, bitmapHandle);
 }
 
 auto same::ui::Surface::fromBitmapFile(std::string const & fileName)->std::shared_ptr<Surface>
@@ -29,9 +27,7 @@ auto same::ui::Surface::fromBitmapFile(std::string const & fileName)->std::share
                                                              LR_CREATEDIBSECTION | LR_LOADFROMFILE));
     auto const dcHandle = CreateCompatibleDC(nullptr);
 
-    std::shared_ptr<Surface> p(new Surface(dcHandle, bitmapHandle));
-
-    return p;
+    return create(dcHandle, bitmapHandle);
 }
 
 auto same::ui::Surface::fromBitmapResource(
@@ -44,9 +40,22 @@ auto same::ui::Surface::fromBitmapResource(
                                                              MAKEINTRESOURCE(resourceId), IMAGE_BITMAP, 0, 0,
                                                              LR_SHARED | LR_DEFAULTSIZE));
 
-    std::shared_ptr<Surface> p(new Surface(dcHandle, bitmapHandle));
+    return create(dcHandle, bitmapHandle);
+}
+
+auto same::ui::Surface::create(HDC const dcHandle, HBITMAP const bitmapHandle)->std::shared_ptr<Surface>
+{
+    std::shared_ptr<Surface> p(new Surface(dcHandle, bitmapHandle), &Surface::destroy);
 
     return p;
+}
+
+void same::ui::Surface::destroy(Surface* const p)
+{
+    DeleteObject(p->bitmapHandle_);
+    DeleteDC(p->dcHandle_);
+
+    delete p;
 }
 
 same::ui::Surface::Surface(HDC const dcHandle, HBITMAP const bitmapHandle)

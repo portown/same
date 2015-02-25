@@ -26,6 +26,9 @@ namespace same
             Surface& operator=(Surface&&) = default;
 
         private:
+            static auto create(HDC dcHandle, HBITMAP bitmapHandle)->std::shared_ptr<Surface>;
+            static void destroy(Surface*);
+
             explicit Surface(HDC dcHandle, HBITMAP bitmapHandle);
 
         public:

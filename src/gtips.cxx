@@ -22,16 +22,6 @@ std::shared_ptr<same::ui::Surface> InitSurface(unsigned short w, unsigned short 
 // デバイスコンテキスト・ビットマップハンドルの解放
 void RelsSurface(std::shared_ptr<same::ui::Surface>& p)
 {
-    if (p->bitmapHandle_)
-    {
-        DeleteObject(p->bitmapHandle_);
-        p->bitmapHandle_ = nullptr;
-    }
-    if (p->dcHandle_)
-    {
-        DeleteDC(p->dcHandle_);
-        p->dcHandle_ = nullptr;
-    }
     p.reset();
 }
 
