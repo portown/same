@@ -10,16 +10,8 @@ std::shared_ptr<same::ui::Surface> InitSurface(unsigned short w, unsigned short 
 {
     auto const hTemp = GetDC(nullptr);
 
-    BITMAPINFO bi;
-    bi.bmiHeader.biSize        = sizeof(BITMAPINFOHEADER);
-    bi.bmiHeader.biWidth       = w;
-    bi.bmiHeader.biHeight      = -h;
-    bi.bmiHeader.biPlanes      = 1;
-    bi.bmiHeader.biBitCount    = 32;
-    bi.bmiHeader.biCompression = BI_RGB;
-
     auto const dcHandle     = CreateCompatibleDC(hTemp);
-    auto const bitmapHandle = CreateDIBSection(hTemp, &bi, DIB_RGB_COLORS, nullptr, nullptr, 0);
+    auto const bitmapHandle = CreateCompatibleBitmap(hTemp, w, h);
     if (bitmapHandle == nullptr)
     {
         Mes("サーフェイスを正しく作成できませんでした");
