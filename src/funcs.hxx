@@ -18,8 +18,8 @@ int Mes(LPCTSTR = NULL, LPCTSTR = NULL, UINT = MB_OK, HWND = NULL);
 bool SetCurDir(void);
 
 // gtips.cpp
-same::ui::Surface InitSurface(unsigned short, unsigned short);
-void              RelsSurface(same::ui::Surface&);
+std::shared_ptr<same::ui::Surface> InitSurface(unsigned short, unsigned short);
+void                               RelsSurface(std::shared_ptr<same::ui::Surface>&);
 
 void PaintRect(HDC, LPRECT, COLORREF);
 bool PutText(HDC, int, int, int, COLORREF, char const*, int = 0);

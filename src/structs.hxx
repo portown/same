@@ -13,8 +13,8 @@
 class CGAME
 {
 protected:
-    same::ui::Surface surface_;
-    unsigned char     m_Level; // 隠し要素レベル（＝プレイヤーレベル）
+    std::shared_ptr<same::ui::Surface> surface_;
+    unsigned char                      m_Level; // 隠し要素レベル（＝プレイヤーレベル）
 
     virtual void LoadStatus(void);
     virtual void SaveStatus(void);
@@ -82,15 +82,15 @@ public:     // for tests
 // タイトルメニュークラス
 class CMENU : public CGAME
 {
-    unsigned short    m_Width; // 幅
-    unsigned short    m_Height; // 高さ
-    unsigned char     m_Sel; // カーソル位置
-    char              m_MaskNum; // マスクレベル
-    char              m_RepNum; // リプレイナンバー
-    same::ui::Surface menuSurface_;
-    RECT              m_rcMenu; // メニューエリア
-    RECT              m_rcLeft; // 左矢印エリア
-    RECT              m_rcRight; // 右矢印エリア
+    unsigned short                     m_Width; // 幅
+    unsigned short                     m_Height; // 高さ
+    unsigned char                      m_Sel; // カーソル位置
+    char                               m_MaskNum; // マスクレベル
+    char                               m_RepNum; // リプレイナンバー
+    std::shared_ptr<same::ui::Surface> menuSurface_;
+    RECT                               m_rcMenu; // メニューエリア
+    RECT                               m_rcLeft; // 左矢印エリア
+    RECT                               m_rcRight; // 右矢印エリア
 
 public:
     CMENU(unsigned short, unsigned short);
@@ -105,23 +105,23 @@ public:
 // リプレイ再生クラス
 class CREPLAY : public CGAME
 {
-    std::vector<unsigned char> m_Played; // リプレイ用データ
-    unsigned short             m_bx, m_by; // 前回のマウス位置
-    unsigned short             m_Num; // 選択中の駒数
-    unsigned short             m_Tries; // 手数
-    unsigned short             m_Width; // 幅
-    unsigned short             m_Height; // 高さ
-    unsigned char*             m_Area; // 駒情報
-    unsigned char              m_Pieces; // 残り駒数
-    unsigned char              m_Groups; // 残り塊数
-    unsigned char              m_Status; // ゲームの状態
-    unsigned long              m_Score; // プレイヤースコア
-    unsigned long              m_GameNum; // ゲームナンバー（乱数の種）
-    same::ui::Surface          cursorSurface_;
-    RECT                       m_rcArea; // ゲーム盤エリア
-    HWND                       m_hWnd; // ウィンドウハンドル
-    char                       m_cRepNum; // リプレイナンバー
-    bool                       m_bErase; // 消去フラグ
+    std::vector<unsigned char>         m_Played; // リプレイ用データ
+    unsigned short                     m_bx, m_by; // 前回のマウス位置
+    unsigned short                     m_Num; // 選択中の駒数
+    unsigned short                     m_Tries; // 手数
+    unsigned short                     m_Width; // 幅
+    unsigned short                     m_Height; // 高さ
+    unsigned char*                     m_Area; // 駒情報
+    unsigned char                      m_Pieces; // 残り駒数
+    unsigned char                      m_Groups; // 残り塊数
+    unsigned char                      m_Status; // ゲームの状態
+    unsigned long                      m_Score; // プレイヤースコア
+    unsigned long                      m_GameNum; // ゲームナンバー（乱数の種）
+    std::shared_ptr<same::ui::Surface> cursorSurface_;
+    RECT                               m_rcArea; // ゲーム盤エリア
+    HWND                               m_hWnd; // ウィンドウハンドル
+    char                               m_cRepNum; // リプレイナンバー
+    bool                               m_bErase; // 消去フラグ
 
     void          Onselect(unsigned short);
     void          Unselect(void);

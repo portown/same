@@ -109,12 +109,12 @@ namespace
 
     LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
     {
-        static CGAME*            s_pcGame = NULL;
-        static same::ui::Surface backSurface;
-        PAINTSTRUCT              ps;
-        POINT                    pt;
-        HDC                      hDC;
-        unsigned char            ucRet;
+        static CGAME*                             s_pcGame = NULL;
+        static std::shared_ptr<same::ui::Surface> backSurface;
+        PAINTSTRUCT                               ps;
+        POINT                                     pt;
+        HDC                                       hDC;
+        unsigned char                             ucRet;
 
         switch (msg)
         {
@@ -125,9 +125,9 @@ namespace
 
             case WM_PAINT:
                 hDC = BeginPaint(hWnd, &ps);
-                PatBlt(backSurface.dcHandle_, 0, 0, WINX, WINY, BLACKNESS);
-                s_pcGame->Draw(backSurface.dcHandle_);
-                BitBlt(hDC, 0, 0, WINX, WINY, backSurface.dcHandle_, 0, 0, SRCCOPY);
+                PatBlt(backSurface->dcHandle_, 0, 0, WINX, WINY, BLACKNESS);
+                s_pcGame->Draw(backSurface->dcHandle_);
+                BitBlt(hDC, 0, 0, WINX, WINY, backSurface->dcHandle_, 0, 0, SRCCOPY);
                 EndPaint(hWnd, &ps);
                 break;
 

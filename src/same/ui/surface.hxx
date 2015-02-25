@@ -2,6 +2,7 @@
 
 #pragma once
 
+#include <memory>
 #include <string>
 
 #include <windows.h>
@@ -14,9 +15,10 @@ namespace same
         class Surface
         {
         public:
-            static auto fromBitmapFile(std::string const & fileName)->Surface;
+            static auto fromBitmapFile(std::string const & fileName)->std::shared_ptr<Surface>;
 
-            Surface() = default;
+            explicit Surface() = default;
+            explicit Surface(HDC dcHandle, HBITMAP bitmapHandle);
 
             Surface(Surface const&)            = delete;
             Surface& operator=(Surface const&) = delete;
@@ -24,10 +26,6 @@ namespace same
             Surface(Surface&&)            = default;
             Surface& operator=(Surface&&) = default;
 
-        private:
-            explicit Surface(HDC dcHandle, HBITMAP bitmapHandle);
-
-        public:
             HDC     dcHandle_;
             HBITMAP bitmapHandle_;
         };

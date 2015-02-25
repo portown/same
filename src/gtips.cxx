@@ -6,7 +6,7 @@
 
 
 // デバイスコンテキスト・ビットマップハンドルの初期化
-same::ui::Surface InitSurface(unsigned short w, unsigned short h)
+std::shared_ptr<same::ui::Surface> InitSurface(unsigned short w, unsigned short h)
 {
     auto const hTemp = GetDC(nullptr);
 
@@ -18,14 +18,14 @@ same::ui::Surface InitSurface(unsigned short w, unsigned short h)
     bi.bmiHeader.biBitCount    = 32;
     bi.bmiHeader.biCompression = BI_RGB;
 
-    same::ui::Surface s;
-    s.dcHandle_     = CreateCompatibleDC(hTemp);
-    s.bitmapHandle_ = CreateDIBSection(hTemp, &bi, DIB_RGB_COLORS, nullptr, nullptr, 0);
-    if (s.bitmapHandle_ == nullptr)
+    auto const dcHandle     = CreateCompatibleDC(hTemp);
+    auto const bitmapHandle = CreateDIBSection(hTemp, &bi, DIB_RGB_COLORS, nullptr, nullptr, 0);
+    if (bitmapHandle == nullptr)
     {
-        throw std::runtime_error("Cannot create surface");
+        Mes("サーフェイスを正しく作成できませんでした");
+        return {};
     }
-    SelectObject(s.dcHandle_, s.bitmapHandle_);
+    SelectObject(dcHandle, bitmapHandle);
 
     ReleaseDC(nullptr, hTemp);
 
@@ -33,24 +33,25 @@ same::ui::Surface InitSurface(unsigned short w, unsigned short h)
     rc.left   = rc.top = 0;
     rc.right  = w;
     rc.bottom = h;
-    PaintRect(s.dcHandle_, &rc, RGB(0, 0, 0));
+    PaintRect(dcHandle, &rc, RGB(0, 0, 0));
 
-    return s;
+    return std::make_shared<same::ui::Surface>(dcHandle, bitmapHandle);
 }
 
 // デバイスコンテキスト・ビットマップハンドルの解放
-void RelsSurface(same::ui::Surface& s)
+void RelsSurface(std::shared_ptr<same::ui::Surface>& p)
 {
-    if (s.bitmapHandle_)
+    if (p->bitmapHandle_)
     {
-        DeleteObject(s.bitmapHandle_);
-        s.bitmapHandle_ = nullptr;
+        DeleteObject(p->bitmapHandle_);
+        p->bitmapHandle_ = nullptr;
     }
-    if (s.dcHandle_)
+    if (p->dcHandle_)
     {
-        DeleteDC(s.dcHandle_);
-        s.dcHandle_ = nullptr;
+        DeleteDC(p->dcHandle_);
+        p->dcHandle_ = nullptr;
     }
+    p.reset();
 }
 
 // 矩形塗りつぶし
