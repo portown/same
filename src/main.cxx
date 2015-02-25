@@ -126,7 +126,7 @@ namespace
                 PAINTSTRUCT ps;
                 auto const surface = same::ui::Surface::onPaint(hWnd, ps);
                 backSurface->paint(RGB(0, 0, 0));
-                s_pcGame->Draw(backSurface->getDC());
+                s_pcGame->Draw(*backSurface);
                 backSurface->blitTo(*surface);
                 break;
             }

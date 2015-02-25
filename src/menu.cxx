@@ -29,11 +29,11 @@ CMENU::CMENU(unsigned short width, unsigned short height)
 }
 
 // •`‰æ
-void CMENU::Draw(HDC hDC)
+void CMENU::Draw(same::ui::Surface& backSurface)
 {
     int i;
 
-    BitBlt(hDC, 0, 0, m_Width, m_Height, surface_->getDC(), 0, 0, SRCCOPY);
+    surface_->blitTo(backSurface);
 
     for (i = 0; i < 4; ++i)
     {
@@ -41,14 +41,14 @@ void CMENU::Draw(HDC hDC)
 
         if (i + 1 == m_Sel)
         {
-            BitBlt(hDC, m_rcMenu.left, m_rcMenu.top + i * (m_rcMenu.bottom - m_rcMenu.top) / 4,
+            BitBlt(backSurface.getDC(), m_rcMenu.left, m_rcMenu.top + i * (m_rcMenu.bottom - m_rcMenu.top) / 4,
                    m_rcMenu.right - m_rcMenu.left, (m_rcMenu.bottom - m_rcMenu.top) / 4,
                    menuSurface_->getDC(), m_rcMenu.right - m_rcMenu.left, i * (m_rcMenu.bottom - m_rcMenu.top) / 4,
                    SRCCOPY);
         }
         else
         {
-            BitBlt(hDC, m_rcMenu.left, m_rcMenu.top + i * (m_rcMenu.bottom - m_rcMenu.top) / 4,
+            BitBlt(backSurface.getDC(), m_rcMenu.left, m_rcMenu.top + i * (m_rcMenu.bottom - m_rcMenu.top) / 4,
                    m_rcMenu.right - m_rcMenu.left, (m_rcMenu.bottom - m_rcMenu.top) / 4,
                    menuSurface_->getDC(), 0, i * (m_rcMenu.bottom - m_rcMenu.top) / 4, SRCCOPY);
         }
@@ -58,58 +58,58 @@ void CMENU::Draw(HDC hDC)
     {
         if (m_Sel == 6)
         {
-            BitBlt(hDC, m_rcLeft.left, m_rcLeft.top + (m_rcLeft.bottom - m_rcLeft.top) / 4,
+            BitBlt(backSurface.getDC(), m_rcLeft.left, m_rcLeft.top + (m_rcLeft.bottom - m_rcLeft.top) / 4,
                    20, 40, menuSurface_->getDC(), 40, 160, SRCCOPY);
         }
         else
         {
-            BitBlt(hDC, m_rcLeft.left, m_rcLeft.top + (m_rcLeft.bottom - m_rcLeft.top) / 4,
+            BitBlt(backSurface.getDC(), m_rcLeft.left, m_rcLeft.top + (m_rcLeft.bottom - m_rcLeft.top) / 4,
                    20, 40, menuSurface_->getDC(), 0, 160, SRCCOPY);
         }
         if (m_Sel == 10)
         {
-            BitBlt(hDC, m_rcRight.left, m_rcRight.top + (m_rcRight.bottom - m_rcRight.top) / 4,
+            BitBlt(backSurface.getDC(), m_rcRight.left, m_rcRight.top + (m_rcRight.bottom - m_rcRight.top) / 4,
                    20, 40, menuSurface_->getDC(), 60, 160, SRCCOPY);
         }
         else
         {
-            BitBlt(hDC, m_rcRight.left, m_rcRight.top + (m_rcRight.bottom - m_rcRight.top) / 4,
+            BitBlt(backSurface.getDC(), m_rcRight.left, m_rcRight.top + (m_rcRight.bottom - m_rcRight.top) / 4,
                    20, 40, menuSurface_->getDC(), 20, 160, SRCCOPY);
         }
 
-        BitBlt(hDC, m_rcLeft.right + 36, m_rcLeft.top + (m_rcLeft.bottom - m_rcLeft.top) / 4,
+        BitBlt(backSurface.getDC(), m_rcLeft.right + 36, m_rcLeft.top + (m_rcLeft.bottom - m_rcLeft.top) / 4,
                19, 40, menuSurface_->getDC(), 80 + m_MaskNum * 19, 160, SRCCOPY);
     }
 
     if (m_Sel == 7)
     {
-        BitBlt(hDC, m_rcLeft.left, m_rcLeft.top + 2 * (m_rcLeft.bottom - m_rcLeft.top) / 4,
+        BitBlt(backSurface.getDC(), m_rcLeft.left, m_rcLeft.top + 2 * (m_rcLeft.bottom - m_rcLeft.top) / 4,
                20, 40, menuSurface_->getDC(), 40, 160, SRCCOPY);
     }
     else
     {
-        BitBlt(hDC, m_rcLeft.left, m_rcLeft.top + 2 * (m_rcLeft.bottom - m_rcLeft.top) / 4,
+        BitBlt(backSurface.getDC(), m_rcLeft.left, m_rcLeft.top + 2 * (m_rcLeft.bottom - m_rcLeft.top) / 4,
                20, 40, menuSurface_->getDC(), 0, 160, SRCCOPY);
     }
     if (m_Sel == 11)
     {
-        BitBlt(hDC, m_rcRight.left, m_rcRight.top + 2 * (m_rcRight.bottom - m_rcRight.top) / 4,
+        BitBlt(backSurface.getDC(), m_rcRight.left, m_rcRight.top + 2 * (m_rcRight.bottom - m_rcRight.top) / 4,
                20, 40, menuSurface_->getDC(), 60, 160, SRCCOPY);
     }
     else
     {
-        BitBlt(hDC, m_rcRight.left, m_rcRight.top + 2 * (m_rcRight.bottom - m_rcRight.top) / 4,
+        BitBlt(backSurface.getDC(), m_rcRight.left, m_rcRight.top + 2 * (m_rcRight.bottom - m_rcRight.top) / 4,
                20, 40, menuSurface_->getDC(), 20, 160, SRCCOPY);
     }
 
     if (m_RepNum == -1)
     {
-        BitBlt(hDC, m_rcLeft.right + 5, m_rcLeft.top + 2 * (m_rcLeft.bottom - m_rcLeft.top) / 4,
+        BitBlt(backSurface.getDC(), m_rcLeft.right + 5, m_rcLeft.top + 2 * (m_rcLeft.bottom - m_rcLeft.top) / 4,
                50, 40, menuSurface_->getDC(), 271, 160, SRCCOPY);
     }
     else
     {
-        BitBlt(hDC, m_rcLeft.right + 36, m_rcLeft.top + 2 * (m_rcLeft.bottom - m_rcLeft.top) / 4,
+        BitBlt(backSurface.getDC(), m_rcLeft.right + 36, m_rcLeft.top + 2 * (m_rcLeft.bottom - m_rcLeft.top) / 4,
                19, 40, menuSurface_->getDC(), 80 + m_RepNum * 19, 160, SRCCOPY);
     }
 }
