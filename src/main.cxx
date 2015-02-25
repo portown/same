@@ -119,8 +119,9 @@ namespace
         switch (msg)
         {
             case WM_CREATE:
-                backSurface = InitSurface(WINX, WINY);
-                s_pcGame    = new CMENU(WINX, WINY);
+                backSurface = same::ui::Surface::create(WINX, WINY);
+                backSurface->paint(RGB(0, 0, 0));
+                s_pcGame = new CMENU(WINX, WINY);
                 break;
 
             case WM_PAINT:

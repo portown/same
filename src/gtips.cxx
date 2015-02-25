@@ -3,16 +3,6 @@
 #include "common.hxx"
 
 
-// デバイスコンテキスト・ビットマップハンドルの初期化
-std::shared_ptr<same::ui::Surface> InitSurface(unsigned short w, unsigned short h)
-{
-    auto const surface = same::ui::Surface::create(w, h);
-
-    surface->paint(RGB(0, 0, 0));
-
-    return surface;
-}
-
 // 文字の描画
 bool PutText(HDC hDC, int x, int y, int f_size,
              COLORREF col, char const* str, int iLen)
