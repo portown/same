@@ -17,9 +17,9 @@ CSAME::CSAME(unsigned short wx, unsigned short wy, char cMaskNum)
 
 CSAME::CSAME(unsigned short wx, unsigned short wy, char cMaskNum, unsigned long gameNum)
 {
-    m_hDC = CreateCompatibleDC(NULL);
-    m_hBm = Load_Bmp(DATA(system.bmp));
-    SelectObject(m_hDC, m_hBm);
+    surface_.dcHandle_     = CreateCompatibleDC(NULL);
+    surface_.bitmapHandle_ = Load_Bmp(DATA(system.bmp));
+    SelectObject(surface_.dcHandle_, surface_.bitmapHandle_);
 
     m_Level     = 0;
     m_HighScore = 0;
@@ -80,15 +80,15 @@ void CSAME::Draw(HDC hDC)
 
                         tmp = tmp ^ ( unsigned char )0x80;
 
-                        BitBlt(hDC, j * PIX, i * PIY, PIX, PIY, m_hDC, tmp * PIX, PIY * 2, SRCAND);
-                        BitBlt(hDC, j * PIX, i * PIY, PIX, PIY, m_hDC, tmp * PIX, PIY, SRCPAINT);
+                        BitBlt(hDC, j * PIX, i * PIY, PIX, PIY, surface_.dcHandle_, tmp * PIX, PIY * 2, SRCAND);
+                        BitBlt(hDC, j * PIX, i * PIY, PIX, PIY, surface_.dcHandle_, tmp * PIX, PIY, SRCPAINT);
                     }
                     else
                     {
                         if (m_cMaskNum == 2) continue;
 
-                        BitBlt(hDC, j * PIX, i * PIY, PIX, PIY, m_hDC, tmp * 32, PIY * 2, SRCAND);
-                        BitBlt(hDC, j * PIX, i * PIY, PIX, PIY, m_hDC, tmp * 32, 0, SRCPAINT);
+                        BitBlt(hDC, j * PIX, i * PIY, PIX, PIY, surface_.dcHandle_, tmp * 32, PIY * 2, SRCAND);
+                        BitBlt(hDC, j * PIX, i * PIY, PIX, PIY, surface_.dcHandle_, tmp * 32, 0, SRCPAINT);
                     }
                 }
             }
@@ -490,7 +490,7 @@ CSAME::~CSAME(void)
 {
     SaveStatus();
 
-    RelsSurface(m_hDC, m_hBm);
+    RelsSurface(surface_);
     delete [] m_Area;
 }
 

@@ -51,14 +51,14 @@ CREPLAY::CREPLAY(HWND hWnd, unsigned short wx, unsigned short wy, char cNum)
 
     CntGroups();
 
-    m_hDC = CreateCompatibleDC(NULL);
-    m_hBm = Load_Bmp(DATA(system.bmp));
-    SelectObject(m_hDC, m_hBm);
+    surface_.dcHandle_     = CreateCompatibleDC(NULL);
+    surface_.bitmapHandle_ = Load_Bmp(DATA(system.bmp));
+    SelectObject(surface_.dcHandle_, surface_.bitmapHandle_);
 
-    m_hCurDC = CreateCompatibleDC(m_hDC);
-    m_hCurBm = ( HBITMAP )LoadImage(( HINSTANCE )GetWindowLongPtr(hWnd, GWLP_HINSTANCE),
-                                    MAKEINTRESOURCE(IDB_SAMECUR), IMAGE_BITMAP, 64, 32, LR_SHARED);
-    SelectObject(m_hCurDC, m_hCurBm);
+    cursorSurface_.dcHandle_     = CreateCompatibleDC(surface_.dcHandle_);
+    cursorSurface_.bitmapHandle_ = ( HBITMAP )LoadImage(( HINSTANCE )GetWindowLongPtr(hWnd, GWLP_HINSTANCE),
+                                                        MAKEINTRESOURCE(IDB_SAMECUR), IMAGE_BITMAP, 64, 32, LR_SHARED);
+    SelectObject(cursorSurface_.dcHandle_, cursorSurface_.bitmapHandle_);
 
     m_hWnd = hWnd;
     SetTimer(m_hWnd, MINE_TIMER, 1000, NULL);
@@ -93,13 +93,13 @@ void CREPLAY::Draw(HDC hDC)
                 {
                     tmp = tmp ^ ( unsigned char )0x80;
 
-                    BitBlt(hDC, j * PIX, i * PIY, PIX, PIY, m_hDC, tmp * PIX, PIY * 2, SRCAND);
-                    BitBlt(hDC, j * PIX, i * PIY, PIX, PIY, m_hDC, tmp * PIX, PIY, SRCPAINT);
+                    BitBlt(hDC, j * PIX, i * PIY, PIX, PIY, surface_.dcHandle_, tmp * PIX, PIY * 2, SRCAND);
+                    BitBlt(hDC, j * PIX, i * PIY, PIX, PIY, surface_.dcHandle_, tmp * PIX, PIY, SRCPAINT);
                 }
                 else
                 {
-                    BitBlt(hDC, j * PIX, i * PIY, PIX, PIY, m_hDC, tmp * 32, PIY * 2, SRCAND);
-                    BitBlt(hDC, j * PIX, i * PIY, PIX, PIY, m_hDC, tmp * 32, 0, SRCPAINT);
+                    BitBlt(hDC, j * PIX, i * PIY, PIX, PIY, surface_.dcHandle_, tmp * 32, PIY * 2, SRCAND);
+                    BitBlt(hDC, j * PIX, i * PIY, PIX, PIY, surface_.dcHandle_, tmp * 32, 0, SRCPAINT);
                 }
             }
         }
@@ -108,8 +108,8 @@ void CREPLAY::Draw(HDC hDC)
     // ÉJÅ[É\ÉãÇÃï`âÊ
     if (m_bx < m_Width && m_by < m_Height)
     {
-        BitBlt(hDC, m_bx * 32 + PIX / 2, m_by * 32 + PIY / 2, 32, 32, m_hCurDC, 32, 0, SRCAND);
-        BitBlt(hDC, m_bx * 32 + PIX / 2, m_by * 32 + PIY / 2, 32, 32, m_hCurDC, 0, 0, SRCPAINT);
+        BitBlt(hDC, m_bx * 32 + PIX / 2, m_by * 32 + PIY / 2, 32, 32, cursorSurface_.dcHandle_, 32, 0, SRCAND);
+        BitBlt(hDC, m_bx * 32 + PIX / 2, m_by * 32 + PIY / 2, 32, 32, cursorSurface_.dcHandle_, 0, 0, SRCPAINT);
     }
 
     // ÇªÇÃëºÇÃï`âÊ
@@ -467,8 +467,8 @@ CREPLAY::~CREPLAY(void)
 {
     KillTimer(m_hWnd, MINE_TIMER);
 
-    RelsSurface(m_hCurDC, m_hCurBm);
-    RelsSurface(m_hDC, m_hBm);
+    RelsSurface(cursorSurface_);
+    RelsSurface(surface_);
     delete [] m_Area;
 }
 

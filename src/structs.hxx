@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include "same/ui/surface.hxx"
+
 
 // ==============================================
 // 構造体定義ヘッダー
@@ -11,9 +13,8 @@
 class CGAME
 {
 protected:
-    HBITMAP       m_hBm; // ビットマップハンドル
-    HDC           m_hDC; // デバイスコンテキスト
-    unsigned char m_Level; // 隠し要素レベル（＝プレイヤーレベル）
+    same::ui::Surface surface_;
+    unsigned char     m_Level; // 隠し要素レベル（＝プレイヤーレベル）
 
     virtual void LoadStatus(void);
     virtual void SaveStatus(void);
@@ -81,16 +82,15 @@ public:     // for tests
 // タイトルメニュークラス
 class CMENU : public CGAME
 {
-    unsigned short m_Width; // 幅
-    unsigned short m_Height; // 高さ
-    unsigned char  m_Sel; // カーソル位置
-    char           m_MaskNum; // マスクレベル
-    char           m_RepNum; // リプレイナンバー
-    HBITMAP        m_hMenuBm; // メニュー用ビットマップハンドル
-    RECT           m_rcMenu; // メニューエリア
-    RECT           m_rcLeft; // 左矢印エリア
-    RECT           m_rcRight; // 右矢印エリア
-    HDC            m_hMenuDC; // メニュー用デバイスコンテキスト
+    unsigned short    m_Width; // 幅
+    unsigned short    m_Height; // 高さ
+    unsigned char     m_Sel; // カーソル位置
+    char              m_MaskNum; // マスクレベル
+    char              m_RepNum; // リプレイナンバー
+    same::ui::Surface menuSurface_;
+    RECT              m_rcMenu; // メニューエリア
+    RECT              m_rcLeft; // 左矢印エリア
+    RECT              m_rcRight; // 右矢印エリア
 
 public:
     CMENU(unsigned short, unsigned short);
@@ -117,10 +117,9 @@ class CREPLAY : public CGAME
     unsigned char              m_Status; // ゲームの状態
     unsigned long              m_Score; // プレイヤースコア
     unsigned long              m_GameNum; // ゲームナンバー（乱数の種）
-    HBITMAP                    m_hCurBm; // カーソル用ビットマップハンドル
+    same::ui::Surface          cursorSurface_;
     RECT                       m_rcArea; // ゲーム盤エリア
     HWND                       m_hWnd; // ウィンドウハンドル
-    HDC                        m_hCurDC; // カーソル用デバイスコンテキスト
     char                       m_cRepNum; // リプレイナンバー
     bool                       m_bErase; // 消去フラグ
 

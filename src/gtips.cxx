@@ -3,6 +3,8 @@
 // インクルード
 #include "common.hxx"
 
+#include <stdexcept>
+
 // 関数のプロトタイプ宣言
 HPALETTE SetPalette(LPBITMAPINFOHEADER);
 int      MakeBmpInfo(LPBITMAPINFOHEADER, LPBITMAPINFO, char*);
@@ -13,14 +15,11 @@ int      MakeBmpInfo(LPBITMAPINFOHEADER, LPBITMAPINFO, char*);
 // ==============================================
 
 // デバイスコンテキスト・ビットマップハンドルの初期化
-void InitSurface(HDC& hDC, HBITMAP& hBm, unsigned short w, unsigned short h)
+same::ui::Surface InitSurface(unsigned short w, unsigned short h)
 {
+    auto const hTemp = GetDC(nullptr);
+
     BITMAPINFO bi;
-    RECT       rc;
-    HDC        hTemp;
-
-    hTemp = GetDC(NULL);
-
     bi.bmiHeader.biSize        = sizeof(BITMAPINFOHEADER);
     bi.bmiHeader.biWidth       = w;
     bi.bmiHeader.biHeight      = -h;
@@ -28,35 +27,38 @@ void InitSurface(HDC& hDC, HBITMAP& hBm, unsigned short w, unsigned short h)
     bi.bmiHeader.biBitCount    = 32;
     bi.bmiHeader.biCompression = BI_RGB;
 
-    hDC = CreateCompatibleDC(hTemp);
-    hBm = CreateDIBSection(hTemp, &bi, DIB_RGB_COLORS, NULL, NULL, 0);
-    if (hBm == NULL)
+    same::ui::Surface s;
+    s.dcHandle_     = CreateCompatibleDC(hTemp);
+    s.bitmapHandle_ = CreateDIBSection(hTemp, &bi, DIB_RGB_COLORS, nullptr, nullptr, 0);
+    if (s.bitmapHandle_ == nullptr)
     {
-        Mes("サーフェイスを正しく作成できませんでした");
-        return;
+        throw std::runtime_error("Cannot create surface");
     }
-    SelectObject(hDC, hBm);
+    SelectObject(s.dcHandle_, s.bitmapHandle_);
 
-    ReleaseDC(NULL, hTemp);
+    ReleaseDC(nullptr, hTemp);
 
+    RECT rc;
     rc.left   = rc.top = 0;
     rc.right  = w;
     rc.bottom = h;
-    PaintRect(hDC, &rc, RGB(0, 0, 0));
+    PaintRect(s.dcHandle_, &rc, RGB(0, 0, 0));
+
+    return s;
 }
 
 // デバイスコンテキスト・ビットマップハンドルの解放
-void RelsSurface(HDC& hDC, HBITMAP& hBm)
+void RelsSurface(same::ui::Surface& s)
 {
-    if (hBm)
+    if (s.bitmapHandle_)
     {
-        DeleteObject(hBm);
-        hBm = NULL;
+        DeleteObject(s.bitmapHandle_);
+        s.bitmapHandle_ = nullptr;
     }
-    if (hDC)
+    if (s.dcHandle_)
     {
-        DeleteDC(hDC);
-        hDC = NULL;
+        DeleteDC(s.dcHandle_);
+        s.dcHandle_ = nullptr;
     }
 }
 
