@@ -144,3 +144,8 @@ void same::ui::Surface::paint(COLORREF const color)
 
     DeleteObject(colorBrush);
 }
+
+void same::ui::Surface::blitTo(Surface& surface) const
+{
+    BitBlt(surface.getDC(), 0, 0, getWidth(), getHeight(), getDC(), 0, 0, SRCCOPY);
+}

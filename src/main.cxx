@@ -127,8 +127,7 @@ namespace
                 auto const surface = same::ui::Surface::onPaint(hWnd, ps);
                 backSurface->paint(RGB(0, 0, 0));
                 s_pcGame->Draw(backSurface->getDC());
-                BitBlt(surface->getDC(), 0, 0, surface->getWidth(), surface->getHeight(),
-                        backSurface->getDC(), 0, 0, SRCCOPY);
+                backSurface->blitTo(*surface);
                 break;
             }
 

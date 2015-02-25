@@ -37,6 +37,7 @@ namespace same
             HDC getDC() const { return impl_->getDC(); }
 
             void paint(COLORREF color);
+            void blitTo(Surface& surface) const;
 
         private:
             template <class T, class ... Args>
