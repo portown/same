@@ -5,6 +5,8 @@
 
 namespace
 {
+    namespace geom = same::ui::geometry;
+
     class SurfaceDDBImpl : public same::ui::SurfaceImpl
     {
     public:
@@ -20,20 +22,14 @@ namespace
             DeleteDC(dcHandle_);
         }
 
-        unsigned int getWidth() const override
+        geom::Box box() const override
         {
             BITMAP bitmap;
             GetObject(bitmapHandle_, sizeof(BITMAP), &bitmap);
 
-            return static_cast<unsigned int>(bitmap.bmWidth);
-        }
-
-        unsigned int getHeight() const override
-        {
-            BITMAP bitmap;
-            GetObject(bitmapHandle_, sizeof(BITMAP), &bitmap);
-
-            return static_cast<unsigned int>(bitmap.bmHeight);
+            return geom::makeBox(
+                geom::makePoint(0, 0),
+                geom::makePoint(bitmap.bmWidth, bitmap.bmHeight));
         }
 
         HDC getDC() const override
@@ -53,7 +49,6 @@ namespace
             : windowHandle_ { windowHandle }, paintStruct_ { paintStruct }
         {
             dcHandle_ = BeginPaint(windowHandle, &paintStruct);
-            GetClientRect(windowHandle, &clientRect_);
         }
 
         ~SurfacePaintImpl() override
@@ -61,14 +56,12 @@ namespace
             EndPaint(windowHandle_, &paintStruct_);
         }
 
-        unsigned int getWidth() const override
+        geom::Box box() const override
         {
-            return clientRect_.right - clientRect_.left;
-        }
+            RECT rect;
+            GetClientRect(windowHandle_, &rect);
 
-        unsigned int getHeight() const override
-        {
-            return clientRect_.bottom - clientRect_.top;
+            return rect;
         }
 
         HDC getDC() const override
@@ -80,19 +73,18 @@ namespace
         HWND         windowHandle_;
         PAINTSTRUCT& paintStruct_;
         HDC          dcHandle_;
-        RECT         clientRect_;
     };
 }
 
 
-auto same::ui::Surface::create(
-    unsigned int const width,
-    unsigned int const height)
+auto same::ui::Surface::create(geometry::Size const & size)
 ->std::shared_ptr<Surface>
 {
+    using namespace same::ui::geometry;
+
     auto const displayDC    = GetDC(nullptr);
     auto const dcHandle     = CreateCompatibleDC(displayDC);
-    auto const bitmapHandle = CreateCompatibleBitmap(displayDC, width, height);
+    auto const bitmapHandle = CreateCompatibleBitmap(displayDC, getWidth(size), getHeight(size));
     ReleaseDC(nullptr, displayDC);
 
     if (dcHandle == nullptr || bitmapHandle == nullptr)
@@ -139,7 +131,8 @@ void same::ui::Surface::paint(COLORREF const color)
 
     auto const dcHandle      = getDC();
     auto const originalBrush = SelectObject(dcHandle, colorBrush);
-    PatBlt(dcHandle, 0, 0, getWidth(), getHeight(), PATCOPY);
+    auto const box           = this->box();
+    PatBlt(dcHandle, geom::getLeft(box), geom::getTop(box), geom::getRight(box), geom::getBottom(box), PATCOPY);
     SelectObject(dcHandle, originalBrush);
 
     DeleteObject(colorBrush);
@@ -147,5 +140,7 @@ void same::ui::Surface::paint(COLORREF const color)
 
 void same::ui::Surface::blitTo(Surface& surface) const
 {
-    BitBlt(surface.getDC(), 0, 0, getWidth(), getHeight(), getDC(), 0, 0, SRCCOPY);
+    auto const box = this->box();
+    BitBlt(surface.getDC(), 0, 0, geom::getRight(box), geom::getBottom(box),
+           getDC(), geom::getLeft(box), geom::getTop(box), SRCCOPY);
 }

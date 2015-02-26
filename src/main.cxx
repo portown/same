@@ -117,14 +117,14 @@ namespace
         switch (msg)
         {
             case WM_CREATE:
-                backSurface = same::ui::Surface::create(WINX, WINY);
+                backSurface = same::ui::Surface::create(same::ui::geometry::makeSize(WINX, WINY));
                 s_pcGame    = new CMENU(WINX, WINY);
                 break;
 
             case WM_PAINT:
             {
                 PAINTSTRUCT ps;
-                auto const surface = same::ui::Surface::onPaint(hWnd, ps);
+                auto const  surface = same::ui::Surface::onPaint(hWnd, ps);
                 backSurface->paint(RGB(0, 0, 0));
                 s_pcGame->Draw(*backSurface);
                 backSurface->blitTo(*surface);

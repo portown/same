@@ -8,6 +8,8 @@
 
 #include <windows.h>
 
+#include "geometry.hxx"
+
 
 namespace same
 {
@@ -17,8 +19,7 @@ namespace same
         {
             virtual ~SurfaceImpl() {}
 
-            virtual unsigned int getWidth() const  = 0;
-            virtual unsigned int getHeight() const = 0;
+            virtual geometry::Box box() const = 0;
 
             virtual HDC getDC() const = 0;
         };
@@ -26,13 +27,12 @@ namespace same
         class Surface
         {
         public:
-            static auto create(unsigned int width, unsigned int height)->std::shared_ptr<Surface>;
+            static auto create(geometry::Size const & size)->std::shared_ptr<Surface>;
             static auto fromBitmapFile(std::string const & fileName)->std::shared_ptr<Surface>;
             static auto fromBitmapResource(HINSTANCE instanceHandle, WORD resourceId)->std::shared_ptr<Surface>;
             static auto onPaint(HWND windowHandle, PAINTSTRUCT & paintStruct)->std::shared_ptr<Surface>;
 
-            unsigned int getWidth() const { return impl_->getWidth(); }
-            unsigned int getHeight() const { return impl_->getHeight(); }
+            geometry::Box box() const { return impl_->box(); }
 
             HDC getDC() const { return impl_->getDC(); }
 
