@@ -16,7 +16,7 @@ namespace
             SelectObject(dcHandle, bitmapHandle);
         }
 
-        ~SurfaceDDBImpl() override
+        ~SurfaceDDBImpl()
         {
             DeleteObject(bitmapHandle_);
             DeleteDC(dcHandle_);
@@ -51,7 +51,7 @@ namespace
             dcHandle_ = BeginPaint(windowHandle, &paintStruct);
         }
 
-        ~SurfacePaintImpl() override
+        ~SurfacePaintImpl()
         {
             EndPaint(windowHandle_, &paintStruct_);
         }
@@ -74,11 +74,24 @@ namespace
         PAINTSTRUCT& paintStruct_;
         HDC          dcHandle_;
     };
+
+    class SurfaceViewImpl : public same::ui::SurfaceImpl
+    {
+    public:
+        SurfaceViewImpl(same::ui::ImplPtr impl, geom::Box const& box) : original_ { impl }, box_(box)
+        {}
+
+        geom::Box box() const override { return box_; }
+        HDC getDC() const override { return original_->getDC(); }
+
+    private:
+        same::ui::ImplPtr original_;
+        geom::Box         box_;
+    };
 }
 
 
-auto same::ui::Surface::create(geometry::Size const & size)
-->std::shared_ptr<Surface>
+auto same::ui::Surface::create(geometry::Size const & size)->SurfacePtr
 {
     using namespace same::ui::geometry;
 
@@ -95,7 +108,7 @@ auto same::ui::Surface::create(geometry::Size const & size)
     return create<SurfaceDDBImpl>(dcHandle, bitmapHandle);
 }
 
-auto same::ui::Surface::fromBitmapFile(std::string const & fileName)->std::shared_ptr<Surface>
+auto same::ui::Surface::fromBitmapFile(std::string const & fileName)->SurfacePtr
 {
     auto const bitmapHandle = static_cast<HBITMAP>(LoadImage(nullptr, fileName.c_str(), IMAGE_BITMAP, 0, 0,
                                                              LR_CREATEDIBSECTION | LR_LOADFROMFILE));
@@ -107,7 +120,7 @@ auto same::ui::Surface::fromBitmapFile(std::string const & fileName)->std::share
 auto same::ui::Surface::fromBitmapResource(
     HINSTANCE const instanceHandle,
     WORD const resourceId)
-->std::shared_ptr<Surface>
+->SurfacePtr
 {
     auto const dcHandle     = CreateCompatibleDC(nullptr);
     auto const bitmapHandle = static_cast<HBITMAP>(LoadImage(instanceHandle,
@@ -120,7 +133,7 @@ auto same::ui::Surface::fromBitmapResource(
 auto same::ui::Surface::onPaint(
     HWND const windowHandle,
     PAINTSTRUCT & paintStruct)
-->std::shared_ptr<Surface>
+->SurfacePtr
 {
     return create<SurfacePaintImpl>(windowHandle, paintStruct);
 }
@@ -143,4 +156,9 @@ void same::ui::Surface::blitTo(Surface& surface) const
     auto const box = this->box();
     BitBlt(surface.getDC(), 0, 0, geom::getRight(box), geom::getBottom(box),
            getDC(), geom::getLeft(box), geom::getTop(box), SRCCOPY);
+}
+
+auto same::ui::Surface::view(geometry::Box const & box) const->SurfacePtr
+{
+    return create<SurfaceViewImpl>(impl_, box);
 }
