@@ -41,9 +41,9 @@ namespace same
 
         private:
             template <class T, class ... Args>
-            static auto create(Args ... args)->std::shared_ptr<Surface>
+            static auto create(Args && ... args)->std::shared_ptr<Surface>
             {
-                std::unique_ptr<SurfaceImpl> impl(new T(args ...));
+                std::unique_ptr<SurfaceImpl> impl(new T(std::forward<Args>(args) ...));
                 std::shared_ptr<Surface>     surface(new Surface(std::move(impl)));
                 return surface;
             }
