@@ -35,82 +35,97 @@ void CMENU::Draw(same::ui::Surface& backSurface)
 
     surface_->blitTo(backSurface);
 
+    namespace geom = same::ui::geometry;
+
+    auto const menuWidth  = m_rcMenu.right - m_rcMenu.left;
+    auto const menuHeight = m_rcMenu.bottom - m_rcMenu.top;
+
+    auto const menuBox = geom::makeBox(
+        geom::makePoint(0, 0),
+        geom::makeSize(menuWidth, menuHeight / 4));
+    auto const menuPoint = geom::makePoint(
+        m_rcMenu.left,
+        m_rcMenu.top);
+
     for (i = 0; i < 4; ++i)
     {
         if (i == 1 && m_Level < 1) continue;
 
-        if (i + 1 == m_Sel)
-        {
-            BitBlt(backSurface.getDC(), m_rcMenu.left, m_rcMenu.top + i * (m_rcMenu.bottom - m_rcMenu.top) / 4,
-                   m_rcMenu.right - m_rcMenu.left, (m_rcMenu.bottom - m_rcMenu.top) / 4,
-                   menuSurface_->getDC(), m_rcMenu.right - m_rcMenu.left, i * (m_rcMenu.bottom - m_rcMenu.top) / 4,
-                   SRCCOPY);
-        }
-        else
-        {
-            BitBlt(backSurface.getDC(), m_rcMenu.left, m_rcMenu.top + i * (m_rcMenu.bottom - m_rcMenu.top) / 4,
-                   m_rcMenu.right - m_rcMenu.left, (m_rcMenu.bottom - m_rcMenu.top) / 4,
-                   menuSurface_->getDC(), 0, i * (m_rcMenu.bottom - m_rcMenu.top) / 4, SRCCOPY);
-        }
+        geom::Point const toPoint = geom::offset(
+            menuPoint,
+            geom::makePoint(0, i * menuHeight / 4));
+
+        geom::Point offset;
+        geom::setX(offset, i + 1 == m_Sel ? menuWidth : 0);
+        geom::setY(offset, i * menuHeight / 4);
+
+        menuSurface_->view(geom::offset(menuBox, offset))->blitTo(backSurface, toPoint);
     }
 
     if (m_Level >= 1)
     {
         if (m_Sel == 6)
         {
-            BitBlt(backSurface.getDC(), m_rcLeft.left, m_rcLeft.top + (m_rcLeft.bottom - m_rcLeft.top) / 4,
-                   20, 40, menuSurface_->getDC(), 40, 160, SRCCOPY);
+            menuSurface_->view(geom::makeBox(geom::makePoint(40, 160), geom::makeSize(20, 40)))
+            ->blitTo(backSurface, geom::makePoint(m_rcLeft.left, m_rcLeft.top + (m_rcLeft.bottom - m_rcLeft.top) / 4));
         }
         else
         {
-            BitBlt(backSurface.getDC(), m_rcLeft.left, m_rcLeft.top + (m_rcLeft.bottom - m_rcLeft.top) / 4,
-                   20, 40, menuSurface_->getDC(), 0, 160, SRCCOPY);
+            menuSurface_->view(geom::makeBox(geom::makePoint(0, 160), geom::makeSize(20, 40)))
+            ->blitTo(backSurface, geom::makePoint(m_rcLeft.left, m_rcLeft.top + (m_rcLeft.bottom - m_rcLeft.top) / 4));
         }
         if (m_Sel == 10)
         {
-            BitBlt(backSurface.getDC(), m_rcRight.left, m_rcRight.top + (m_rcRight.bottom - m_rcRight.top) / 4,
-                   20, 40, menuSurface_->getDC(), 60, 160, SRCCOPY);
+            menuSurface_->view(geom::makeBox(geom::makePoint(60, 160), geom::makeSize(20, 40)))
+            ->blitTo(backSurface, geom::makePoint(m_rcRight.left, m_rcRight.top + (m_rcRight.bottom - m_rcRight.top)
+                                                  / 4));
         }
         else
         {
-            BitBlt(backSurface.getDC(), m_rcRight.left, m_rcRight.top + (m_rcRight.bottom - m_rcRight.top) / 4,
-                   20, 40, menuSurface_->getDC(), 20, 160, SRCCOPY);
+            menuSurface_->view(geom::makeBox(geom::makePoint(20, 160), geom::makeSize(20, 40)))
+            ->blitTo(backSurface, geom::makePoint(m_rcRight.left, m_rcRight.top + (m_rcRight.bottom - m_rcRight.top)
+                                                  / 4));
         }
 
-        BitBlt(backSurface.getDC(), m_rcLeft.right + 36, m_rcLeft.top + (m_rcLeft.bottom - m_rcLeft.top) / 4,
-               19, 40, menuSurface_->getDC(), 80 + m_MaskNum * 19, 160, SRCCOPY);
+        menuSurface_->view(geom::makeBox(geom::makePoint(80 + m_MaskNum * 19, 160), geom::makeSize(19, 40)))
+        ->blitTo(backSurface, geom::makePoint(m_rcLeft.right + 36, m_rcLeft.top + (m_rcLeft.bottom - m_rcLeft.top)
+                                              / 4));
     }
 
     if (m_Sel == 7)
     {
-        BitBlt(backSurface.getDC(), m_rcLeft.left, m_rcLeft.top + 2 * (m_rcLeft.bottom - m_rcLeft.top) / 4,
-               20, 40, menuSurface_->getDC(), 40, 160, SRCCOPY);
+        menuSurface_->view(geom::makeBox(geom::makePoint(40, 160), geom::makeSize(20, 40)))
+        ->blitTo(backSurface, geom::makePoint(m_rcLeft.left, m_rcLeft.top + 2 * (m_rcLeft.bottom - m_rcLeft.top) / 4));
     }
     else
     {
-        BitBlt(backSurface.getDC(), m_rcLeft.left, m_rcLeft.top + 2 * (m_rcLeft.bottom - m_rcLeft.top) / 4,
-               20, 40, menuSurface_->getDC(), 0, 160, SRCCOPY);
+        menuSurface_->view(geom::makeBox(geom::makePoint(0, 160), geom::makeSize(20, 40)))
+        ->blitTo(backSurface, geom::makePoint(m_rcLeft.left, m_rcLeft.top + 2 * (m_rcLeft.bottom - m_rcLeft.top) / 4));
     }
     if (m_Sel == 11)
     {
-        BitBlt(backSurface.getDC(), m_rcRight.left, m_rcRight.top + 2 * (m_rcRight.bottom - m_rcRight.top) / 4,
-               20, 40, menuSurface_->getDC(), 60, 160, SRCCOPY);
+        menuSurface_->view(geom::makeBox(geom::makePoint(60, 160), geom::makeSize(20, 40)))
+        ->blitTo(backSurface, geom::makePoint(m_rcRight.left, m_rcRight.top + 2 * (m_rcRight.bottom - m_rcRight.top)
+                                              / 4));
     }
     else
     {
-        BitBlt(backSurface.getDC(), m_rcRight.left, m_rcRight.top + 2 * (m_rcRight.bottom - m_rcRight.top) / 4,
-               20, 40, menuSurface_->getDC(), 20, 160, SRCCOPY);
+        menuSurface_->view(geom::makeBox(geom::makePoint(20, 160), geom::makeSize(20, 40)))
+        ->blitTo(backSurface, geom::makePoint(m_rcRight.left, m_rcRight.top + 2 * (m_rcRight.bottom - m_rcRight.top)
+                                              / 4));
     }
 
     if (m_RepNum == -1)
     {
-        BitBlt(backSurface.getDC(), m_rcLeft.right + 5, m_rcLeft.top + 2 * (m_rcLeft.bottom - m_rcLeft.top) / 4,
-               50, 40, menuSurface_->getDC(), 271, 160, SRCCOPY);
+        menuSurface_->view(geom::makeBox(geom::makePoint(271, 160), geom::makeSize(50, 40)))
+        ->blitTo(backSurface, geom::makePoint(m_rcLeft.right + 5, m_rcLeft.top + 2 * (m_rcLeft.bottom - m_rcLeft.top)
+                                              / 4));
     }
     else
     {
-        BitBlt(backSurface.getDC(), m_rcLeft.right + 36, m_rcLeft.top + 2 * (m_rcLeft.bottom - m_rcLeft.top) / 4,
-               19, 40, menuSurface_->getDC(), 80 + m_RepNum * 19, 160, SRCCOPY);
+        menuSurface_->view(geom::makeBox(geom::makePoint(80 + m_RepNum * 19, 160), geom::makeSize(19, 40)))
+        ->blitTo(backSurface, geom::makePoint(m_rcLeft.right + 36, m_rcLeft.top + 2 * (m_rcLeft.bottom - m_rcLeft.top)
+                                              / 4));
     }
 }
 

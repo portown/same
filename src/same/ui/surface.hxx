@@ -40,6 +40,7 @@ namespace same
 
             void paint(COLORREF color);
             void blitTo(Surface& surface) const;
+            void blitTo(Surface& surface, geometry::Point const&) const;
 
             auto view(geometry::Box const & box) const->SurfacePtr;
 

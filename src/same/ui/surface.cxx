@@ -154,7 +154,14 @@ void same::ui::Surface::paint(COLORREF const color)
 void same::ui::Surface::blitTo(Surface& surface) const
 {
     auto const box = this->box();
-    BitBlt(surface.getDC(), 0, 0, geom::getRight(box), geom::getBottom(box),
+    blitTo(surface, geom::getMinCorner(box));
+}
+
+void same::ui::Surface::blitTo(Surface& surface, geom::Point const& point) const
+{
+    auto const box = this->box();
+    BitBlt(surface.getDC(), geom::getX(point), geom::getY(point),
+           geom::getWidth(box), geom::getHeight(box),
            getDC(), geom::getLeft(box), geom::getTop(box), SRCCOPY);
 }
 
