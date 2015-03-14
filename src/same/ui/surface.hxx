@@ -4,41 +4,60 @@
 
 #include <memory>
 #include <string>
+#include <utility>
 
 #include <windows.h>
+
+#include "geometry.hxx"
 
 
 namespace same
 {
     namespace ui
     {
+        struct SurfaceImpl
+        {
+            virtual geometry::Box box() const = 0;
+
+            virtual HDC getDC() const = 0;
+        };
+        using ImplPtr = std::shared_ptr<SurfaceImpl>;
+
+        class Surface;
+        using SurfacePtr = std::shared_ptr<Surface>;
+
         class Surface
         {
         public:
-            static auto create(unsigned int width, unsigned int height)->std::shared_ptr<Surface>;
-            static auto fromBitmapFile(std::string const & fileName)->std::shared_ptr<Surface>;
-            static auto fromBitmapResource(HINSTANCE instanceHandle, WORD resourceId)->std::shared_ptr<Surface>;
+            static auto create(geometry::Size const & size)->SurfacePtr;
+            static auto fromBitmapFile(std::string const & fileName)->SurfacePtr;
+            static auto fromBitmapResource(HINSTANCE instanceHandle, WORD resourceId)->SurfacePtr;
+            static auto onPaint(HWND windowHandle, PAINTSTRUCT & paintStruct)->SurfacePtr;
 
-            Surface(Surface const&)            = delete;
-            Surface& operator=(Surface const&) = delete;
+            geometry::Box box() const { return impl_->box(); }
 
-            Surface(Surface&&)            = default;
-            Surface& operator=(Surface&&) = default;
-
-            unsigned int getWidth() const;
-            unsigned int getHeight() const;
+            HDC getDC() const { return impl_->getDC(); }
 
             void paint(COLORREF color);
+            void blitTo(Surface& surface) const;
+            void blitTo(Surface& surface, geometry::Point const&) const;
+
+            auto view(geometry::Box const & box) const->SurfacePtr;
 
         private:
-            static auto create(HDC dcHandle, HBITMAP bitmapHandle)->std::shared_ptr<Surface>;
-            static void destroy(Surface*);
+            template <class T, class ... Args>
+            static auto create(Args && ... args)->SurfacePtr
+            {
+                ImplPtr    impl(new T(std::forward<Args>(args) ...));
+                SurfacePtr surface(new Surface(impl));
+                return surface;
+            }
 
-            explicit Surface(HDC dcHandle, HBITMAP bitmapHandle);
+            explicit Surface(ImplPtr impl) : impl_ { impl }
+            {}
 
-        public:
-            HDC     dcHandle_;
-            HBITMAP bitmapHandle_;
+        private:
+            ImplPtr impl_;
         };
     }
 }

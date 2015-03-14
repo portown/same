@@ -20,7 +20,8 @@ protected:
     virtual void SaveStatus(void);
 
 public:
-    virtual void Draw(HDC)     = 0;
+    virtual void Draw(same::ui::Surface& backSurface) = 0;
+
     virtual void Select(POINT) = 0;
     virtual unsigned char Click(void) = 0;
 
@@ -65,7 +66,8 @@ class CSAME : public CGAME
 
 public:
     CSAME(unsigned short, unsigned short, char);
-    void Draw(HDC) override;
+    void Draw(same::ui::Surface& backSurface) override;
+
     void Select(POINT) override;
     unsigned char Click(void) override;
 
@@ -94,7 +96,8 @@ class CMENU : public CGAME
 
 public:
     CMENU(unsigned short, unsigned short);
-    void Draw(HDC) override;
+    void Draw(same::ui::Surface& backSurface) override;
+
     void Select(POINT) override;
     unsigned char Click(void) override;
 
@@ -140,7 +143,8 @@ class CREPLAY : public CGAME
 
 public:
     CREPLAY(HWND, unsigned short, unsigned short, char);
-    void Draw(HDC) override;
+    void Draw(same::ui::Surface& backSurface) override;
+
     void Select(POINT) override;
     unsigned char Click(void) override;
 

@@ -52,7 +52,7 @@ CSAME::CSAME(unsigned short wx, unsigned short wy, char cMaskNum, unsigned long 
 }
 
 // マス目の描画
-void CSAME::Draw(HDC hDC)
+void CSAME::Draw(same::ui::Surface& backSurface)
 {
     unsigned short i, j;
     unsigned char  tmp;
@@ -78,15 +78,19 @@ void CSAME::Draw(HDC hDC)
 
                         tmp = tmp ^ ( unsigned char )0x80;
 
-                        BitBlt(hDC, j * PIX, i * PIY, PIX, PIY, surface_->dcHandle_, tmp * PIX, PIY * 2, SRCAND);
-                        BitBlt(hDC, j * PIX, i * PIY, PIX, PIY, surface_->dcHandle_, tmp * PIX, PIY, SRCPAINT);
+                        BitBlt(backSurface.getDC(), j * PIX, i * PIY, PIX, PIY, surface_->getDC(), tmp * PIX, PIY * 2,
+                               SRCAND);
+                        BitBlt(backSurface.getDC(), j * PIX, i * PIY, PIX, PIY, surface_->getDC(), tmp * PIX, PIY,
+                               SRCPAINT);
                     }
                     else
                     {
                         if (m_cMaskNum == 2) continue;
 
-                        BitBlt(hDC, j * PIX, i * PIY, PIX, PIY, surface_->dcHandle_, tmp * 32, PIY * 2, SRCAND);
-                        BitBlt(hDC, j * PIX, i * PIY, PIX, PIY, surface_->dcHandle_, tmp * 32, 0, SRCPAINT);
+                        BitBlt(backSurface.getDC(), j * PIX, i * PIY, PIX, PIY, surface_->getDC(), tmp * 32, PIY * 2,
+                               SRCAND);
+                        BitBlt(backSurface.getDC(), j * PIX, i * PIY, PIX, PIY, surface_->getDC(), tmp * 32, 0,
+                               SRCPAINT);
                     }
                 }
             }
@@ -95,60 +99,64 @@ void CSAME::Draw(HDC hDC)
 
     // その他の描画
     wsprintf(strTmp, "　　スコア：%lu", m_Score);
-    PutText(hDC, m_rcArea.right, 0, 20, RGB(255, 255, 255), strTmp);
+    PutText(backSurface.getDC(), m_rcArea.right, 0, 20, RGB(255, 255, 255), strTmp);
     wsprintf(strTmp, "ハイスコア：%lu", m_HighScore);
-    PutText(hDC, m_rcArea.right, 20, 20, RGB(255, 255, 255), strTmp);
+    PutText(backSurface.getDC(), m_rcArea.right, 20, 20, RGB(255, 255, 255), strTmp);
 
     wsprintf(strTmp, "選択エリア：%u", m_Num);
-    PutText(hDC, m_rcArea.right, 60, 20, RGB(255, 255, 255), strTmp);
+    PutText(backSurface.getDC(), m_rcArea.right, 60, 20, RGB(255, 255, 255), strTmp);
     wsprintf(strTmp, "　　　手数：%u", m_Tries);
-    PutText(hDC, m_rcArea.right, 80, 20, RGB(255, 255, 255), strTmp);
+    PutText(backSurface.getDC(), m_rcArea.right, 80, 20, RGB(255, 255, 255), strTmp);
     wsprintf(strTmp, "　残り個数：%u", m_Pieces);
-    PutText(hDC, m_rcArea.right, 100, 20, RGB(255, 255, 255), strTmp);
+    PutText(backSurface.getDC(), m_rcArea.right, 100, 20, RGB(255, 255, 255), strTmp);
     wsprintf(strTmp, "　残り塊数：%u", m_Groups);
-    PutText(hDC, m_rcArea.right, 120, 20, RGB(255, 255, 255), strTmp);
+    PutText(backSurface.getDC(), m_rcArea.right, 120, 20, RGB(255, 255, 255), strTmp);
 
     wsprintf(strTmp, "　　 X座標：%u", (m_bx < m_Width ? m_bx : 0));
-    PutText(hDC, m_rcArea.right + 152, 60, 20, RGB(255, 255, 255), strTmp);
+    PutText(backSurface.getDC(), m_rcArea.right + 152, 60, 20, RGB(255, 255, 255), strTmp);
     wsprintf(strTmp, "　　 Y座標：%u", (m_by < m_Height ? m_by : 0));
-    PutText(hDC, m_rcArea.right + 152, 80, 20, RGB(255, 255, 255), strTmp);
+    PutText(backSurface.getDC(), m_rcArea.right + 152, 80, 20, RGB(255, 255, 255), strTmp);
 
     wsprintf(strTmp, "Game Number:%lu", m_GameNum);
-    PutText(hDC, m_rcArea.right + 160, m_rcArea.bottom - 12, 12, RGB(255, 255, 255), strTmp);
+    PutText(backSurface.getDC(), m_rcArea.right + 160, m_rcArea.bottom - 12, 12, RGB(255, 255, 255), strTmp);
 
     // クリア後の描画
     if (m_Status == GS_CLEAR || m_Status == GS_ALLCLEAR)
     {
         if (m_Status == GS_CLEAR)
-            PutText(hDC, m_rcArea.right + 100, 180, 40, RGB(255, 255, 255), "終了！");
+            PutText(backSurface.getDC(), m_rcArea.right + 100, 180, 40, RGB(255, 255, 255), "終了！");
         else
-            PutText(hDC, m_rcArea.right + 80, 180, 40, RGB(255, 255, 255), "全消し！");
+            PutText(backSurface.getDC(), m_rcArea.right + 80, 180, 40, RGB(255, 255, 255), "全消し！");
 
-        PutText(hDC, m_rcArea.right, 260, 20, RGB(255, 255, 255), "Enter:再ゲーム");
-        PutText(hDC, m_rcArea.right, 280, 20, RGB(255, 255, 255), "F12  :メニューに戻る");
-        PutText(hDC, m_rcArea.right, 300, 20, RGB(255, 255, 255), "Esc  :終了");
+        PutText(backSurface.getDC(), m_rcArea.right, 260, 20, RGB(255, 255, 255), "Enter:再ゲーム");
+        PutText(backSurface.getDC(), m_rcArea.right, 280, 20, RGB(255, 255, 255), "F12  :メニューに戻る");
+        PutText(backSurface.getDC(), m_rcArea.right, 300, 20, RGB(255, 255, 255), "Esc  :終了");
 
-        PutText(hDC, m_rcArea.right, 340, 20, RGB(255, 255, 255), "キーボードの0～9を押すと");
-        PutText(hDC, m_rcArea.right + 40, 360, 20, RGB(255, 255, 255), "リプレイを保存します");
+        PutText(backSurface.getDC(), m_rcArea.right, 340, 20, RGB(255, 255, 255), "キーボードの0～9を押すと");
+        PutText(backSurface.getDC(), m_rcArea.right + 40, 360, 20, RGB(255, 255, 255), "リプレイを保存します");
 
         if (m_Score >= 10000 && m_Level - 1 == m_cMaskNum)
         {
             switch (m_Level)
             {
                 case 1:
-                    PutText(hDC, m_rcArea.right + 40, 400, 20, RGB(0, 255, 255), "“マスクモード”出現！");
+                    PutText(backSurface.getDC(), m_rcArea.right + 40, 400, 20, RGB(0, 255, 255),
+                            "“マスクモード”出現！");
                     break;
 
                 case 2:
-                    PutText(hDC, m_rcArea.right + 20, 400, 20, RGB(0, 255, 255), "マスクモードレベル２出現！");
+                    PutText(backSurface.getDC(), m_rcArea.right + 20, 400, 20, RGB(0, 255, 255),
+                            "マスクモードレベル２出現！");
                     break;
 
                 case 3:
-                    PutText(hDC, m_rcArea.right + 20, 400, 20, RGB(0, 255, 255), "マスクモードレベル３出現！");
+                    PutText(backSurface.getDC(), m_rcArea.right + 20, 400, 20, RGB(0, 255, 255),
+                            "マスクモードレベル３出現！");
                     break;
 
                 case 4:
-                    PutText(hDC, m_rcArea.right + 20, 400, 20, RGB(0, 255, 255), "マスクモードレベル４出現！");
+                    PutText(backSurface.getDC(), m_rcArea.right + 20, 400, 20, RGB(0, 255, 255),
+                            "マスクモードレベル４出現！");
                     break;
             }
         }

@@ -111,25 +111,25 @@ namespace
     {
         static CGAME*                             s_pcGame = NULL;
         static std::shared_ptr<same::ui::Surface> backSurface;
-        PAINTSTRUCT                               ps;
         POINT                                     pt;
-        HDC                                       hDC;
         unsigned char                             ucRet;
 
         switch (msg)
         {
             case WM_CREATE:
-                backSurface = same::ui::Surface::create(WINX, WINY);
+                backSurface = same::ui::Surface::create(same::ui::geometry::makeSize(WINX, WINY));
                 s_pcGame    = new CMENU(WINX, WINY);
                 break;
 
             case WM_PAINT:
-                hDC = BeginPaint(hWnd, &ps);
+            {
+                PAINTSTRUCT ps;
+                auto const  surface = same::ui::Surface::onPaint(hWnd, ps);
                 backSurface->paint(RGB(0, 0, 0));
-                s_pcGame->Draw(backSurface->dcHandle_);
-                BitBlt(hDC, 0, 0, WINX, WINY, backSurface->dcHandle_, 0, 0, SRCCOPY);
-                EndPaint(hWnd, &ps);
+                s_pcGame->Draw(*backSurface);
+                backSurface->blitTo(*surface);
                 break;
+            }
 
             case WM_MOUSEMOVE:
                 pt.x = LOWORD(lp);
