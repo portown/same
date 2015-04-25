@@ -228,7 +228,7 @@ CMENU::~CMENU(void)
 }
 
 // ステータス読み込み
-void CGAME::LoadStatus(void)
+void CMENU::LoadStatus(void)
 {
     HANDLE hFile;
     DWORD  dwRead;
@@ -243,7 +243,7 @@ void CGAME::LoadStatus(void)
 }
 
 // ステータス書き込み
-void CGAME::SaveStatus(void)
+void CMENU::SaveStatus(void)
 {
     HANDLE hFile;
     DWORD  dwWritten;

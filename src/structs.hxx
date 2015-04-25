@@ -10,20 +10,12 @@
 // ==============================================
 
 // 基本クラス
-class CGAME
+struct CGAME
 {
-protected:
-    std::shared_ptr<same::ui::Surface> surface_;
-    unsigned char                      m_Level; // 隠し要素レベル（＝プレイヤーレベル）
-
-    virtual void LoadStatus(void);
-    virtual void SaveStatus(void);
-
-public:
     virtual void Draw(same::ui::Surface& backSurface) = 0;
 
-    virtual void Select(POINT) = 0;
-    virtual unsigned char Click(void) = 0;
+    virtual void          Select(POINT) = 0;
+    virtual unsigned char Click(void)   = 0;
 
     virtual unsigned char KeyDown(WPARAM) = 0;
     virtual ~CGAME(void) {}
@@ -32,6 +24,9 @@ public:
 // ゲーム盤クラス
 class CSAME : public CGAME
 {
+    std::shared_ptr<same::ui::Surface> surface_;
+    unsigned char                      m_Level; // 隠し要素レベル（＝プレイヤーレベル）
+
     std::vector<unsigned char> m_Played; // リプレイ用データ
     unsigned short             m_bx, m_by; // 前回のマウス位置
     unsigned short             m_Num; // 選択中の駒数
@@ -84,6 +79,9 @@ public:     // for tests
 // タイトルメニュークラス
 class CMENU : public CGAME
 {
+    std::shared_ptr<same::ui::Surface> surface_;
+    unsigned char                      m_Level; // 隠し要素レベル（＝プレイヤーレベル）
+
     unsigned short                     m_Width; // 幅
     unsigned short                     m_Height; // 高さ
     unsigned char                      m_Sel; // カーソル位置
@@ -93,6 +91,9 @@ class CMENU : public CGAME
     RECT                               m_rcMenu; // メニューエリア
     RECT                               m_rcLeft; // 左矢印エリア
     RECT                               m_rcRight; // 右矢印エリア
+
+    virtual void LoadStatus(void);
+    virtual void SaveStatus(void);
 
 public:
     CMENU(unsigned short, unsigned short);
@@ -108,6 +109,8 @@ public:
 // リプレイ再生クラス
 class CREPLAY : public CGAME
 {
+    std::shared_ptr<same::ui::Surface> surface_;
+
     std::vector<unsigned char>         m_Played; // リプレイ用データ
     unsigned short                     m_bx, m_by; // 前回のマウス位置
     unsigned short                     m_Num; // 選択中の駒数
