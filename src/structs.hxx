@@ -117,7 +117,7 @@ class CREPLAY : public CGAME
     unsigned short                     m_Tries; // è”
     unsigned short                     m_Width; // •
     unsigned short                     m_Height; // ‚‚³
-    unsigned char*                     m_Area; // ‹îî•ñ
+    std::vector<unsigned char>         m_Area; // ‹îî•ñ
     unsigned char                      m_Pieces; // c‚è‹î”
     unsigned char                      m_Groups; // c‚è‰ò”
     unsigned char                      m_Status; // ƒQ[ƒ€‚Ìó‘Ô

@@ -41,7 +41,7 @@ CREPLAY::CREPLAY(HWND hWnd, unsigned short wx, unsigned short wy, char cNum)
     m_Tries  = 0;
     m_bErase = false;
 
-    m_Area = new unsigned char [m_Width * m_Height];
+    m_Area = std::vector<unsigned char>(m_Width * m_Height);
     std::mt19937 engine { m_GameNum };
     for (i = 0; i < m_Height; ++i)
     {
@@ -471,8 +471,6 @@ void CREPLAY::Replay(void)
 CREPLAY::~CREPLAY(void)
 {
     KillTimer(m_hWnd, MINE_TIMER);
-
-    delete [] m_Area;
 }
 
 // リプレイデータ読み込み
