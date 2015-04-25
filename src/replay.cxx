@@ -2,6 +2,8 @@
 
 #include "common.hxx"
 
+#include <random>
+
 
 // ==============================================
 // ŽÀ‘•
@@ -36,16 +38,17 @@ CREPLAY::CREPLAY(HWND hWnd, unsigned short wx, unsigned short wy, char cNum)
         m_Status = GS_NOREPLAY;
         return;
     }
-    init_genrand(m_GameNum);
     m_Tries  = 0;
     m_bErase = false;
 
     m_Area = new unsigned char [m_Width * m_Height];
+    std::mt19937 engine { m_GameNum };
     for (i = 0; i < m_Height; ++i)
     {
         for (j = 0; j < m_Width; ++j)
         {
-            m_Area[i * m_Width + j] = ( unsigned char )(genrand_int32() % 5 + 1);
+            // for backward compatibility, not using uniform_int_distribution
+            m_Area[i * m_Width + j] = static_cast<unsigned char>(engine() % 5 + 1);
         }
     }
 

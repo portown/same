@@ -3,6 +3,7 @@
 #include "common.hxx"
 
 #include <ctime>
+#include <random>
 
 
 // ==============================================
@@ -574,12 +575,13 @@ unsigned char* CSAME::makeArea(unsigned short const width,
 {
     unsigned char* const area = new unsigned char [width * height];
 
-    init_genrand(gameNumber);
+    std::mt19937 engine { gameNumber };
     for (auto y = 0; y < height; ++y)
     {
         for (auto x = 0; x < width; ++x)
         {
-            area[x + y * m_Width] = static_cast<unsigned char>(genrand_int32() % 5 + 1);
+            // for backward compatibility, not using uniform_int_distribution
+            area[x + y * m_Width] = static_cast<unsigned char>(engine() % 5 + 1);
         }
     }
 

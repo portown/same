@@ -7,10 +7,6 @@
 // ŽÀ‘•
 // ==============================================
 
-// mt19937ar.c
-void          init_genrand(unsigned long);
-unsigned long genrand_int32(void);
-
 // tips.cpp
 int Mes(LPCTSTR = NULL, LPCTSTR = NULL, UINT = MB_OK, HWND = NULL);
 bool SetCurDir(void);
