@@ -55,18 +55,14 @@ CSAME::CSAME(unsigned short wx, unsigned short wy, char cMaskNum, unsigned long 
 // マス目の描画
 void CSAME::Draw(same::ui::Surface& backSurface)
 {
-    unsigned short i, j;
-    unsigned char  tmp;
-    char           strTmp[0x100];
-
     // ゲーム盤の描画
     if (m_cMaskNum < 4)
     {
-        for (i = 0; i < m_Height; ++i)
+        for (auto i = 0; i < m_Height; ++i)
         {
-            for (j = 0; j < m_Width; ++j)
+            for (auto j = 0; j < m_Width; ++j)
             {
-                tmp = m_Area[i * m_Width + j];
+                unsigned char tmp = m_Area[i * m_Width + j];
 
                 if (tmp != 0)
                 {
@@ -97,6 +93,8 @@ void CSAME::Draw(same::ui::Surface& backSurface)
             }
         }
     }
+
+    char strTmp[0x100];
 
     // その他の描画
     wsprintf(strTmp, "　　スコア：%lu", m_Score);
@@ -169,13 +167,12 @@ void CSAME::Draw(same::ui::Surface& backSurface)
 // マス目チェック
 void CSAME::Select(POINT pt)
 {
-    RECT                  rc;
     static unsigned short s_sBef = m_Width * m_Height;
-    unsigned short        x, y, pos;
 
     m_bReGame = false;
     if (m_Status == GS_CLEAR || m_Status == GS_ALLCLEAR)
     {
+        RECT rc;
         SetRect(&rc, m_rcArea.right, 260, m_rcArea.right * 2, 320);
         if (PtInRect(&rc, pt))
         {
@@ -191,12 +188,12 @@ void CSAME::Select(POINT pt)
 
     if (PtInRect(&m_rcArea, pt))
     {
-        x    = ( unsigned short )pt.x / PIX;
-        y    = ( unsigned short )pt.y / PIY;
+        unsigned short const x = ( unsigned short )pt.x / PIX;
+        unsigned short const y = ( unsigned short )pt.y / PIY;
         m_bx = x;
         m_by = y;
 
-        pos = y * m_Width + x;
+        unsigned short const pos = y * m_Width + x;
         if (pos >= m_Width * m_Height) return;
         if (m_Area[pos] == 0)
         {
@@ -265,8 +262,6 @@ void CSAME::Inexplore(unsigned short pos)
 // 駒消去
 unsigned char CSAME::Click(void)
 {
-    unsigned char cRet;
-
     if (!m_bDraw) return CR_NOSTATUS;
 
     if (m_Status == GS_CLEAR || m_Status == GS_ALLCLEAR)
@@ -288,7 +283,7 @@ unsigned char CSAME::Click(void)
 
     Check();
 
-    cRet = EndCheck();
+    auto const cRet = EndCheck();
     switch (cRet)
     {
         case CR_NOSTATUS:
@@ -343,32 +338,31 @@ void CSAME::Exexplore(unsigned short pos)
 // 駒落ちチェック
 void CSAME::Check(void)
 {
-    unsigned short i, j, max;
+    auto const max = m_Width * m_Height;
 
-    max = m_Width * m_Height;
-
-    for (i = 0; i < max; ++i)
+    for (auto i = 0; i < max; ++i)
     {
         if (m_Area[i] == 0) VShift(i);
     }
 
-    for (i = 0; i < m_Width - 1; ++i)
+    for (auto i = 0; i < m_Width - 1; ++i)
     {
-        if (m_Area[(m_Height - 1) * m_Width + i] == 0)
+        if (m_Area[(m_Height - 1) * m_Width + i] != 0) continue;
+
+        unsigned short j;
+
+        for (j = i; j < m_Width; ++j)
         {
-            for (j = i; j < m_Width; ++j)
-            {
-                if (m_Area[(m_Height - 1) * m_Width + j] != 0)
-                    break;
-            }
-
-            if (j == m_Width) break; ;
-
-            for (j = 0; j < m_Height; ++j)
-                HShift(j * m_Width + i);
-
-            --i;
+            if (m_Area[(m_Height - 1) * m_Width + j] != 0)
+                break;
         }
+
+        if (j == m_Width) break;
+
+        for (auto k = 0; k < m_Height; ++k)
+            HShift(k * m_Width + i);
+
+        --i;
     }
 }
 
@@ -403,9 +397,7 @@ void CSAME::HShift(unsigned short pos)
 // 終了チェック
 unsigned char CSAME::EndCheck(void)
 {
-    bool bAll;
-
-    bAll = CntGroups();
+    auto const bAll = CntGroups();
 
     if (bAll) return CR_ALLCLEAR;
     else if (m_Groups == 0)
@@ -417,13 +409,12 @@ unsigned char CSAME::EndCheck(void)
 // 塊の個数計算
 bool CSAME::CntGroups(void)
 {
-    unsigned short max, i;
-    unsigned char  cPiece = 0;
+    unsigned char cPiece = 0;
 
-    max      = m_Width * m_Height;
+    auto const max = m_Width * m_Height;
     m_Groups = 0;
 
-    for (i = 0; i < max; ++i)
+    for (auto i = 0; i < max; ++i)
     {
         cPiece |= (m_Area[i] != 0);
         if (m_Area[i] == 0) continue;
@@ -438,7 +429,7 @@ bool CSAME::CntGroups(void)
     }
 
     // 後始末
-    for (i = 0; i < max; ++i)
+    for (auto i = 0; i < max; ++i)
     {
         if (m_Area[i] == 0) continue;
         if (!(m_Area[i] & ( unsigned char )0x80)) continue;
@@ -503,21 +494,17 @@ CSAME::~CSAME(void)
 // ステータス読み込み
 void CSAME::LoadStatus(void)
 {
-    HANDLE hFile;
-    DWORD  dwSize, dwRead;
-    char*  data;
-    int    i;
-
-    hFile = CreateFile(DATFILE, GENERIC_READ, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+    auto const hFile = CreateFile(DATFILE, GENERIC_READ, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
     if (hFile == INVALID_HANDLE_VALUE) return;
 
     SetFilePointer(hFile, 0, NULL, FILE_BEGIN);
-    ReadFile(hFile, ( LPVOID )&m_Level, 1, &dwRead, NULL);
+    DWORD dwRead;
+    ReadFile(hFile, &m_Level, 1, &dwRead, NULL);
 
-    dwSize = sizeof(unsigned long);
-    ReadFile(hFile, ( LPVOID )&m_HighScore, dwSize, &dwRead, NULL);
-    data = ( char* )&m_HighScore;
-    for (i = 0; i < static_cast<int>(sizeof(unsigned long)); ++i)
+    DWORD const dwSize = sizeof(unsigned long);
+    ReadFile(hFile, &m_HighScore, dwSize, &dwRead, NULL);
+    auto const data = ( char* )&m_HighScore;
+    for (auto i = 0; i < static_cast<int>(sizeof(unsigned long)); ++i)
         data[i] -= CODE(i + 1);
 
     CloseHandle(hFile);
@@ -526,23 +513,19 @@ void CSAME::LoadStatus(void)
 // ステータス書き込み
 void CSAME::SaveStatus(void)
 {
-    HANDLE hFile;
-    DWORD  dwSize, dwWritten;
-    char*  data;
-    int    i;
-
-    data = ( char* )&m_HighScore;
-    for (i = 0; i < static_cast<int>(sizeof(unsigned long)); ++i)
+    auto const data = ( char* )&m_HighScore;
+    for (auto i = 0; i < static_cast<int>(sizeof(unsigned long)); ++i)
         data[i] += CODE(i + 1);
 
-    hFile = CreateFile(DATFILE, GENERIC_WRITE, 0, NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+    auto const hFile = CreateFile(DATFILE, GENERIC_WRITE, 0, NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
     if (hFile == INVALID_HANDLE_VALUE) return;
 
     SetFilePointer(hFile, 0, NULL, FILE_BEGIN);
-    WriteFile(hFile, ( LPVOID )&m_Level, 1, &dwWritten, NULL);
+    DWORD dwWritten;
+    WriteFile(hFile, &m_Level, 1, &dwWritten, NULL);
 
-    dwSize = sizeof(unsigned long);
-    WriteFile(hFile, ( LPVOID )&m_HighScore, dwSize, &dwWritten, NULL);
+    DWORD const dwSize = sizeof(unsigned long);
+    WriteFile(hFile, &m_HighScore, dwSize, &dwWritten, NULL);
 
     CloseHandle(hFile);
 }
@@ -550,25 +533,23 @@ void CSAME::SaveStatus(void)
 // リプレイデータ書き込み
 void CSAME::SaveReplay(char cNum)
 {
-    HANDLE         hFile;
-    DWORD          dwWritten;
-    unsigned short i;
-    char           strFName[0x100];
+    char strFName[0x100];
 
     lstrcpy(strFName, REPFILE);
     strFName[lstrlen(strFName) + 1] = '\0';
     strFName[lstrlen(strFName)]     = cNum;
 
-    hFile = CreateFile(strFName, GENERIC_WRITE, 0, NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+    auto const hFile = CreateFile(strFName, GENERIC_WRITE, 0, NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
     if (hFile == INVALID_HANDLE_VALUE) return;
 
     SetFilePointer(hFile, 0, NULL, FILE_BEGIN);
-    WriteFile(hFile, ( LPCVOID )&m_GameNum, sizeof(unsigned long), &dwWritten, NULL);
-    WriteFile(hFile, ( LPCVOID )&m_Tries, sizeof(unsigned short), &dwWritten, NULL);
+    DWORD dwWritten;
+    WriteFile(hFile, &m_GameNum, sizeof(unsigned long), &dwWritten, NULL);
+    WriteFile(hFile, &m_Tries, sizeof(unsigned short), &dwWritten, NULL);
 
-    for (i = 0; i < m_Tries; ++i)
+    for (auto i = 0; i < m_Tries; ++i)
     {
-        WriteFile(hFile, ( LPCVOID )&m_Played[i], 1, &dwWritten, NULL);
+        WriteFile(hFile, &m_Played[i], 1, &dwWritten, NULL);
     }
 
     CloseHandle(hFile);
