@@ -487,8 +487,6 @@ unsigned char CSAME::KeyDown(WPARAM key)
 CSAME::~CSAME(void)
 {
     SaveStatus();
-
-    delete [] m_Area;
 }
 
 // ステータス読み込み
@@ -555,11 +553,11 @@ void CSAME::SaveReplay(char cNum)
     CloseHandle(hFile);
 }
 
-unsigned char* CSAME::makeArea(unsigned short const width,
-                               unsigned short const height,
-                               unsigned long const gameNumber) const
+std::vector<unsigned char> CSAME::makeArea(unsigned short const width,
+                                           unsigned short const height,
+                                           unsigned long const gameNumber) const
 {
-    unsigned char* const area = new unsigned char [width * height];
+    std::vector<unsigned char> area(width * height);
 
     std::mt19937 engine { gameNumber };
     for (auto y = 0; y < height; ++y)

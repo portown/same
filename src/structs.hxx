@@ -38,7 +38,7 @@ class CSAME : public CGAME
     unsigned short             m_Tries; // 手数
     unsigned short             m_Width; // 幅
     unsigned short             m_Height; // 高さ
-    unsigned char*             m_Area; // 駒情報
+    std::vector<unsigned char> m_Area; // 駒情報
     unsigned char              m_Pieces; // 残り駒数
     unsigned char              m_Groups; // 残り塊数
     unsigned char              m_Status; // ゲームの状態
@@ -76,9 +76,9 @@ public:
 
 public:     // for tests
     CSAME(unsigned short wx, unsigned short wy, char cMaskNum, unsigned long gameNum);
-    unsigned char* makeArea(unsigned short width, unsigned short height, unsigned long gameNumber) const;
-    unsigned char  getAt(unsigned short x, unsigned short y) const;
-    bool           selectsAt(unsigned short x, unsigned short y) const;
+    std::vector<unsigned char> makeArea(unsigned short width, unsigned short height, unsigned long gameNumber) const;
+    unsigned char              getAt(unsigned short x, unsigned short y) const;
+    bool                       selectsAt(unsigned short x, unsigned short y) const;
 };
 
 // タイトルメニュークラス
