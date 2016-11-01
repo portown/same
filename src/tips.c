@@ -1,37 +1,38 @@
-// tips.cpp
+// tips.c
 
-#include "common.hxx"
+#include <windows.h>
+#include <shlwapi.h>
 
 
 // ==============================================
-// 実装
+// 螳溯｣�
 // ==============================================
 
-// 簡易メッセージボックス
+// 邁｡譏薙Γ繝�繧ｻ繝ｼ繧ｸ繝懊ャ繧ｯ繧ｹ
 int Mes(LPCTSTR lpText, LPCTSTR lpCaption, UINT uType, HWND hWnd)
 {
     return MessageBox(hWnd, lpText, lpCaption, uType);
 }
 
-// カレントディレクトリの修正
-bool SetCurDir(void)
+// 繧ｫ繝ｬ繝ｳ繝医ョ繧｣繝ｬ繧ｯ繝医Μ縺ｮ菫ｮ豁｣
+int SetCurDir(void)
 {
     LPTSTR pstrDir;
     TCHAR  strDir[MAX_PATH];
 
     if (!GetModuleFileName(NULL, strDir, MAX_PATH))
-        return false;
+        return 0;
 
     pstrDir = StrRChr(strDir, NULL, '\\');
     if (!pstrDir)
-        return false;
+        return 0;
 
     lstrcpy(pstrDir, "");
 
     if (!SetCurrentDirectory(strDir))
-        return false;
+        return 0;
 
-    return true;
+    return 1;
 }
 
 // EOF

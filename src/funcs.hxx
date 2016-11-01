@@ -8,8 +8,10 @@
 // ==============================================
 
 // tips.cpp
-int Mes(LPCTSTR = NULL, LPCTSTR = NULL, UINT = MB_OK, HWND = NULL);
-bool SetCurDir(void);
+extern "C" {
+    int Mes(LPCTSTR = NULL, LPCTSTR = NULL, UINT = MB_OK, HWND = NULL);
+    int SetCurDir(void);
+}
 
 // gtips.cpp
 void    InitSurface(HDC&, HBITMAP&, unsigned short, unsigned short);
