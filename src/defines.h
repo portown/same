@@ -3,10 +3,6 @@
 #pragma once
 
 
-// ==============================================
-// 定数定義ヘッダー
-// ==============================================
-
 #define MINE_TIMER 1000
 
 #define DATA(fname) "data\\" #fname
@@ -15,9 +11,9 @@
     | (((( char )sizeof(unsigned long) - (x)) * 77 % 100) & 0x0f)
 
 #define ADDSCORE(x) ( unsigned long )pow(1.6, x)
-#define PIX 32    // 駒の幅
-#define PIY 32    // 駒の高さ
-#define MASKMAX 4 // マスクモード限界
+#define PIX 32
+#define PIY 32
+#define MASKMAX 4
 
 #define SELWAV DATA(select.wav)
 #define ERSWAV DATA(erase.wav)
@@ -25,7 +21,6 @@
 #define DATFILE ".\\same.dat"
 #define REPFILE ".\\replay"
 
-// クリック戻り値
 enum CLICKRESULT
 {
     CR_NOSTATUS = 0,
@@ -51,7 +46,6 @@ enum CLICKRESULT
     CR_REPLAY9,
 };
 
-// ゲームの状態
 enum GAMESTATUS
 {
     GS_NOSTATUS = 0,
@@ -61,6 +55,3 @@ enum GAMESTATUS
     GS_ALLCLEAR,
     GS_NOREPLAY,
 };
-
-
-// EOF
