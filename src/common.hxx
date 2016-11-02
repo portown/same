@@ -16,7 +16,7 @@
 #include "defines.hxx"
 #include "resource.h"
 #include "structs.hxx"
-#include "funcs.hxx"
+#include "funcs.h"
 
 
 // EOF

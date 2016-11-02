@@ -76,8 +76,8 @@ void CREPLAY::Draw(HDC hDC)
 
     if (m_Status == GS_NOREPLAY)
     {
-        PutText(hDC, 320 - 13 * 20, 220, 40, RGB(255, 255, 255), "リプレイデータがありません", 26);
-        PutText(hDC, 320, 272, 20, RGB(255, 255, 255), "クリックでタイトルに戻る", 24);
+        PutText(hDC, 320 - 13 * 20, 220, 40, RGB(255, 255, 255), "リプレイデータがありません");
+        PutText(hDC, 320, 272, 20, RGB(255, 255, 255), "クリックでタイトルに戻る");
         return;
     }
 
@@ -470,8 +470,8 @@ CREPLAY::~CREPLAY(void)
 {
     KillTimer(m_hWnd, MINE_TIMER);
 
-    RelsSurface(m_hCurDC, m_hCurBm);
-    RelsSurface(m_hDC, m_hBm);
+    RelsSurface(&m_hCurDC, &m_hCurBm);
+    RelsSurface(&m_hDC, &m_hBm);
     delete [] m_Area;
 }
 

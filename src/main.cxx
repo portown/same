@@ -120,7 +120,7 @@ namespace
         switch (msg)
         {
             case WM_CREATE:
-                InitSurface(s_hBackDC, s_hBackBm, WINX, WINY);
+                InitSurface(&s_hBackDC, &s_hBackBm, WINX, WINY);
                 s_pcGame = new CMENU(WINX, WINY);
                 break;
 
@@ -216,7 +216,7 @@ namespace
 
             case WM_DESTROY:
                 _DELETE(s_pcGame);
-                RelsSurface(s_hBackDC, s_hBackBm);
+                RelsSurface(&s_hBackDC, &s_hBackBm);
                 PostQuitMessage(0);
                 break;
 

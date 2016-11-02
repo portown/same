@@ -1,20 +1,15 @@
 // tips.c
 
-#include <windows.h>
+#include "funcs.h"
+
 #include <shlwapi.h>
 
 
-// ==============================================
-// 実装
-// ==============================================
-
-// 簡易メッセージボックス
-int Mes(LPCTSTR lpText, LPCTSTR lpCaption, UINT uType, HWND hWnd)
+int Mes(LPCTSTR lpText)
 {
-    return MessageBox(hWnd, lpText, lpCaption, uType);
+    return MessageBox(NULL, lpText, NULL, MB_OK);
 }
 
-// カレントディレクトリの修正
 int SetCurDir(void)
 {
     LPTSTR pstrDir;
@@ -34,5 +29,3 @@ int SetCurDir(void)
 
     return 1;
 }
-
-// EOF

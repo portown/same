@@ -482,7 +482,7 @@ CSAME::~CSAME(void)
 {
     SaveStatus();
 
-    RelsSurface(m_hDC, m_hBm);
+    RelsSurface(&m_hDC, &m_hBm);
     delete [] m_Area;
 }
 

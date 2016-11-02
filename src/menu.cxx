@@ -215,8 +215,8 @@ CMENU::~CMENU(void)
 {
     SaveStatus();
 
-    RelsSurface(m_hMenuDC, m_hMenuBm);
-    RelsSurface(m_hDC, m_hBm);
+    RelsSurface(&m_hMenuDC, &m_hMenuBm);
+    RelsSurface(&m_hDC, &m_hBm);
 }
 
 // ステータス読み込み
