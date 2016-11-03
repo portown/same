@@ -1,14 +1,13 @@
 // menu.cpp
 
-#include "common.hxx"
 #include "menu.h"
+
+#include "defines.h"
 
 
 static void LoadStatus(GameSceneMenu* scene);
 static void SaveStatus(GameSceneMenu* scene);
 
-
-extern "C" {
 
 GameSceneMenu* createGameSceneMenu(unsigned int const width, unsigned int const height) {
     GameSceneMenu* const scene = (GameSceneMenu*)malloc(sizeof(GameSceneMenu));
@@ -188,7 +187,9 @@ unsigned char gameSceneMenuMouseLDown(GameSceneMenu* const scene) {
 
         case 10:
             PlaySound(ERSWAV, NULL, SND_FILENAME | SND_ASYNC);
-            if (++scene->m_MaskNum > std::min<char>(scene->m_Level, MASKMAX)) scene->m_MaskNum = std::min<char>(scene->m_Level, MASKMAX);
+            if (++scene->m_MaskNum > min(scene->m_Level, MASKMAX)) {
+                scene->m_MaskNum = min(scene->m_Level, MASKMAX);
+            }
             break;
 
         case 11:
@@ -208,8 +209,6 @@ unsigned char gameSceneMenuKeyDown(GameSceneMenu* const scene, WPARAM const key)
     }
 
     return CR_NOSTATUS;
-}
-
 }
 
 
