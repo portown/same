@@ -25,7 +25,6 @@ extern "C" {
 
 GameSceneReplay* createGameSceneReplay(HWND const hWnd, unsigned int const width, unsigned int const height, int const replayNumber) {
     GameSceneReplay* const scene = (GameSceneReplay*)malloc(sizeof(GameSceneReplay));
-    new(&scene->m_Played) std::vector<unsigned char>();
 
     unsigned short i, j;
 
@@ -44,7 +43,6 @@ GameSceneReplay* createGameSceneReplay(HWND const hWnd, unsigned int const width
     scene->m_Groups = 0;
     scene->m_Score  = 0;
 
-    scene->m_Played.clear();
     scene->m_GameNum = 0;
     char const replayChar = replayNumber == -1 ? '\0' : (char)replayNumber + '0';
     if (!LoadReplay(scene, replayChar))
@@ -83,7 +81,7 @@ void destroyGameSceneReplay(GameSceneReplay* const scene) {
     destroySurface(scene->cursorSurface);
     destroySurface(scene->surface);
     delete [] scene->m_Area;
-    scene->m_Played.~vector();
+    free(scene->m_Played);
 
     free(scene);
 }
@@ -211,7 +209,7 @@ unsigned char gameSceneReplayKeyDown(GameSceneReplay* const scene, WPARAM const 
 }
 
 void gameSceneReplayOnTimer(GameSceneReplay* const scene) {
-    unsigned short i = ( unsigned short )scene->m_Played.size();
+    unsigned short i = ( unsigned short )scene->m_PlayedSize;
     if (scene->m_Tries > i) return;
 
     if (scene->m_bErase)
@@ -513,11 +511,13 @@ static bool LoadReplay(GameSceneReplay* const scene, char cNum) {
     ReadFile(hFile, ( LPVOID )&scene->m_Tries, sizeof(unsigned short), &dwRead, NULL);
     if (dwRead != sizeof(unsigned short)) return false;
 
+    scene->m_PlayedSize = scene->m_Tries;
+    scene->m_Played = (unsigned char*)malloc(sizeof(unsigned char) * scene->m_PlayedSize);
     for (i = 0; i < scene->m_Tries; ++i)
     {
         ReadFile(hFile, ( LPVOID )&ucDat, 1, &dwRead, NULL);
         if (dwRead != 1) return false;
-        scene->m_Played.push_back(ucDat);
+        scene->m_Played[i] = ucDat;
     }
 
     CloseHandle(hFile);

@@ -9,7 +9,8 @@ extern "C" {
 
 typedef struct tagGameSceneReplay {
     Surface* surface;
-    std::vector<unsigned char> m_Played; // リプレイ用データ
+    unsigned char* m_Played; // リプレイ用データ
+    size_t m_PlayedSize;
     unsigned short             m_bx, m_by; // 前回のマウス位置
     unsigned short             m_Num; // 選択中の駒数
     unsigned short             m_Tries; // 手数
@@ -25,7 +26,7 @@ typedef struct tagGameSceneReplay {
     HWND                       m_hWnd; // ウィンドウハンドル
     Surface* cursorSurface;
     char                       m_cRepNum; // リプレイナンバー
-    bool                       m_bErase; // 消去フラグ
+    int                       m_bErase; // 消去フラグ
 } GameSceneReplay;
 
 GameSceneReplay* createGameSceneReplay(HWND hWnd, unsigned int width, unsigned int height, int replayNumber);

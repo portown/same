@@ -27,7 +27,6 @@ extern "C" {
 
 GameSceneGame* createGameSceneGame(unsigned int const width, unsigned int const height, int const maskLevel, unsigned long const seed) {
     GameSceneGame* scene = (GameSceneGame*)malloc(sizeof(GameSceneGame));
-    new(&scene->m_Played) std::vector<unsigned char>();
 
     scene->surface = surfaceFromBitmapFile(DATA(system.bmp));
 
@@ -60,7 +59,8 @@ GameSceneGame* createGameSceneGame(unsigned int const width, unsigned int const 
 
     CntGroups(scene);
 
-    scene->m_Played.clear();
+    scene->m_Played = (unsigned char*)malloc(sizeof(unsigned char) * 256);
+    scene->m_PlayedCapacity = 256;
 
     return scene;
 }
@@ -70,7 +70,7 @@ void destroyGameSceneGame(GameSceneGame* const scene) {
 
     destroySurface(scene->surface);
     delete [] scene->m_Area;
-    scene->m_Played.~vector();
+    free(scene->m_Played);
 
     free(scene);
 }
@@ -248,7 +248,13 @@ unsigned char gameSceneGameMouseLDown(GameSceneGame* const scene) {
     ++scene->m_Tries;
     scene->m_Pieces -= scene->m_Num;
     AddScore(scene, ADDSCORE(scene->m_Num));
-    scene->m_Played.push_back(( unsigned char )(scene->m_by * scene->m_Width + scene->m_bx));
+
+    size_t const playedIndex = scene->m_Tries - 1;
+    if (playedIndex >= scene->m_PlayedCapacity) {
+        scene->m_PlayedCapacity = (size_t)((double)scene->m_PlayedCapacity * 1.5);
+        scene->m_Played = (unsigned char*)realloc(scene->m_Played, sizeof(unsigned char) * scene->m_PlayedCapacity);
+    }
+    scene->m_Played[playedIndex] = (unsigned char)(scene->m_by * scene->m_Width + scene->m_bx);
 
     Check(scene);
 

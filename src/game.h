@@ -10,7 +10,8 @@ extern "C" {
 typedef struct tagGameSceneGame {
     Surface* surface;
     unsigned char m_Level; // 隠し要素レベル（＝プレイヤーレベル）
-    std::vector<unsigned char> m_Played; // リプレイ用データ
+    unsigned char* m_Played; // リプレイ用データ
+    size_t m_PlayedCapacity;
     unsigned short             m_bx, m_by; // 前回のマウス位置
     unsigned short             m_Num; // 選択中の駒数
     unsigned short             m_Tries; // 手数
@@ -24,8 +25,8 @@ typedef struct tagGameSceneGame {
     unsigned long              m_Score; // プレイヤースコア
     unsigned long              m_GameNum; // ゲームナンバー（乱数の種）
     RECT                       m_rcArea; // ゲーム盤エリア
-    bool                       m_bDraw; // 連打抑え
-    bool                       m_bReGame; // クリックフラグ
+    int                       m_bDraw; // 連打抑え
+    int                       m_bReGame; // クリックフラグ
     char                       m_cMaskNum; // マスクレベル
 } GameSceneGame;
 
