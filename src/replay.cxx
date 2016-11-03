@@ -54,21 +54,15 @@ CREPLAY::CREPLAY(HWND hWnd, unsigned short wx, unsigned short wy, char cNum)
 
     CntGroups();
 
-    m_hDC = CreateCompatibleDC(NULL);
-    m_hBm = Load_Bmp(DATA(system.bmp));
-    SelectObject(m_hDC, m_hBm);
-
-    m_hCurDC = CreateCompatibleDC(m_hDC);
-    m_hCurBm = ( HBITMAP )LoadImage(( HINSTANCE )GetWindowLongPtr(hWnd, GWLP_HINSTANCE),
-                                    MAKEINTRESOURCE(IDB_SAMECUR), IMAGE_BITMAP, 64, 32, LR_SHARED);
-    SelectObject(m_hCurDC, m_hCurBm);
+    surface = surfaceFromBitmapFile(DATA(system.bmp));
+    cursorSurface = surfaceFromResource((HINSTANCE)GetWindowLongPtr(hWnd, GWLP_HINSTANCE), MAKEINTRESOURCE(IDB_SAMECUR));
 
     m_hWnd = hWnd;
     SetTimer(m_hWnd, MINE_TIMER, 1000, NULL);
 }
 
 // マス目の描画
-void CREPLAY::Draw(HDC hDC)
+void CREPLAY::draw(Surface* const backSurface)
 {
     unsigned short i, j;
     unsigned char  tmp;
@@ -76,8 +70,8 @@ void CREPLAY::Draw(HDC hDC)
 
     if (m_Status == GS_NOREPLAY)
     {
-        PutText(hDC, 320 - 13 * 20, 220, 40, RGB(255, 255, 255), "リプレイデータがありません");
-        PutText(hDC, 320, 272, 20, RGB(255, 255, 255), "クリックでタイトルに戻る");
+        surfaceDrawText(backSurface, 320 - 13 * 20, 220, 40, RGB(255, 255, 255), "リプレイデータがありません");
+        surfaceDrawText(backSurface, 320, 272, 20, RGB(255, 255, 255), "クリックでタイトルに戻る");
         return;
     }
 
@@ -96,13 +90,13 @@ void CREPLAY::Draw(HDC hDC)
                 {
                     tmp = tmp ^ ( unsigned char )0x80;
 
-                    BitBlt(hDC, j * PIX, i * PIY, PIX, PIY, m_hDC, tmp * PIX, PIY * 2, SRCAND);
-                    BitBlt(hDC, j * PIX, i * PIY, PIX, PIY, m_hDC, tmp * PIX, PIY, SRCPAINT);
+                    surfaceBlit(backSurface, j * PIX, i * PIY, PIX, PIY, surface, tmp * PIX, PIY * 2, SRCAND);
+                    surfaceBlit(backSurface, j * PIX, i * PIY, PIX, PIY, surface, tmp * PIX, PIY, SRCPAINT);
                 }
                 else
                 {
-                    BitBlt(hDC, j * PIX, i * PIY, PIX, PIY, m_hDC, tmp * 32, PIY * 2, SRCAND);
-                    BitBlt(hDC, j * PIX, i * PIY, PIX, PIY, m_hDC, tmp * 32, 0, SRCPAINT);
+                    surfaceBlit(backSurface, j * PIX, i * PIY, PIX, PIY, surface, tmp * 32, PIY * 2, SRCAND);
+                    surfaceBlit(backSurface, j * PIX, i * PIY, PIX, PIY, surface, tmp * 32, 0, SRCPAINT);
                 }
             }
         }
@@ -111,45 +105,45 @@ void CREPLAY::Draw(HDC hDC)
     // カーソルの描画
     if (m_bx < m_Width && m_by < m_Height)
     {
-        BitBlt(hDC, m_bx * 32 + PIX / 2, m_by * 32 + PIY / 2, 32, 32, m_hCurDC, 32, 0, SRCAND);
-        BitBlt(hDC, m_bx * 32 + PIX / 2, m_by * 32 + PIY / 2, 32, 32, m_hCurDC, 0, 0, SRCPAINT);
+        surfaceBlit(backSurface, m_bx * 32 + PIX / 2, m_by * 32 + PIY / 2, 32, 32, cursorSurface, 32, 0, SRCAND);
+        surfaceBlit(backSurface, m_bx * 32 + PIX / 2, m_by * 32 + PIY / 2, 32, 32, cursorSurface, 0, 0, SRCPAINT);
     }
 
     // その他の描画
     wsprintf(strTmp, "　　スコア：%lu", m_Score);
-    PutText(hDC, m_rcArea.right, 0, 20, RGB(255, 255, 255), strTmp);
-    PutText(hDC, m_rcArea.right + 80, 24, 24, RGB(255, 255, 255), "- リプレイ -");
+    surfaceDrawText(backSurface, m_rcArea.right, 0, 20, RGB(255, 255, 255), strTmp);
+    surfaceDrawText(backSurface, m_rcArea.right + 80, 24, 24, RGB(255, 255, 255), "- リプレイ -");
 
     wsprintf(strTmp, "選択エリア：%u", m_Num);
-    PutText(hDC, m_rcArea.right, 60, 20, RGB(255, 255, 255), strTmp);
+    surfaceDrawText(backSurface, m_rcArea.right, 60, 20, RGB(255, 255, 255), strTmp);
     wsprintf(strTmp, "　　　手数：%u", m_Tries);
-    PutText(hDC, m_rcArea.right, 80, 20, RGB(255, 255, 255), strTmp);
+    surfaceDrawText(backSurface, m_rcArea.right, 80, 20, RGB(255, 255, 255), strTmp);
     wsprintf(strTmp, "　残り個数：%u", m_Pieces);
-    PutText(hDC, m_rcArea.right, 100, 20, RGB(255, 255, 255), strTmp);
+    surfaceDrawText(backSurface, m_rcArea.right, 100, 20, RGB(255, 255, 255), strTmp);
     wsprintf(strTmp, "　残り塊数：%u", m_Groups);
-    PutText(hDC, m_rcArea.right, 120, 20, RGB(255, 255, 255), strTmp);
+    surfaceDrawText(backSurface, m_rcArea.right, 120, 20, RGB(255, 255, 255), strTmp);
 
     wsprintf(strTmp, "　　 X座標：%u", (m_bx < m_Width ? m_bx : 0));
-    PutText(hDC, m_rcArea.right + 152, 60, 20, RGB(255, 255, 255), strTmp);
+    surfaceDrawText(backSurface, m_rcArea.right + 152, 60, 20, RGB(255, 255, 255), strTmp);
     wsprintf(strTmp, "　　 Y座標：%u", (m_by < m_Height ? m_by : 0));
-    PutText(hDC, m_rcArea.right + 152, 80, 20, RGB(255, 255, 255), strTmp);
+    surfaceDrawText(backSurface, m_rcArea.right + 152, 80, 20, RGB(255, 255, 255), strTmp);
 
     wsprintf(strTmp, "Game Number:%lu", m_GameNum);
-    PutText(hDC, m_rcArea.right + 160, m_rcArea.bottom - 12, 12, RGB(255, 255, 255), strTmp);
+    surfaceDrawText(backSurface, m_rcArea.right + 160, m_rcArea.bottom - 12, 12, RGB(255, 255, 255), strTmp);
 
     // クリア後の描画
     if (m_Status == GS_CLEAR || m_Status == GS_ALLCLEAR)
     {
         if (m_Status == GS_CLEAR)
-            PutText(hDC, m_rcArea.right + 100, 180, 40, RGB(255, 255, 255), "終了！");
+            surfaceDrawText(backSurface, m_rcArea.right + 100, 180, 40, RGB(255, 255, 255), "終了！");
         else
-            PutText(hDC, m_rcArea.right + 80, 180, 40, RGB(255, 255, 255), "全消し！");
+            surfaceDrawText(backSurface, m_rcArea.right + 80, 180, 40, RGB(255, 255, 255), "全消し！");
 
-        PutText(hDC, m_rcArea.right, 280, 20, RGB(255, 255, 255), "F12  :メニューに戻る");
-        PutText(hDC, m_rcArea.right, 300, 20, RGB(255, 255, 255), "Esc  :終了");
+        surfaceDrawText(backSurface, m_rcArea.right, 280, 20, RGB(255, 255, 255), "F12  :メニューに戻る");
+        surfaceDrawText(backSurface, m_rcArea.right, 300, 20, RGB(255, 255, 255), "Esc  :終了");
 
-        PutText(hDC, m_rcArea.right, 340, 20, RGB(255, 255, 255), "キーボードの0～9を押すと");
-        PutText(hDC, m_rcArea.right + 40, 360, 20, RGB(255, 255, 255), "リプレイを保存します");
+        surfaceDrawText(backSurface, m_rcArea.right, 340, 20, RGB(255, 255, 255), "キーボードの0～9を押すと");
+        surfaceDrawText(backSurface, m_rcArea.right + 40, 360, 20, RGB(255, 255, 255), "リプレイを保存します");
     }
 }
 
@@ -470,8 +464,8 @@ CREPLAY::~CREPLAY(void)
 {
     KillTimer(m_hWnd, MINE_TIMER);
 
-    RelsSurface(&m_hCurDC, &m_hCurBm);
-    RelsSurface(&m_hDC, &m_hBm);
+    destroySurface(cursorSurface);
+    destroySurface(surface);
     delete [] m_Area;
 }
 

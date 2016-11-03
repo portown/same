@@ -109,9 +109,8 @@ namespace
 
     LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
     {
-        static HBITMAP s_hBackBm;
+        static Surface* backSurface = NULL;
         static CGAME*  s_pcGame = NULL;
-        static HDC     s_hBackDC;
         PAINTSTRUCT    ps;
         POINT          pt;
         HDC            hDC;
@@ -120,15 +119,15 @@ namespace
         switch (msg)
         {
             case WM_CREATE:
-                InitSurface(&s_hBackDC, &s_hBackBm, WINX, WINY);
+                backSurface = createSurface(WINX, WINY);
                 s_pcGame = new CMENU(WINX, WINY);
                 break;
 
             case WM_PAINT:
                 hDC = BeginPaint(hWnd, &ps);
-                PatBlt(s_hBackDC, 0, 0, WINX, WINY, BLACKNESS);
-                s_pcGame->Draw(s_hBackDC);
-                BitBlt(hDC, 0, 0, WINX, WINY, s_hBackDC, 0, 0, SRCCOPY);
+                PatBlt(backSurface->hDC, 0, 0, WINX, WINY, BLACKNESS);
+                s_pcGame->draw(backSurface);
+                BitBlt(hDC, 0, 0, WINX, WINY, backSurface->hDC, 0, 0, SRCCOPY);
                 EndPaint(hWnd, &ps);
                 break;
 
@@ -216,7 +215,8 @@ namespace
 
             case WM_DESTROY:
                 _DELETE(s_pcGame);
-                RelsSurface(&s_hBackDC, &s_hBackBm);
+                destroySurface(backSurface);
+                backSurface = NULL;
                 PostQuitMessage(0);
                 break;
 

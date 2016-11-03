@@ -1,111 +1,142 @@
 // gtips.c
 
-#include "funcs.h"
+#include "gtips.h"
 
 
-void InitSurface(HDC* hDC, HBITMAP* hBm, unsigned short w, unsigned short h)
-{
-    HDC hTemp = GetDC(NULL);
+Surface* createSurface(int const width, int const height) {
+    HDC const hTemp = GetDC(NULL);
 
-    *hDC = CreateCompatibleDC(hTemp);
-    *hBm = CreateCompatibleBitmap(hTemp, w, h);
-    if (*hBm == NULL)
-    {
-        Mes("ƒT[ƒtƒFƒCƒX‚ð³‚µ‚­ì¬‚Å‚«‚Ü‚¹‚ñ‚Å‚µ‚½");
-        return;
+    Surface* const surface = malloc(sizeof(Surface));
+    surface->hDC = CreateCompatibleDC(hTemp);
+    surface->hBitmap = CreateCompatibleBitmap(hTemp, width, height);
+    if (surface->hDC == NULL || surface->hBitmap == NULL) {
+        destroySurface(surface);
+        ReleaseDC(NULL, hTemp);
+        return NULL;
     }
-    SelectObject(*hDC, *hBm);
+    SelectObject(surface->hDC, surface->hBitmap);
 
     ReleaseDC(NULL, hTemp);
 
-    RECT rc;
-    rc.left   = rc.top = 0;
-    rc.right  = w;
-    rc.bottom = h;
-    PaintRect(*hDC, &rc, RGB(0, 0, 0));
+    surface->width = width;
+    surface->height = height;
+
+    surfacePaintRect(surface, NULL, RGB(0, 0, 0));
+
+    return surface;
 }
 
-void RelsSurface(HDC* hDC, HBITMAP* hBm)
-{
-    if (*hBm)
-    {
-        DeleteObject(*hBm);
-        *hBm = NULL;
+void destroySurface(Surface* const surface) {
+    if (surface == NULL) {
+        return;
     }
-    if (*hDC)
-    {
-        DeleteDC(*hDC);
-        *hDC = NULL;
+    if (surface->hBitmap != NULL) {
+        DeleteObject(surface->hBitmap);
     }
+    if (surface->hDC != NULL) {
+        DeleteDC(surface->hDC);
+    }
+    free(surface);
 }
 
-void PaintRect(HDC hDC, LPRECT lprc, COLORREF col)
-{
-    HBRUSH hBrush, hOld;
+Surface* surfaceFromBitmapFile(char const* const fileName) {
+    HDC const hTemp = GetDC(NULL);
 
-    hBrush = CreateSolidBrush(col);
+    Surface* const surface = malloc(sizeof(Surface));
+    surface->hDC = CreateCompatibleDC(hTemp);
+    surface->hBitmap = (HBITMAP)LoadImage(NULL, fileName, IMAGE_BITMAP, 0, 0, LR_CREATEDIBSECTION | LR_LOADFROMFILE);
+    if (surface->hDC == NULL || surface->hBitmap == NULL) {
+        destroySurface(surface);
+        ReleaseDC(NULL, hTemp);
+        return NULL;
+    }
+    SelectObject(surface->hDC, surface->hBitmap);
 
-    hOld = ( HBRUSH )SelectObject(hDC, hBrush);
-    if (lprc == NULL)
-    {
-        RECT rc;
-        SetRect(&rc, 0, 0, 640, 480);
-        PatBlt(hDC, rc.left, rc.top, rc.right - rc.left,
-               rc.bottom - rc.top, PATCOPY);
+    ReleaseDC(NULL, hTemp);
+
+    BITMAP bm;
+    GetObject(surface->hBitmap, sizeof(BITMAP), &bm);
+    surface->width = bm.bmWidth;
+    surface->height = bm.bmHeight;
+
+    return surface;
+}
+
+Surface* surfaceFromResource(HINSTANCE const hInst, char const* const resourceName) {
+    HDC const hTemp = GetDC(NULL);
+
+    Surface* const surface = malloc(sizeof(Surface));
+    surface->hDC = CreateCompatibleDC(hTemp);
+    surface->hBitmap = (HBITMAP)LoadImage(hInst, resourceName, IMAGE_BITMAP, 0, 0, LR_SHARED);
+    if (surface->hDC == NULL || surface->hBitmap == NULL) {
+        destroySurface(surface);
+        ReleaseDC(NULL, hTemp);
+        return NULL;
     }
-    else
-    {
-        PatBlt(hDC, lprc->left, lprc->top, lprc->right - lprc->left,
-               lprc->bottom - lprc->top, PATCOPY);
+    SelectObject(surface->hDC, surface->hBitmap);
+
+    ReleaseDC(NULL, hTemp);
+
+    BITMAP bm;
+    GetObject(surface->hBitmap, sizeof(BITMAP), &bm);
+    surface->width = bm.bmWidth;
+    surface->height = bm.bmHeight;
+
+    return surface;
+}
+
+void surfacePaintRect(Surface* const surface, LPRECT const rect, COLORREF const color) {
+    HBRUSH const hBrush = CreateSolidBrush(color);
+
+    HBRUSH const hOld = (HBRUSH)SelectObject(surface->hDC, hBrush);
+    if (rect == NULL) {
+        PatBlt(surface->hDC, 0, 0, surface->width, surface->height, PATCOPY);
+    } else {
+        PatBlt(surface->hDC, rect->left, rect->top, rect->right - rect->left,
+               rect->bottom - rect->top, PATCOPY);
     }
-    SelectObject(hDC, hOld);
+    SelectObject(surface->hDC, hOld);
 
     DeleteObject(hBrush);
 }
 
-int PutText(HDC hDC, int x, int y, int f_size,
-             COLORREF col, char const* str)
-{
-    COLORREF clOld;
-    HFONT    hFont, hOldFont;
-    int      iOldMode;
+int surfaceDrawText(Surface* const surface, int const x, int const y, int const size,
+        COLORREF const color, char const* text) {
+    HFONT const hFont = CreateFont(size,
+            0,
+            0,
+            0,
+            600,
+            0,
+            0,
+            0,
+            SHIFTJIS_CHARSET,
+            OUT_DEFAULT_PRECIS,
+            CLIP_DEFAULT_PRECIS,
+            DEFAULT_QUALITY,
+            DEFAULT_PITCH | FF_DONTCARE,
+            "‚l‚r ƒSƒVƒbƒN");
 
-    int const iLen = lstrlen(str);
-
-    hFont = CreateFont(f_size,
-                       0,
-                       0,
-                       0,
-                       600,
-                       0,
-                       0,
-                       0,
-                       SHIFTJIS_CHARSET,
-                       OUT_DEFAULT_PRECIS,
-                       CLIP_DEFAULT_PRECIS,
-                       DEFAULT_QUALITY,
-                       DEFAULT_PITCH | FF_DONTCARE,
-                       "‚l‚r ƒSƒVƒbƒN");
-
-    if (!hFont)
+    if (hFont == NULL) {
         return 0;
+    }
 
-    iOldMode = SetBkMode(hDC, TRANSPARENT);
-    hOldFont = ( HFONT )SelectObject(hDC, hFont);
-    clOld    = SetTextColor(hDC, col);
+    int const iOldMode = SetBkMode(surface->hDC, TRANSPARENT);
+    HFONT const hOldFont = (HFONT)SelectObject(surface->hDC, hFont);
+    COLORREF const clOld = SetTextColor(surface->hDC, color);
 
-    TextOut(hDC, x, y, str, iLen);
+    TextOut(surface->hDC, x, y, text, lstrlen(text));
 
-    SetTextColor(hDC, clOld);
-    SelectObject(hDC, hOldFont);
-    SetBkMode(hDC, iOldMode);
+    SetTextColor(surface->hDC, clOld);
+    SelectObject(surface->hDC, hOldFont);
+    SetBkMode(surface->hDC, iOldMode);
 
     DeleteObject(hFont);
 
     return 1;
 }
 
-HBITMAP Load_Bmp(const char* f_name)
-{
-    return (HBITMAP)LoadImage(NULL, f_name, IMAGE_BITMAP, 0, 0, LR_CREATEDIBSECTION | LR_LOADFROMFILE);
+void surfaceBlit(Surface* const dest, int const dx, int const dy, int const width, int const height,
+        Surface* const src, int const sx, int const sy, DWORD const mode) {
+    BitBlt(dest->hDC, dx, dy, width, height, src->hDC, sx, sy, mode);
 }

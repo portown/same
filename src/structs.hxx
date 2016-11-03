@@ -2,24 +2,21 @@
 
 #pragma once
 
+#include "gtips.h"
 
-// ==============================================
-// 構造体定義ヘッダー
-// ==============================================
 
 // 基本クラス
 class CGAME
 {
 protected:
-    HBITMAP       m_hBm; // ビットマップハンドル
-    HDC           m_hDC; // デバイスコンテキスト
+    Surface* surface;
     unsigned char m_Level; // 隠し要素レベル（＝プレイヤーレベル）
 
     virtual void LoadStatus(void);
     virtual void SaveStatus(void);
 
 public:
-    virtual void Draw(HDC)     = 0;
+    virtual void draw(Surface* backSurface) = 0;
     virtual void Select(POINT) = 0;
     virtual unsigned char Click(void) = 0;
 
@@ -64,7 +61,7 @@ class CSAME : public CGAME
 
 public:
     CSAME(unsigned short, unsigned short, char);
-    void Draw(HDC) override;
+    void draw(Surface* backSurface) override;
     void Select(POINT) override;
     unsigned char Click(void) override;
 
@@ -86,15 +83,14 @@ class CMENU : public CGAME
     unsigned char  m_Sel; // カーソル位置
     char           m_MaskNum; // マスクレベル
     char           m_RepNum; // リプレイナンバー
-    HBITMAP        m_hMenuBm; // メニュー用ビットマップハンドル
     RECT           m_rcMenu; // メニューエリア
     RECT           m_rcLeft; // 左矢印エリア
     RECT           m_rcRight; // 右矢印エリア
-    HDC            m_hMenuDC; // メニュー用デバイスコンテキスト
+    Surface* menuSurface;
 
 public:
     CMENU(unsigned short, unsigned short);
-    void Draw(HDC) override;
+    void draw(Surface* backSurface) override;
     void Select(POINT) override;
     unsigned char Click(void) override;
 
@@ -117,10 +113,9 @@ class CREPLAY : public CGAME
     unsigned char              m_Status; // ゲームの状態
     unsigned long              m_Score; // プレイヤースコア
     unsigned long              m_GameNum; // ゲームナンバー（乱数の種）
-    HBITMAP                    m_hCurBm; // カーソル用ビットマップハンドル
     RECT                       m_rcArea; // ゲーム盤エリア
     HWND                       m_hWnd; // ウィンドウハンドル
-    HDC                        m_hCurDC; // カーソル用デバイスコンテキスト
+    Surface* cursorSurface;
     char                       m_cRepNum; // リプレイナンバー
     bool                       m_bErase; // 消去フラグ
 
@@ -141,7 +136,7 @@ class CREPLAY : public CGAME
 
 public:
     CREPLAY(HWND, unsigned short, unsigned short, char);
-    void Draw(HDC) override;
+    void draw(Surface* backSurface) override;
     void Select(POINT) override;
     unsigned char Click(void) override;
 
