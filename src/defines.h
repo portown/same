@@ -8,7 +8,6 @@
 #define MINE_TIMER 1000
 
 #define DATA(fname) "data\\" #fname
-#define _DELETE(x); if (x) { delete x; x = NULL; }
 #define CODE(x) (((x) * 7 % 10 * 10) & 0xf0)  \
     | (((( char )sizeof(unsigned long) - (x)) * 77 % 100) & 0x0f)
 
