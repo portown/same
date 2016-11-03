@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include <math.h>
+
 
 #define MINE_TIMER 1000
 

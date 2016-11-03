@@ -1,10 +1,10 @@
-// game.cpp
+// game.c
 
-#include "common.hxx"
 #include "game.h"
 
-#include <ctime>
-#include <random>
+#include <stdbool.h>
+
+#include "defines.h"
 
 
 static void Explore(GameSceneGame* scene, unsigned short pos, unsigned char piece);
@@ -14,7 +14,7 @@ static void Exexplore(GameSceneGame* scene, unsigned short pos);
 static void Check(GameSceneGame* scene);
 static void VShift(GameSceneGame* scene, unsigned short pos);
 static void HShift(GameSceneGame* scene, unsigned short pos);
-static unsigned char EndCheck(GameSceneGame* scene);
+static enum CLICKRESULT EndCheck(GameSceneGame* scene);
 static bool CntGroups(GameSceneGame* scene);
 static void AddScore(GameSceneGame* scene, unsigned long add);
 static void LoadStatus(GameSceneGame* scene);
@@ -23,8 +23,6 @@ static void SaveReplay(GameSceneGame* scene, char cNum);
 static unsigned char* makeArea(unsigned short width, unsigned short height, unsigned long gameNumber);
 static bool selectsAt(GameSceneGame* scene, unsigned short x, unsigned short y);
 
-
-extern "C" {
 
 GameSceneGame* createGameSceneGame(unsigned int const width, unsigned int const height, int const maskLevel, unsigned long const seed) {
     GameSceneGame* scene = (GameSceneGame*)malloc(sizeof(GameSceneGame));
@@ -46,6 +44,7 @@ GameSceneGame* createGameSceneGame(unsigned int const width, unsigned int const 
     scene->m_by      = scene->m_Height;
     scene->m_bDraw   = false;
     scene->m_bReGame = false;
+    scene->previousPosition = scene->m_Width * scene->m_Height;
 
     SetRect(&scene->m_rcArea, 0, 0, width, height);
 
@@ -70,7 +69,7 @@ void destroyGameSceneGame(GameSceneGame* const scene) {
     SaveStatus(scene);
 
     destroySurface(scene->surface);
-    delete [] scene->m_Area;
+    free(scene->m_Area);
     free(scene->m_Played);
 
     free(scene);
@@ -80,9 +79,9 @@ void gameSceneGameDraw(GameSceneGame* const scene, Surface* const backSurface) {
     // ÉQÅ[ÉÄî’ÇÃï`âÊ
     if (scene->m_cMaskNum < 4)
     {
-        for (auto i = 0; i < scene->m_Height; ++i)
+        for (unsigned short i = 0; i < scene->m_Height; ++i)
         {
-            for (auto j = 0; j < scene->m_Width; ++j)
+            for (unsigned short j = 0; j < scene->m_Width; ++j)
             {
                 unsigned char tmp = scene->m_Area[i * scene->m_Width + j];
 
@@ -179,8 +178,6 @@ void gameSceneGameDraw(GameSceneGame* const scene, Surface* const backSurface) {
 }
 
 void gameSceneGameMouseMove(GameSceneGame* const scene, POINT const point) {
-    static unsigned short s_sBef = scene->m_Width * scene->m_Height;
-
     scene->m_bReGame = false;
     if (scene->m_Status == GS_CLEAR || scene->m_Status == GS_ALLCLEAR)
     {
@@ -209,7 +206,7 @@ void gameSceneGameMouseMove(GameSceneGame* const scene, POINT const point) {
         if (pos >= scene->m_Width * scene->m_Height) return;
         if (scene->m_Area[pos] == 0)
         {
-            s_sBef = pos;
+            scene->previousPosition = pos;
             return;
         }
         Explore(scene, pos, scene->m_Area[pos]);
@@ -218,16 +215,16 @@ void gameSceneGameMouseMove(GameSceneGame* const scene, POINT const point) {
 
         if (selectsAt(scene, x, y))
         {
-            if (!(scene->m_Area[s_sBef] & 0x80))
+            if (!(scene->m_Area[scene->previousPosition] & 0x80))
             {
                 PlaySound(SELWAV, NULL, SND_FILENAME | SND_ASYNC);
             }
         }
-        s_sBef = pos;
+        scene->previousPosition = pos;
     }
     else
     {
-        s_sBef = scene->m_Width * scene->m_Height;
+        scene->previousPosition = scene->m_Width * scene->m_Height;
     }
 }
 
@@ -259,7 +256,7 @@ unsigned char gameSceneGameMouseLDown(GameSceneGame* const scene) {
 
     Check(scene);
 
-    auto const cRet = EndCheck(scene);
+    enum CLICKRESULT const cRet = EndCheck(scene);
     switch (cRet)
     {
         case CR_NOSTATUS:
@@ -278,6 +275,9 @@ unsigned char gameSceneGameMouseLDown(GameSceneGame* const scene) {
             AddScore(scene, 1000000);
             PlaySound(CLRWAV, NULL, SND_FILENAME | SND_ASYNC);
             scene->m_Status = GS_ALLCLEAR;
+            break;
+
+        default:
             break;
     }
 
@@ -326,8 +326,6 @@ unsigned char gameSceneGameKeyDown(GameSceneGame* const scene, WPARAM const key)
     }
 
     return CR_NOSTATUS;
-}
-
 }
 
 
@@ -380,14 +378,14 @@ static void Exexplore(GameSceneGame* const scene, unsigned short pos) {
 }
 
 static void Check(GameSceneGame* const scene) {
-    auto const max = scene->m_Width * scene->m_Height;
+    unsigned short const max = scene->m_Width * scene->m_Height;
 
-    for (auto i = 0; i < max; ++i)
+    for (unsigned short i = 0; i < max; ++i)
     {
         if (scene->m_Area[i] == 0) VShift(scene, i);
     }
 
-    for (auto i = 0; i < scene->m_Width - 1; ++i)
+    for (unsigned short i = 0; i < scene->m_Width - 1; ++i)
     {
         if (scene->m_Area[(scene->m_Height - 1) * scene->m_Width + i] != 0) continue;
 
@@ -401,7 +399,7 @@ static void Check(GameSceneGame* const scene) {
 
         if (j == scene->m_Width) break;
 
-        for (auto k = 0; k < scene->m_Height; ++k)
+        for (unsigned short k = 0; k < scene->m_Height; ++k)
             HShift(scene, k * scene->m_Width + i);
 
         --i;
@@ -432,8 +430,8 @@ static void HShift(GameSceneGame* const scene, unsigned short pos) {
         scene->m_Area[pos] = 0;
 }
 
-static unsigned char EndCheck(GameSceneGame* const scene) {
-    auto const bAll = CntGroups(scene);
+static enum CLICKRESULT EndCheck(GameSceneGame* const scene) {
+    bool const bAll = CntGroups(scene);
 
     if (bAll) return CR_ALLCLEAR;
     else if (scene->m_Groups == 0)
@@ -445,10 +443,10 @@ static unsigned char EndCheck(GameSceneGame* const scene) {
 static bool CntGroups(GameSceneGame* const scene) {
     unsigned char cPiece = 0;
 
-    auto const max = scene->m_Width * scene->m_Height;
+    unsigned short const max = scene->m_Width * scene->m_Height;
     scene->m_Groups = 0;
 
-    for (auto i = 0; i < max; ++i)
+    for (unsigned short i = 0; i < max; ++i)
     {
         cPiece |= (scene->m_Area[i] != 0);
         if (scene->m_Area[i] == 0) continue;
@@ -463,7 +461,7 @@ static bool CntGroups(GameSceneGame* const scene) {
     }
 
     // å„énññ
-    for (auto i = 0; i < max; ++i)
+    for (unsigned short i = 0; i < max; ++i)
     {
         if (scene->m_Area[i] == 0) continue;
         if (!(scene->m_Area[i] & ( unsigned char )0x80)) continue;
@@ -480,7 +478,7 @@ static void AddScore(GameSceneGame* const scene, unsigned long add) {
 }
 
 static void LoadStatus(GameSceneGame* const scene) {
-    auto const hFile = CreateFile(DATFILE, GENERIC_READ, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+    HANDLE const hFile = CreateFile(DATFILE, GENERIC_READ, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
     if (hFile == INVALID_HANDLE_VALUE) return;
 
     SetFilePointer(hFile, 0, NULL, FILE_BEGIN);
@@ -489,19 +487,19 @@ static void LoadStatus(GameSceneGame* const scene) {
 
     DWORD const dwSize = sizeof(unsigned long);
     ReadFile(hFile, &scene->m_HighScore, dwSize, &dwRead, NULL);
-    auto const data = ( char* )&scene->m_HighScore;
-    for (auto i = 0; i < static_cast<int>(sizeof(unsigned long)); ++i)
+    char* const data = (char*)&scene->m_HighScore;
+    for (size_t i = 0; i < sizeof(unsigned long); ++i)
         data[i] -= CODE(i + 1);
 
     CloseHandle(hFile);
 }
 
 static void SaveStatus(GameSceneGame* const scene) {
-    auto const data = ( char* )&scene->m_HighScore;
-    for (auto i = 0; i < static_cast<int>(sizeof(unsigned long)); ++i)
+    char* const data = (char*)&scene->m_HighScore;
+    for (size_t i = 0; i < sizeof(unsigned long); ++i)
         data[i] += CODE(i + 1);
 
-    auto const hFile = CreateFile(DATFILE, GENERIC_WRITE, 0, NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+    HANDLE const hFile = CreateFile(DATFILE, GENERIC_WRITE, 0, NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
     if (hFile == INVALID_HANDLE_VALUE) return;
 
     SetFilePointer(hFile, 0, NULL, FILE_BEGIN);
@@ -521,7 +519,7 @@ static void SaveReplay(GameSceneGame* const scene, char cNum) {
     strFName[lstrlen(strFName) + 1] = '\0';
     strFName[lstrlen(strFName)]     = cNum;
 
-    auto const hFile = CreateFile(strFName, GENERIC_WRITE, 0, NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+    HANDLE const hFile = CreateFile(strFName, GENERIC_WRITE, 0, NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
     if (hFile == INVALID_HANDLE_VALUE) return;
 
     SetFilePointer(hFile, 0, NULL, FILE_BEGIN);
@@ -529,7 +527,7 @@ static void SaveReplay(GameSceneGame* const scene, char cNum) {
     WriteFile(hFile, &scene->m_GameNum, sizeof(unsigned long), &dwWritten, NULL);
     WriteFile(hFile, &scene->m_Tries, sizeof(unsigned short), &dwWritten, NULL);
 
-    for (auto i = 0; i < scene->m_Tries; ++i)
+    for (unsigned short i = 0; i < scene->m_Tries; ++i)
     {
         WriteFile(hFile, &scene->m_Played[i], 1, &dwWritten, NULL);
     }
@@ -541,15 +539,14 @@ static unsigned char* makeArea(unsigned short const width,
                                unsigned short const height,
                                unsigned long const gameNumber)
 {
-    unsigned char* const area = new unsigned char [width * height];
+    unsigned char* const area = malloc(sizeof(unsigned char) * width * height);
 
-    std::mt19937 engine { gameNumber };
-    for (auto y = 0; y < height; ++y)
+    srand(gameNumber);
+    for (unsigned short y = 0; y < height; ++y)
     {
-        for (auto x = 0; x < width; ++x)
+        for (unsigned short x = 0; x < width; ++x)
         {
-            // for backward compatibility, not using uniform_int_distribution
-            area[x + y * width] = static_cast<unsigned char>(engine() % 5 + 1);
+            area[x + y * width] = (unsigned char)(rand() % 5 + 1);
         }
     }
 

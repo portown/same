@@ -15,6 +15,7 @@ typedef struct tagGameSceneGame {
     unsigned char* m_Played; // リプレイ用データ
     size_t m_PlayedCapacity;
     unsigned short             m_bx, m_by; // 前回のマウス位置
+    unsigned short previousPosition;
     unsigned short             m_Num; // 選択中の駒数
     unsigned short             m_Tries; // 手数
     unsigned short             m_Width; // 幅
