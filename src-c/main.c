@@ -25,18 +25,12 @@ static BOOL             InitInstance(HINSTANCE, int);
 static int Run();
 
 
-int WINAPI WinMain(
-        HINSTANCE const instance_handle,
-        HINSTANCE const hPrevInst,
-        LPSTR const cmdLine,
-        int const showing_command) {
-    (void)hPrevInst;
-    (void)cmdLine;
-
+int c_main() {
     CreateMutex(NULL, FALSE, "jp.portown.same");
     if (GetLastError() == ERROR_ALREADY_EXISTS) return 0;
 
-    if (!SetCurDir()) return 0;
+    HINSTANCE const instance_handle = GetModuleHandle(NULL);
+    int const showing_command = SW_SHOW;
 
     if (!InitApp(instance_handle)) return 0;
     if (!InitInstance(instance_handle, showing_command)) return 0;

@@ -1,0 +1,46 @@
+name:                same
+version:             0.1.0.0
+synopsis:            Same Game (for my study)
+description:         Please see README.md
+homepage:            https://github.com/portown/same.git
+license:             OtherLicense
+license-file:        LICENSE
+author:              portown
+maintainer:          portown09@gmail.com
+copyright:           2016 portown
+category:            Game
+build-type:          Simple
+-- extra-source-files:
+data-files:          data/*.bmp data/*.wav
+cabal-version:       >=1.10
+
+library
+  hs-source-dirs:      src
+  c-sources:           src-c/main.c src-c/tips.c src-c/gtips.c src-c/scene.c src-c/menu.c src-c/game.c src-c/replay.c
+  exposed-modules:     Lib
+  ghc-options:         -Wall -Werror
+  build-depends:       base >= 4.7 && < 5
+                     , Win32
+  default-language:    Haskell2010
+
+executable same
+  hs-source-dirs:      app
+  main-is:             Main.hs
+  ghc-options:         -threaded -rtsopts -with-rtsopts=-N -Wall -Werror
+  ld-options:          -mwindows
+  build-depends:       base
+                     , same
+  default-language:    Haskell2010
+
+test-suite same-test
+  type:                exitcode-stdio-1.0
+  hs-source-dirs:      test
+  main-is:             Spec.hs
+  build-depends:       base
+                     , same
+  ghc-options:         -threaded -rtsopts -with-rtsopts=-N
+  default-language:    Haskell2010
+
+source-repository head
+  type:     git
+  location: https://github.com/portown/same.git
