@@ -9,7 +9,6 @@ extern "C" {
 #endif
 
 // tips.c
-int Mes(LPCTSTR);
 int SetCurDir(void);
 
 #ifdef __cplusplus

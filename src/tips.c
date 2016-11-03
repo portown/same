@@ -5,11 +5,6 @@
 #include <shlwapi.h>
 
 
-int Mes(LPCTSTR lpText)
-{
-    return MessageBox(NULL, lpText, NULL, MB_OK);
-}
-
 int SetCurDir(void)
 {
     LPTSTR pstrDir;
