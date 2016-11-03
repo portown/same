@@ -11,5 +11,4 @@
 
 #include "defines.h"
 #include "resource.h"
-#include "structs.hxx"
 #include "funcs.h"

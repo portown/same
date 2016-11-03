@@ -1,6 +1,7 @@
 // menu.cpp
 
 #include "common.hxx"
+#include "menu.h"
 
 
 static void LoadStatus(GameSceneMenu* scene);
@@ -211,36 +212,6 @@ unsigned char gameSceneMenuKeyDown(GameSceneMenu* const scene, WPARAM const key)
 
 }
 
-
-CMENU::CMENU(unsigned short width, unsigned short height)
-    : data(createGameSceneMenu(width, height))
-{
-}
-
-void CMENU::draw(Surface* const backSurface)
-{
-    gameSceneMenuDraw(data, backSurface);
-}
-
-void CMENU::Select(POINT pt)
-{
-    gameSceneMenuMouseMove(data, pt);
-}
-
-unsigned char CMENU::Click(void)
-{
-    return gameSceneMenuMouseLDown(data);
-}
-
-unsigned char CMENU::KeyDown(WPARAM key)
-{
-    return gameSceneMenuKeyDown(data, key);
-}
-
-CMENU::~CMENU(void)
-{
-    destroyGameSceneMenu(data);
-}
 
 static void LoadStatus(GameSceneMenu* const scene) {
     HANDLE hFile;

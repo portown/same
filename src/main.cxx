@@ -1,6 +1,13 @@
 // main.cpp
 
 #include "common.hxx"
+#include "scene.h"
+#include "menu.h"
+#include "game.h"
+#include "replay.h"
+#include "gtips.h"
+
+#include <ctime>
 
 
 namespace
@@ -110,7 +117,7 @@ namespace
     LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
     {
         static Surface* backSurface = NULL;
-        static CGAME*  s_pcGame = NULL;
+        static GameScene* scene = NULL;
         PAINTSTRUCT    ps;
         POINT          pt;
         HDC            hDC;
@@ -120,13 +127,13 @@ namespace
         {
             case WM_CREATE:
                 backSurface = createSurface(WINX, WINY);
-                s_pcGame = new CMENU(WINX, WINY);
+                scene = createGameScene(GSK_MENU, createGameSceneMenu(WINX, WINY));
                 break;
 
             case WM_PAINT:
                 hDC = BeginPaint(hWnd, &ps);
                 PatBlt(backSurface->hDC, 0, 0, WINX, WINY, BLACKNESS);
-                s_pcGame->draw(backSurface);
+                gameSceneDraw(scene, backSurface);
                 BitBlt(hDC, 0, 0, WINX, WINY, backSurface->hDC, 0, 0, SRCCOPY);
                 EndPaint(hWnd, &ps);
                 break;
@@ -134,12 +141,12 @@ namespace
             case WM_MOUSEMOVE:
                 pt.x = LOWORD(lp);
                 pt.y = HIWORD(lp);
-                s_pcGame->Select(pt);
+                gameSceneMouseMove(scene, pt);
                 InvalidateRect(hWnd, NULL, FALSE);
                 break;
 
             case WM_LBUTTONUP:
-                ucRet = s_pcGame->Click();
+                ucRet = gameSceneMouseLDown(scene);
                 switch (ucRet)
                 {
                     case CR_ENDGAME:
@@ -147,8 +154,8 @@ namespace
                         break;
 
                     case CR_TITLEMENU:
-                        _DELETE(s_pcGame);
-                        s_pcGame = new CMENU(WINX, WINY);
+                        destroyGameScene(scene);
+                        scene = createGameScene(GSK_MENU, createGameSceneMenu(WINX, WINY));
                         break;
 
                     case CR_BEGINNORMAL:
@@ -156,8 +163,8 @@ namespace
                     case CR_BEGINMASK2:
                     case CR_BEGINMASK3:
                     case CR_BEGINMASK4:
-                        _DELETE(s_pcGame);
-                        s_pcGame = new CSAME(GAMEX, GAMEY, ucRet - CR_BEGINNORMAL);
+                        destroyGameScene(scene);
+                        scene = createGameScene(GSK_GAME, createGameSceneGame(GAMEX, GAMEY, ucRet - CR_BEGINNORMAL, (unsigned long)std::time(NULL)));
                         break;
 
                     case CR_REPLAY:
@@ -171,20 +178,20 @@ namespace
                     case CR_REPLAY7:
                     case CR_REPLAY8:
                     case CR_REPLAY9:
-                        _DELETE(s_pcGame);
-                        s_pcGame = new CREPLAY(hWnd, GAMEX, GAMEY, ucRet - CR_REPLAY0);
+                        destroyGameScene(scene);
+                        scene = createGameScene(GSK_REPLAY, createGameSceneReplay(hWnd, GAMEX, GAMEY, ucRet - CR_REPLAY0));
                         break;
                 }
                 InvalidateRect(hWnd, NULL, FALSE);
                 break;
 
             case WM_KEYDOWN:
-                ucRet = s_pcGame->KeyDown(wp);
+                ucRet = gameSceneKeyDown(scene, wp);
                 switch (ucRet)
                 {
                     case CR_TITLEMENU:
-                        _DELETE(s_pcGame);
-                        s_pcGame = new CMENU(WINX, WINY);
+                        destroyGameScene(scene);
+                        scene = createGameScene(GSK_MENU, createGameSceneMenu(WINX, WINY));
                         break;
 
                     case CR_BEGINNORMAL:
@@ -192,8 +199,8 @@ namespace
                     case CR_BEGINMASK2:
                     case CR_BEGINMASK3:
                     case CR_BEGINMASK4:
-                        _DELETE(s_pcGame);
-                        s_pcGame = new CSAME(GAMEX, GAMEY, ucRet - CR_BEGINNORMAL);
+                        destroyGameScene(scene);
+                        scene = createGameScene(GSK_GAME, createGameSceneGame(GAMEX, GAMEY, ucRet - CR_BEGINNORMAL, (unsigned long)std::time(NULL)));
                         break;
 
                     case CR_ENDGAME:
@@ -209,12 +216,13 @@ namespace
             case WM_TIMER:
                 if (wp == MINE_TIMER)
                 {
-                    ((CREPLAY*)s_pcGame)->Replay();
+                    gameSceneOnTimer(scene);
                 }
                 break;
 
             case WM_DESTROY:
-                _DELETE(s_pcGame);
+                destroyGameScene(scene);
+                scene = NULL;
                 destroySurface(backSurface);
                 backSurface = NULL;
                 PostQuitMessage(0);

@@ -1,6 +1,7 @@
 // game.cpp
 
 #include "common.hxx"
+#include "game.h"
 
 #include <ctime>
 #include <random>
@@ -330,21 +331,6 @@ unsigned char gameSceneGameKeyDown(GameSceneGame* const scene, WPARAM const key)
 }
 
 
-CSAME::CSAME(unsigned short wx, unsigned short wy, char cMaskNum)
-    : data(createGameSceneGame(wx, wy, cMaskNum, static_cast<unsigned long>(std::time(nullptr))))
-{
-}
-
-void CSAME::draw(Surface* const backSurface)
-{
-    gameSceneGameDraw(data, backSurface);
-}
-
-void CSAME::Select(POINT pt)
-{
-    gameSceneGameMouseMove(data, pt);
-}
-
 static void Explore(GameSceneGame* const scene, unsigned short pos, unsigned char piece) {
     if (pos >= scene->m_Width * scene->m_Height) return;
     if (piece == 0) return;
@@ -377,11 +363,6 @@ static void Inexplore(GameSceneGame* const scene, unsigned short pos) {
         if ((pos % scene->m_Width) < scene->m_Width - 1) Inexplore(scene, pos + 1);
         if ((pos / scene->m_Width) < scene->m_Height - 1) Inexplore(scene, pos + scene->m_Width);
     }
-}
-
-unsigned char CSAME::Click(void)
-{
-    return gameSceneGameMouseLDown(data);
 }
 
 static void Exexplore(GameSceneGame* const scene, unsigned short pos) {
@@ -496,16 +477,6 @@ static bool CntGroups(GameSceneGame* const scene) {
 static void AddScore(GameSceneGame* const scene, unsigned long add) {
     scene->m_Score += add;
     if (scene->m_Score > scene->m_HighScore) scene->m_HighScore = scene->m_Score;
-}
-
-unsigned char CSAME::KeyDown(WPARAM key)
-{
-    return gameSceneGameKeyDown(data, key);
-}
-
-CSAME::~CSAME(void)
-{
-    destroyGameSceneGame(data);
 }
 
 static void LoadStatus(GameSceneGame* const scene) {

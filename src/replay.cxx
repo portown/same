@@ -1,6 +1,7 @@
 // replay.cpp
 
 #include "common.hxx"
+#include "replay.h"
 
 #include <random>
 
@@ -229,21 +230,6 @@ void gameSceneReplayOnTimer(GameSceneReplay* const scene) {
 }
 
 
-CREPLAY::CREPLAY(HWND hWnd, unsigned short wx, unsigned short wy, char cNum)
-    : data(createGameSceneReplay(hWnd, wx, wy, cNum))
-{
-}
-
-void CREPLAY::draw(Surface* const backSurface)
-{
-    gameSceneReplayDraw(data, backSurface);
-}
-
-void CREPLAY::Select(POINT pt)
-{
-    gameSceneReplayMouseMove(data, pt);
-}
-
 static void Onselect(GameSceneReplay* const scene, unsigned short pos) {
     static unsigned short s_sBef = 0;
     unsigned short        x, y;
@@ -309,11 +295,6 @@ static void Inexplore(GameSceneReplay* const scene, unsigned short pos) {
         if ((pos % scene->m_Width) < scene->m_Width - 1) Inexplore(scene, pos + 1);
         if ((pos / scene->m_Width) < scene->m_Height - 1) Inexplore(scene, pos + scene->m_Width);
     }
-}
-
-unsigned char CREPLAY::Click(void)
-{
-    return gameSceneReplayMouseLDown(data);
 }
 
 static unsigned char Onclick(GameSceneReplay* const scene) {
@@ -473,21 +454,6 @@ static bool CntGroups(GameSceneReplay* const scene) {
 
 static void AddScore(GameSceneReplay* const scene, unsigned long add) {
     scene->m_Score += add;
-}
-
-unsigned char CREPLAY::KeyDown(WPARAM key)
-{
-    return gameSceneReplayKeyDown(data, key);
-}
-
-void CREPLAY::Replay(void)
-{
-    gameSceneReplayOnTimer(data);
-}
-
-CREPLAY::~CREPLAY(void)
-{
-    destroyGameSceneReplay(data);
 }
 
 static bool LoadReplay(GameSceneReplay* const scene, char cNum) {

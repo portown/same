@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include "gtips.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif
