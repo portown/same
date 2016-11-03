@@ -4,6 +4,7 @@
 
 #include "gtips.h"
 #include "game.h"
+#include "menu.h"
 
 
 // 基本クラス
@@ -36,17 +37,7 @@ public:
 // タイトルメニュークラス
 class CMENU : public CGAME
 {
-    Surface* surface;
-    unsigned char m_Level; // 隠し要素レベル（＝プレイヤーレベル）
-    unsigned short m_Width; // 幅
-    unsigned short m_Height; // 高さ
-    unsigned char  m_Sel; // カーソル位置
-    char           m_MaskNum; // マスクレベル
-    char           m_RepNum; // リプレイナンバー
-    RECT           m_rcMenu; // メニューエリア
-    RECT           m_rcLeft; // 左矢印エリア
-    RECT           m_rcRight; // 右矢印エリア
-    Surface* menuSurface;
+    GameSceneMenu* data;
 
 public:
     CMENU(unsigned short, unsigned short);
@@ -56,9 +47,6 @@ public:
 
     unsigned char KeyDown(WPARAM) override;
     ~CMENU(void) override;
-
-    void LoadStatus(void);
-    void SaveStatus(void);
 };
 
 // リプレイ再生クラス
