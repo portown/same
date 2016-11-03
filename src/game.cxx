@@ -6,84 +6,105 @@
 #include <random>
 
 
-// ==============================================
-// 実装
-// ==============================================
+static void Explore(GameSceneGame* scene, unsigned short pos, unsigned char piece);
+static void Unselect(GameSceneGame* scene);
+static void Inexplore(GameSceneGame* scene, unsigned short pos);
+static void Exexplore(GameSceneGame* scene, unsigned short pos);
+static void Check(GameSceneGame* scene);
+static void VShift(GameSceneGame* scene, unsigned short pos);
+static void HShift(GameSceneGame* scene, unsigned short pos);
+static unsigned char EndCheck(GameSceneGame* scene);
+static bool CntGroups(GameSceneGame* scene);
+static void AddScore(GameSceneGame* scene, unsigned long add);
+static void LoadStatus(GameSceneGame* scene);
+static void SaveStatus(GameSceneGame* scene);
+static void SaveReplay(GameSceneGame* scene, char cNum);
+static unsigned char* makeArea(unsigned short width, unsigned short height, unsigned long gameNumber);
+static bool selectsAt(GameSceneGame* scene, unsigned short x, unsigned short y);
 
-// 初期化
-CSAME::CSAME(unsigned short wx, unsigned short wy, char cMaskNum)
-    : CSAME(wx, wy, cMaskNum, static_cast<unsigned long>(std::time(nullptr)))
-{
+
+extern "C" {
+
+GameSceneGame* createGameSceneGame(unsigned int const width, unsigned int const height, int const maskLevel, unsigned long const seed) {
+    GameSceneGame* scene = (GameSceneGame*)malloc(sizeof(GameSceneGame));
+    new(&scene->m_Played) std::vector<unsigned char>();
+
+    scene->surface = surfaceFromBitmapFile(DATA(system.bmp));
+
+    scene->m_Level     = 0;
+    scene->m_HighScore = 0;
+
+    LoadStatus(scene);
+
+    scene->m_Status = GS_PLAYING;
+
+    scene->m_cMaskNum = maskLevel;
+
+    scene->m_Width   = width / PIX;
+    scene->m_Height  = height / PIY;
+    scene->m_bx      = scene->m_Width;
+    scene->m_by      = scene->m_Height;
+    scene->m_bDraw   = false;
+    scene->m_bReGame = false;
+
+    SetRect(&scene->m_rcArea, 0, 0, width, height);
+
+    scene->m_Num    = 0;
+    scene->m_Tries  = 0;
+    scene->m_Pieces = scene->m_Width * scene->m_Height;
+    scene->m_Groups = 0;
+    scene->m_Score  = 0;
+
+    scene->m_GameNum = seed;
+    scene->m_Area    = makeArea(scene->m_Width, scene->m_Height, scene->m_GameNum);
+
+    CntGroups(scene);
+
+    scene->m_Played.clear();
+
+    return scene;
 }
 
-CSAME::CSAME(unsigned short wx, unsigned short wy, char cMaskNum, unsigned long gameNum)
-{
-    surface = surfaceFromBitmapFile(DATA(system.bmp));
+void destroyGameSceneGame(GameSceneGame* const scene) {
+    SaveStatus(scene);
 
-    m_Level     = 0;
-    m_HighScore = 0;
+    destroySurface(scene->surface);
+    delete [] scene->m_Area;
+    scene->m_Played.~vector();
 
-    LoadStatus();
-
-    m_Status = GS_PLAYING;
-
-    m_cMaskNum = cMaskNum;
-
-    m_Width   = wx / PIX;
-    m_Height  = wy / PIY;
-    m_bx      = m_Width;
-    m_by      = m_Height;
-    m_bDraw   = false;
-    m_bReGame = false;
-
-    SetRect(&m_rcArea, 0, 0, wx, wy);
-
-    m_Num    = 0;
-    m_Tries  = 0;
-    m_Pieces = m_Width * m_Height;
-    m_Groups = 0;
-    m_Score  = 0;
-
-    m_GameNum = gameNum;
-    m_Area    = makeArea(m_Width, m_Height, m_GameNum);
-
-    CntGroups();
-
-    m_Played.clear();
+    free(scene);
 }
 
-// マス目の描画
-void CSAME::draw(Surface* const backSurface)
-{
+void gameSceneGameDraw(GameSceneGame* const scene, Surface* const backSurface) {
     // ゲーム盤の描画
-    if (m_cMaskNum < 4)
+    if (scene->m_cMaskNum < 4)
     {
-        for (auto i = 0; i < m_Height; ++i)
+        for (auto i = 0; i < scene->m_Height; ++i)
         {
-            for (auto j = 0; j < m_Width; ++j)
+            for (auto j = 0; j < scene->m_Width; ++j)
             {
-                unsigned char tmp = m_Area[i * m_Width + j];
+                unsigned char tmp = scene->m_Area[i * scene->m_Width + j];
 
                 if (tmp != 0)
                 {
                     --tmp;
-                    if (m_cMaskNum == 3) tmp &= 0x80;
+                    if (scene->m_cMaskNum == 3) tmp &= 0x80;
 
-                    if (selectsAt(j, i))
+                    if (selectsAt(scene, j, i))
                     {
-                        if (m_cMaskNum == 1) continue;
+                        if (scene->m_cMaskNum == 1) continue;
 
                         tmp = tmp ^ ( unsigned char )0x80;
 
-                        surfaceBlit(backSurface, j * PIX, i * PIY, PIX, PIY, surface, tmp * PIX, PIY * 2, SRCAND);
-                        surfaceBlit(backSurface, j * PIX, i * PIY, PIX, PIY, surface, tmp * PIX, PIY, SRCPAINT);
+                        surfaceBlit(backSurface, j * PIX, i * PIY, PIX, PIY, scene->surface, tmp * PIX, PIY * 2, SRCAND);
+                        surfaceBlit(backSurface, j * PIX, i * PIY, PIX, PIY, scene->surface, tmp * PIX, PIY, SRCPAINT);
                     }
                     else
                     {
-                        if (m_cMaskNum == 2) continue;
+                        if (scene->m_cMaskNum == 2) continue;
 
-                        surfaceBlit(backSurface, j * PIX, i * PIY, PIX, PIY, surface, tmp * 32, PIY * 2, SRCAND);
-                        surfaceBlit(backSurface, j * PIX, i * PIY, PIX, PIY, surface, tmp * 32, 0, SRCPAINT);
+                        surfaceBlit(backSurface, j * PIX, i * PIY, PIX, PIY, scene->surface, tmp * 32, PIY * 2, SRCAND);
+                        surfaceBlit(backSurface, j * PIX, i * PIY, PIX, PIY, scene->surface, tmp * 32, 0, SRCPAINT);
                     }
                 }
             }
@@ -93,112 +114,110 @@ void CSAME::draw(Surface* const backSurface)
     char strTmp[0x100];
 
     // その他の描画
-    wsprintf(strTmp, "　　スコア：%lu", m_Score);
-    surfaceDrawText(backSurface, m_rcArea.right, 0, 20, RGB(255, 255, 255), strTmp);
-    wsprintf(strTmp, "ハイスコア：%lu", m_HighScore);
-    surfaceDrawText(backSurface, m_rcArea.right, 20, 20, RGB(255, 255, 255), strTmp);
+    wsprintf(strTmp, "　　スコア：%lu", scene->m_Score);
+    surfaceDrawText(backSurface, scene->m_rcArea.right, 0, 20, RGB(255, 255, 255), strTmp);
+    wsprintf(strTmp, "ハイスコア：%lu", scene->m_HighScore);
+    surfaceDrawText(backSurface, scene->m_rcArea.right, 20, 20, RGB(255, 255, 255), strTmp);
 
-    wsprintf(strTmp, "選択エリア：%u", m_Num);
-    surfaceDrawText(backSurface, m_rcArea.right, 60, 20, RGB(255, 255, 255), strTmp);
-    wsprintf(strTmp, "　　　手数：%u", m_Tries);
-    surfaceDrawText(backSurface, m_rcArea.right, 80, 20, RGB(255, 255, 255), strTmp);
-    wsprintf(strTmp, "　残り個数：%u", m_Pieces);
-    surfaceDrawText(backSurface, m_rcArea.right, 100, 20, RGB(255, 255, 255), strTmp);
-    wsprintf(strTmp, "　残り塊数：%u", m_Groups);
-    surfaceDrawText(backSurface, m_rcArea.right, 120, 20, RGB(255, 255, 255), strTmp);
+    wsprintf(strTmp, "選択エリア：%u", scene->m_Num);
+    surfaceDrawText(backSurface, scene->m_rcArea.right, 60, 20, RGB(255, 255, 255), strTmp);
+    wsprintf(strTmp, "　　　手数：%u", scene->m_Tries);
+    surfaceDrawText(backSurface, scene->m_rcArea.right, 80, 20, RGB(255, 255, 255), strTmp);
+    wsprintf(strTmp, "　残り個数：%u", scene->m_Pieces);
+    surfaceDrawText(backSurface, scene->m_rcArea.right, 100, 20, RGB(255, 255, 255), strTmp);
+    wsprintf(strTmp, "　残り塊数：%u", scene->m_Groups);
+    surfaceDrawText(backSurface, scene->m_rcArea.right, 120, 20, RGB(255, 255, 255), strTmp);
 
-    wsprintf(strTmp, "　　 X座標：%u", (m_bx < m_Width ? m_bx : 0));
-    surfaceDrawText(backSurface, m_rcArea.right + 152, 60, 20, RGB(255, 255, 255), strTmp);
-    wsprintf(strTmp, "　　 Y座標：%u", (m_by < m_Height ? m_by : 0));
-    surfaceDrawText(backSurface, m_rcArea.right + 152, 80, 20, RGB(255, 255, 255), strTmp);
+    wsprintf(strTmp, "　　 X座標：%u", (scene->m_bx < scene->m_Width ? scene->m_bx : 0));
+    surfaceDrawText(backSurface, scene->m_rcArea.right + 152, 60, 20, RGB(255, 255, 255), strTmp);
+    wsprintf(strTmp, "　　 Y座標：%u", (scene->m_by < scene->m_Height ? scene->m_by : 0));
+    surfaceDrawText(backSurface, scene->m_rcArea.right + 152, 80, 20, RGB(255, 255, 255), strTmp);
 
-    wsprintf(strTmp, "Game Number:%lu", m_GameNum);
-    surfaceDrawText(backSurface, m_rcArea.right + 160, m_rcArea.bottom - 12, 12, RGB(255, 255, 255), strTmp);
+    wsprintf(strTmp, "Game Number:%lu", scene->m_GameNum);
+    surfaceDrawText(backSurface, scene->m_rcArea.right + 160, scene->m_rcArea.bottom - 12, 12, RGB(255, 255, 255), strTmp);
 
     // クリア後の描画
-    if (m_Status == GS_CLEAR || m_Status == GS_ALLCLEAR)
+    if (scene->m_Status == GS_CLEAR || scene->m_Status == GS_ALLCLEAR)
     {
-        if (m_Status == GS_CLEAR)
-            surfaceDrawText(backSurface, m_rcArea.right + 100, 180, 40, RGB(255, 255, 255), "終了！");
+        if (scene->m_Status == GS_CLEAR)
+            surfaceDrawText(backSurface, scene->m_rcArea.right + 100, 180, 40, RGB(255, 255, 255), "終了！");
         else
-            surfaceDrawText(backSurface, m_rcArea.right + 80, 180, 40, RGB(255, 255, 255), "全消し！");
+            surfaceDrawText(backSurface, scene->m_rcArea.right + 80, 180, 40, RGB(255, 255, 255), "全消し！");
 
-        surfaceDrawText(backSurface, m_rcArea.right, 260, 20, RGB(255, 255, 255), "Enter:再ゲーム");
-        surfaceDrawText(backSurface, m_rcArea.right, 280, 20, RGB(255, 255, 255), "F12  :メニューに戻る");
-        surfaceDrawText(backSurface, m_rcArea.right, 300, 20, RGB(255, 255, 255), "Esc  :終了");
+        surfaceDrawText(backSurface, scene->m_rcArea.right, 260, 20, RGB(255, 255, 255), "Enter:再ゲーム");
+        surfaceDrawText(backSurface, scene->m_rcArea.right, 280, 20, RGB(255, 255, 255), "F12  :メニューに戻る");
+        surfaceDrawText(backSurface, scene->m_rcArea.right, 300, 20, RGB(255, 255, 255), "Esc  :終了");
 
-        surfaceDrawText(backSurface, m_rcArea.right, 340, 20, RGB(255, 255, 255), "キーボードの0～9を押すと");
-        surfaceDrawText(backSurface, m_rcArea.right + 40, 360, 20, RGB(255, 255, 255), "リプレイを保存します");
+        surfaceDrawText(backSurface, scene->m_rcArea.right, 340, 20, RGB(255, 255, 255), "キーボードの0～9を押すと");
+        surfaceDrawText(backSurface, scene->m_rcArea.right + 40, 360, 20, RGB(255, 255, 255), "リプレイを保存します");
 
-        if (m_Score >= 10000 && m_Level - 1 == m_cMaskNum)
+        if (scene->m_Score >= 10000 && scene->m_Level - 1 == scene->m_cMaskNum)
         {
-            switch (m_Level)
+            switch (scene->m_Level)
             {
                 case 1:
-                    surfaceDrawText(backSurface, m_rcArea.right + 40, 400, 20, RGB(0, 255, 255), "“マスクモード”出現！");
+                    surfaceDrawText(backSurface, scene->m_rcArea.right + 40, 400, 20, RGB(0, 255, 255), "“マスクモード”出現！");
                     break;
 
                 case 2:
-                    surfaceDrawText(backSurface, m_rcArea.right + 20, 400, 20, RGB(0, 255, 255), "マスクモードレベル２出現！");
+                    surfaceDrawText(backSurface, scene->m_rcArea.right + 20, 400, 20, RGB(0, 255, 255), "マスクモードレベル２出現！");
                     break;
 
                 case 3:
-                    surfaceDrawText(backSurface, m_rcArea.right + 20, 400, 20, RGB(0, 255, 255), "マスクモードレベル３出現！");
+                    surfaceDrawText(backSurface, scene->m_rcArea.right + 20, 400, 20, RGB(0, 255, 255), "マスクモードレベル３出現！");
                     break;
 
                 case 4:
-                    surfaceDrawText(backSurface, m_rcArea.right + 20, 400, 20, RGB(0, 255, 255), "マスクモードレベル４出現！");
+                    surfaceDrawText(backSurface, scene->m_rcArea.right + 20, 400, 20, RGB(0, 255, 255), "マスクモードレベル４出現！");
                     break;
             }
         }
     }
 
-    m_bDraw = true;
+    scene->m_bDraw = true;
 }
 
-// マス目チェック
-void CSAME::Select(POINT pt)
-{
-    static unsigned short s_sBef = m_Width * m_Height;
+void gameSceneGameMouseMove(GameSceneGame* const scene, POINT const point) {
+    static unsigned short s_sBef = scene->m_Width * scene->m_Height;
 
-    m_bReGame = false;
-    if (m_Status == GS_CLEAR || m_Status == GS_ALLCLEAR)
+    scene->m_bReGame = false;
+    if (scene->m_Status == GS_CLEAR || scene->m_Status == GS_ALLCLEAR)
     {
         RECT rc;
-        SetRect(&rc, m_rcArea.right, 260, m_rcArea.right * 2, 320);
-        if (PtInRect(&rc, pt))
+        SetRect(&rc, scene->m_rcArea.right, 260, scene->m_rcArea.right * 2, 320);
+        if (PtInRect(&rc, point))
         {
-            m_bReGame = true;
+            scene->m_bReGame = true;
         }
         return;
     }
 
-    Inexplore(m_by * m_Width + m_bx);
-    m_Num = 0;
-    m_bx  = m_Width;
-    m_by  = m_Height;
+    Inexplore(scene, scene->m_by * scene->m_Width + scene->m_bx);
+    scene->m_Num = 0;
+    scene->m_bx  = scene->m_Width;
+    scene->m_by  = scene->m_Height;
 
-    if (PtInRect(&m_rcArea, pt))
+    if (PtInRect(&scene->m_rcArea, point))
     {
-        unsigned short const x = ( unsigned short )pt.x / PIX;
-        unsigned short const y = ( unsigned short )pt.y / PIY;
-        m_bx = x;
-        m_by = y;
+        unsigned short const x = ( unsigned short )point.x / PIX;
+        unsigned short const y = ( unsigned short )point.y / PIY;
+        scene->m_bx = x;
+        scene->m_by = y;
 
-        unsigned short const pos = y * m_Width + x;
-        if (pos >= m_Width * m_Height) return;
-        if (m_Area[pos] == 0)
+        unsigned short const pos = y * scene->m_Width + x;
+        if (pos >= scene->m_Width * scene->m_Height) return;
+        if (scene->m_Area[pos] == 0)
         {
             s_sBef = pos;
             return;
         }
-        Explore(pos, m_Area[pos]);
+        Explore(scene, pos, scene->m_Area[pos]);
 
-        if (m_Num == 1) Unselect();
+        if (scene->m_Num == 1) Unselect(scene);
 
-        if (selectsAt(x, y))
+        if (selectsAt(scene, x, y))
         {
-            if (!(m_Area[s_sBef] & 0x80))
+            if (!(scene->m_Area[s_sBef] & 0x80))
             {
                 PlaySound(SELWAV, NULL, SND_FILENAME | SND_ASYNC);
             }
@@ -207,246 +226,73 @@ void CSAME::Select(POINT pt)
     }
     else
     {
-        s_sBef = m_Width * m_Height;
+        s_sBef = scene->m_Width * scene->m_Height;
     }
 }
 
-// マス目チェック・再帰
-void CSAME::Explore(unsigned short pos, unsigned char piece)
-{
-    if (pos >= m_Width * m_Height) return;
-    if (piece == 0) return;
-    if (m_Area[pos] & ( unsigned char )0x80) return;
+unsigned char gameSceneGameMouseLDown(GameSceneGame* const scene) {
+    if (!scene->m_bDraw) return CR_NOSTATUS;
 
-    if (m_Area[pos] == piece)
+    if (scene->m_Status == GS_CLEAR || scene->m_Status == GS_ALLCLEAR)
     {
-        m_Area[pos] |= ( unsigned char )0x80;
-        ++m_Num;
-
-        if (pos >= m_Width) Explore(pos - m_Width, piece);
-        if ((pos % m_Width) != 0) Explore(pos - 1, piece);
-        if ((pos % m_Width) < m_Width - 1) Explore(pos + 1, piece);
-        if ((pos / m_Width) < m_Height - 1) Explore(pos + m_Width, piece);
-    }
-}
-
-// マス目選択消去
-void CSAME::Unselect(void)
-{
-    Inexplore(m_by * m_Width + m_bx);
-}
-
-// マス目チェック・反転再帰
-void CSAME::Inexplore(unsigned short pos)
-{
-    if (pos >= m_Width * m_Height) return;
-    if (m_Area[pos] & ( unsigned char )0x80)
-    {
-        m_Area[pos] ^= ( unsigned char )0x80;
-
-        if (pos >= m_Width) Inexplore(pos - m_Width);
-        if ((pos % m_Width) != 0) Inexplore(pos - 1);
-        if ((pos % m_Width) < m_Width - 1) Inexplore(pos + 1);
-        if ((pos / m_Width) < m_Height - 1) Inexplore(pos + m_Width);
-    }
-}
-
-// 駒消去
-unsigned char CSAME::Click(void)
-{
-    if (!m_bDraw) return CR_NOSTATUS;
-
-    if (m_Status == GS_CLEAR || m_Status == GS_ALLCLEAR)
-    {
-        if (m_bReGame) return CR_BEGINNORMAL + m_cMaskNum;
+        if (scene->m_bReGame) return CR_BEGINNORMAL + scene->m_cMaskNum;
         return CR_NOSTATUS;
     }
 
-    if (m_Num < 2) return CR_NOSTATUS;
-    if (m_bx >= m_Width || m_by >= m_Height) return CR_NOSTATUS;
-    if (m_Area[m_by * m_Width + m_bx] == 0) return CR_NOSTATUS;
+    if (scene->m_Num < 2) return CR_NOSTATUS;
+    if (scene->m_bx >= scene->m_Width || scene->m_by >= scene->m_Height) return CR_NOSTATUS;
+    if (scene->m_Area[scene->m_by * scene->m_Width + scene->m_bx] == 0) return CR_NOSTATUS;
 
-    Exexplore(m_by * m_Width + m_bx);
+    Exexplore(scene, scene->m_by * scene->m_Width + scene->m_bx);
 
-    ++m_Tries;
-    m_Pieces -= m_Num;
-    AddScore(ADDSCORE(m_Num));
-    m_Played.push_back(( unsigned char )(m_by * m_Width + m_bx));
+    ++scene->m_Tries;
+    scene->m_Pieces -= scene->m_Num;
+    AddScore(scene, ADDSCORE(scene->m_Num));
+    scene->m_Played.push_back(( unsigned char )(scene->m_by * scene->m_Width + scene->m_bx));
 
-    Check();
+    Check(scene);
 
-    auto const cRet = EndCheck();
+    auto const cRet = EndCheck(scene);
     switch (cRet)
     {
         case CR_NOSTATUS:
             PlaySound(ERSWAV, NULL, SND_FILENAME | SND_SYNC);
-            m_Num = 0;
-            Explore(m_by * m_Width + m_bx, m_Area[m_by * m_Width + m_bx]);
-            if (m_Num == 1) Unselect();
+            scene->m_Num = 0;
+            Explore(scene, scene->m_by * scene->m_Width + scene->m_bx, scene->m_Area[scene->m_by * scene->m_Width + scene->m_bx]);
+            if (scene->m_Num == 1) Unselect(scene);
             break;
 
         case CR_CLEAR:
             PlaySound(CLRWAV, NULL, SND_FILENAME | SND_ASYNC);
-            m_Status = GS_CLEAR;
+            scene->m_Status = GS_CLEAR;
             break;
 
         case CR_ALLCLEAR:
-            AddScore(1000000);
+            AddScore(scene, 1000000);
             PlaySound(CLRWAV, NULL, SND_FILENAME | SND_ASYNC);
-            m_Status = GS_ALLCLEAR;
+            scene->m_Status = GS_ALLCLEAR;
             break;
     }
 
     if (cRet == CR_CLEAR || cRet == CR_ALLCLEAR)
     {
-        SaveReplay('\0');
-        if (m_Score >= 10000 && m_Level == m_cMaskNum)
+        SaveReplay(scene, '\0');
+        if (scene->m_Score >= 10000 && scene->m_Level == scene->m_cMaskNum)
         {
-            if (++m_Level > MASKMAX + 1) m_Level = MASKMAX + 1;
+            if (++scene->m_Level > MASKMAX + 1) scene->m_Level = MASKMAX + 1;
         }
     }
 
-    m_bDraw = false;
+    scene->m_bDraw = false;
 
     return cRet;
 }
 
-// 駒消去・再帰
-void CSAME::Exexplore(unsigned short pos)
-{
-    if (pos >= m_Width * m_Height) return;
-
-    if (m_Area[pos] & ( unsigned char )0x80)
-    {
-        m_Area[pos] = 0;
-
-        if (pos >= m_Width) Exexplore(pos - m_Width);
-        if ((pos % m_Width) != 0) Exexplore(pos - 1);
-        if ((pos % m_Width) < m_Width - 1) Exexplore(pos + 1);
-        if ((pos / m_Width) < m_Height - 1) Exexplore(pos + m_Width);
-    }
-}
-
-// 駒落ちチェック
-void CSAME::Check(void)
-{
-    auto const max = m_Width * m_Height;
-
-    for (auto i = 0; i < max; ++i)
-    {
-        if (m_Area[i] == 0) VShift(i);
-    }
-
-    for (auto i = 0; i < m_Width - 1; ++i)
-    {
-        if (m_Area[(m_Height - 1) * m_Width + i] != 0) continue;
-
-        unsigned short j;
-
-        for (j = i; j < m_Width; ++j)
-        {
-            if (m_Area[(m_Height - 1) * m_Width + j] != 0)
-                break;
-        }
-
-        if (j == m_Width) break;
-
-        for (auto k = 0; k < m_Height; ++k)
-            HShift(k * m_Width + i);
-
-        --i;
-    }
-}
-
-// 縦方向シフト・再帰
-void CSAME::VShift(unsigned short pos)
-{
-    if (pos >= m_Width * m_Height) return;
-
-    if (pos >= m_Width)
-    {
-        m_Area[pos] = m_Area[pos - m_Width];
-        VShift(pos - m_Width);
-    }
-    else
-        m_Area[pos] = 0;
-}
-
-// 横方向シフト・再帰
-void CSAME::HShift(unsigned short pos)
-{
-    if (pos >= m_Width * m_Height) return;
-
-    if (pos % m_Width < m_Width - 1)
-    {
-        m_Area[pos] = m_Area[pos + 1];
-        HShift(pos + 1);
-    }
-    else
-        m_Area[pos] = 0;
-}
-
-// 終了チェック
-unsigned char CSAME::EndCheck(void)
-{
-    auto const bAll = CntGroups();
-
-    if (bAll) return CR_ALLCLEAR;
-    else if (m_Groups == 0)
-        return CR_CLEAR;
-
-    return CR_NOSTATUS;
-}
-
-// 塊の個数計算
-bool CSAME::CntGroups(void)
-{
-    unsigned char cPiece = 0;
-
-    auto const max = m_Width * m_Height;
-    m_Groups = 0;
-
-    for (auto i = 0; i < max; ++i)
-    {
-        cPiece |= (m_Area[i] != 0);
-        if (m_Area[i] == 0) continue;
-        if (m_Area[i] & ( unsigned char )0x80) continue;
-
-        m_Num = 0;
-        Explore(i, m_Area[i]);
-        if (m_Num > 1)
-        {
-            ++m_Groups;
-        }
-    }
-
-    // 後始末
-    for (auto i = 0; i < max; ++i)
-    {
-        if (m_Area[i] == 0) continue;
-        if (!(m_Area[i] & ( unsigned char )0x80)) continue;
-
-        Inexplore(i);
-    }
-
-    return cPiece == 0;
-}
-
-// スコア加算
-void CSAME::AddScore(unsigned long add)
-{
-    m_Score += add;
-    if (m_Score > m_HighScore) m_HighScore = m_Score;
-}
-
-// キーダウン
-unsigned char CSAME::KeyDown(WPARAM key)
-{
-    switch (key)
-    {
+unsigned char gameSceneGameKeyDown(GameSceneGame* const scene, WPARAM const key) {
+    switch (key) {
         case VK_RETURN:
-            if (m_Status == GS_CLEAR || m_Status == GS_ALLCLEAR)
-                return CR_BEGINNORMAL + m_cMaskNum;
+            if (scene->m_Status == GS_CLEAR || scene->m_Status == GS_ALLCLEAR)
+                return CR_BEGINNORMAL + scene->m_cMaskNum;
             break;
 
         case '0':
@@ -459,11 +305,11 @@ unsigned char CSAME::KeyDown(WPARAM key)
         case '7':
         case '8':
         case '9':
-            SaveReplay(( char )key);
+            SaveReplay(scene, (char)key);
             break;
 
         case VK_F8:
-            return CR_BEGINNORMAL + m_cMaskNum;
+            return CR_BEGINNORMAL + scene->m_cMaskNum;
 
         case VK_F12:
             return CR_TITLEMENU;
@@ -475,38 +321,206 @@ unsigned char CSAME::KeyDown(WPARAM key)
     return CR_NOSTATUS;
 }
 
-// デストラクタ
-CSAME::~CSAME(void)
-{
-    SaveStatus();
-
-    destroySurface(surface);
-    delete [] m_Area;
 }
 
-// ステータス読み込み
-void CSAME::LoadStatus(void)
+
+CSAME::CSAME(unsigned short wx, unsigned short wy, char cMaskNum)
+    : data(createGameSceneGame(wx, wy, cMaskNum, static_cast<unsigned long>(std::time(nullptr))))
 {
+}
+
+void CSAME::draw(Surface* const backSurface)
+{
+    gameSceneGameDraw(data, backSurface);
+}
+
+void CSAME::Select(POINT pt)
+{
+    gameSceneGameMouseMove(data, pt);
+}
+
+static void Explore(GameSceneGame* const scene, unsigned short pos, unsigned char piece) {
+    if (pos >= scene->m_Width * scene->m_Height) return;
+    if (piece == 0) return;
+    if (scene->m_Area[pos] & ( unsigned char )0x80) return;
+
+    if (scene->m_Area[pos] == piece)
+    {
+        scene->m_Area[pos] |= ( unsigned char )0x80;
+        ++scene->m_Num;
+
+        if (pos >= scene->m_Width) Explore(scene, pos - scene->m_Width, piece);
+        if ((pos % scene->m_Width) != 0) Explore(scene, pos - 1, piece);
+        if ((pos % scene->m_Width) < scene->m_Width - 1) Explore(scene, pos + 1, piece);
+        if ((pos / scene->m_Width) < scene->m_Height - 1) Explore(scene, pos + scene->m_Width, piece);
+    }
+}
+
+static void Unselect(GameSceneGame* const scene) {
+    Inexplore(scene, scene->m_by * scene->m_Width + scene->m_bx);
+}
+
+static void Inexplore(GameSceneGame* const scene, unsigned short pos) {
+    if (pos >= scene->m_Width * scene->m_Height) return;
+    if (scene->m_Area[pos] & (unsigned char)0x80)
+    {
+        scene->m_Area[pos] ^= (unsigned char)0x80;
+
+        if (pos >= scene->m_Width) Inexplore(scene, pos - scene->m_Width);
+        if ((pos % scene->m_Width) != 0) Inexplore(scene, pos - 1);
+        if ((pos % scene->m_Width) < scene->m_Width - 1) Inexplore(scene, pos + 1);
+        if ((pos / scene->m_Width) < scene->m_Height - 1) Inexplore(scene, pos + scene->m_Width);
+    }
+}
+
+unsigned char CSAME::Click(void)
+{
+    return gameSceneGameMouseLDown(data);
+}
+
+static void Exexplore(GameSceneGame* const scene, unsigned short pos) {
+    if (pos >= scene->m_Width * scene->m_Height) return;
+
+    if (scene->m_Area[pos] & ( unsigned char )0x80)
+    {
+        scene->m_Area[pos] = 0;
+
+        if (pos >= scene->m_Width) Exexplore(scene, pos - scene->m_Width);
+        if ((pos % scene->m_Width) != 0) Exexplore(scene, pos - 1);
+        if ((pos % scene->m_Width) < scene->m_Width - 1) Exexplore(scene, pos + 1);
+        if ((pos / scene->m_Width) < scene->m_Height - 1) Exexplore(scene, pos + scene->m_Width);
+    }
+}
+
+static void Check(GameSceneGame* const scene) {
+    auto const max = scene->m_Width * scene->m_Height;
+
+    for (auto i = 0; i < max; ++i)
+    {
+        if (scene->m_Area[i] == 0) VShift(scene, i);
+    }
+
+    for (auto i = 0; i < scene->m_Width - 1; ++i)
+    {
+        if (scene->m_Area[(scene->m_Height - 1) * scene->m_Width + i] != 0) continue;
+
+        unsigned short j;
+
+        for (j = i; j < scene->m_Width; ++j)
+        {
+            if (scene->m_Area[(scene->m_Height - 1) * scene->m_Width + j] != 0)
+                break;
+        }
+
+        if (j == scene->m_Width) break;
+
+        for (auto k = 0; k < scene->m_Height; ++k)
+            HShift(scene, k * scene->m_Width + i);
+
+        --i;
+    }
+}
+
+static void VShift(GameSceneGame* const scene, unsigned short pos) {
+    if (pos >= scene->m_Width * scene->m_Height) return;
+
+    if (pos >= scene->m_Width)
+    {
+        scene->m_Area[pos] = scene->m_Area[pos - scene->m_Width];
+        VShift(scene, pos - scene->m_Width);
+    }
+    else
+        scene->m_Area[pos] = 0;
+}
+
+static void HShift(GameSceneGame* const scene, unsigned short pos) {
+    if (pos >= scene->m_Width * scene->m_Height) return;
+
+    if (pos % scene->m_Width < scene->m_Width - 1)
+    {
+        scene->m_Area[pos] = scene->m_Area[pos + 1];
+        HShift(scene, pos + 1);
+    }
+    else
+        scene->m_Area[pos] = 0;
+}
+
+static unsigned char EndCheck(GameSceneGame* const scene) {
+    auto const bAll = CntGroups(scene);
+
+    if (bAll) return CR_ALLCLEAR;
+    else if (scene->m_Groups == 0)
+        return CR_CLEAR;
+
+    return CR_NOSTATUS;
+}
+
+static bool CntGroups(GameSceneGame* const scene) {
+    unsigned char cPiece = 0;
+
+    auto const max = scene->m_Width * scene->m_Height;
+    scene->m_Groups = 0;
+
+    for (auto i = 0; i < max; ++i)
+    {
+        cPiece |= (scene->m_Area[i] != 0);
+        if (scene->m_Area[i] == 0) continue;
+        if (scene->m_Area[i] & ( unsigned char )0x80) continue;
+
+        scene->m_Num = 0;
+        Explore(scene, i, scene->m_Area[i]);
+        if (scene->m_Num > 1)
+        {
+            ++scene->m_Groups;
+        }
+    }
+
+    // 後始末
+    for (auto i = 0; i < max; ++i)
+    {
+        if (scene->m_Area[i] == 0) continue;
+        if (!(scene->m_Area[i] & ( unsigned char )0x80)) continue;
+
+        Inexplore(scene, i);
+    }
+
+    return cPiece == 0;
+}
+
+static void AddScore(GameSceneGame* const scene, unsigned long add) {
+    scene->m_Score += add;
+    if (scene->m_Score > scene->m_HighScore) scene->m_HighScore = scene->m_Score;
+}
+
+unsigned char CSAME::KeyDown(WPARAM key)
+{
+    return gameSceneGameKeyDown(data, key);
+}
+
+CSAME::~CSAME(void)
+{
+    destroyGameSceneGame(data);
+}
+
+static void LoadStatus(GameSceneGame* const scene) {
     auto const hFile = CreateFile(DATFILE, GENERIC_READ, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
     if (hFile == INVALID_HANDLE_VALUE) return;
 
     SetFilePointer(hFile, 0, NULL, FILE_BEGIN);
     DWORD dwRead;
-    ReadFile(hFile, &m_Level, 1, &dwRead, NULL);
+    ReadFile(hFile, &scene->m_Level, 1, &dwRead, NULL);
 
     DWORD const dwSize = sizeof(unsigned long);
-    ReadFile(hFile, &m_HighScore, dwSize, &dwRead, NULL);
-    auto const data = ( char* )&m_HighScore;
+    ReadFile(hFile, &scene->m_HighScore, dwSize, &dwRead, NULL);
+    auto const data = ( char* )&scene->m_HighScore;
     for (auto i = 0; i < static_cast<int>(sizeof(unsigned long)); ++i)
         data[i] -= CODE(i + 1);
 
     CloseHandle(hFile);
 }
 
-// ステータス書き込み
-void CSAME::SaveStatus(void)
-{
-    auto const data = ( char* )&m_HighScore;
+static void SaveStatus(GameSceneGame* const scene) {
+    auto const data = ( char* )&scene->m_HighScore;
     for (auto i = 0; i < static_cast<int>(sizeof(unsigned long)); ++i)
         data[i] += CODE(i + 1);
 
@@ -515,17 +529,15 @@ void CSAME::SaveStatus(void)
 
     SetFilePointer(hFile, 0, NULL, FILE_BEGIN);
     DWORD dwWritten;
-    WriteFile(hFile, &m_Level, 1, &dwWritten, NULL);
+    WriteFile(hFile, &scene->m_Level, 1, &dwWritten, NULL);
 
     DWORD const dwSize = sizeof(unsigned long);
-    WriteFile(hFile, &m_HighScore, dwSize, &dwWritten, NULL);
+    WriteFile(hFile, &scene->m_HighScore, dwSize, &dwWritten, NULL);
 
     CloseHandle(hFile);
 }
 
-// リプレイデータ書き込み
-void CSAME::SaveReplay(char cNum)
-{
+static void SaveReplay(GameSceneGame* const scene, char cNum) {
     char strFName[0x100];
 
     lstrcpy(strFName, REPFILE);
@@ -537,20 +549,20 @@ void CSAME::SaveReplay(char cNum)
 
     SetFilePointer(hFile, 0, NULL, FILE_BEGIN);
     DWORD dwWritten;
-    WriteFile(hFile, &m_GameNum, sizeof(unsigned long), &dwWritten, NULL);
-    WriteFile(hFile, &m_Tries, sizeof(unsigned short), &dwWritten, NULL);
+    WriteFile(hFile, &scene->m_GameNum, sizeof(unsigned long), &dwWritten, NULL);
+    WriteFile(hFile, &scene->m_Tries, sizeof(unsigned short), &dwWritten, NULL);
 
-    for (auto i = 0; i < m_Tries; ++i)
+    for (auto i = 0; i < scene->m_Tries; ++i)
     {
-        WriteFile(hFile, &m_Played[i], 1, &dwWritten, NULL);
+        WriteFile(hFile, &scene->m_Played[i], 1, &dwWritten, NULL);
     }
 
     CloseHandle(hFile);
 }
 
-unsigned char* CSAME::makeArea(unsigned short const width,
+static unsigned char* makeArea(unsigned short const width,
                                unsigned short const height,
-                               unsigned long const gameNumber) const
+                               unsigned long const gameNumber)
 {
     unsigned char* const area = new unsigned char [width * height];
 
@@ -560,21 +572,13 @@ unsigned char* CSAME::makeArea(unsigned short const width,
         for (auto x = 0; x < width; ++x)
         {
             // for backward compatibility, not using uniform_int_distribution
-            area[x + y * m_Width] = static_cast<unsigned char>(engine() % 5 + 1);
+            area[x + y * width] = static_cast<unsigned char>(engine() % 5 + 1);
         }
     }
 
     return area;
 }
 
-unsigned char CSAME::getAt(unsigned short const x, unsigned short const y) const
-{
-    return m_Area[x + y * m_Width];
+static bool selectsAt(GameSceneGame* const scene, unsigned short const x, unsigned short const y) {
+    return (scene->m_Area[x + y * scene->m_Width] & 0x80) != 0;
 }
-
-bool CSAME::selectsAt(unsigned short const x, unsigned short const y) const
-{
-    return (m_Area[x + y * m_Width] & 0x80) != 0;
-}
-
-// EOF
