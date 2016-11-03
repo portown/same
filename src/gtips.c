@@ -2,6 +2,8 @@
 
 #include "gtips.h"
 
+#include <stdbool.h>
+
 
 Surface* createSurface(int const width, int const height) {
     HDC const hTemp = GetDC(NULL);
@@ -100,7 +102,7 @@ void surfacePaintRect(Surface* const surface, LPRECT const rect, COLORREF const 
     DeleteObject(hBrush);
 }
 
-int surfaceDrawText(Surface* const surface, int const x, int const y, int const size,
+bool surfaceDrawText(Surface* const surface, int const x, int const y, int const size,
         COLORREF const color, char const* text) {
     HFONT const hFont = CreateFont(size,
             0,
@@ -118,7 +120,7 @@ int surfaceDrawText(Surface* const surface, int const x, int const y, int const 
             "‚l‚r ƒSƒVƒbƒN");
 
     if (hFont == NULL) {
-        return 0;
+        return false;
     }
 
     int const iOldMode = SetBkMode(surface->hDC, TRANSPARENT);
@@ -133,7 +135,7 @@ int surfaceDrawText(Surface* const surface, int const x, int const y, int const 
 
     DeleteObject(hFont);
 
-    return 1;
+    return true;
 }
 
 void surfaceBlit(Surface* const dest, int const dx, int const dy, int const width, int const height,

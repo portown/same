@@ -4,10 +4,6 @@
 
 #include "gtips.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 
 typedef struct tagGameSceneReplay {
     Surface* surface;
@@ -28,7 +24,7 @@ typedef struct tagGameSceneReplay {
     HWND                       m_hWnd; // ウィンドウハンドル
     Surface* cursorSurface;
     char                       m_cRepNum; // リプレイナンバー
-    int                       m_bErase; // 消去フラグ
+    _Bool                       m_bErase; // 消去フラグ
 } GameSceneReplay;
 
 GameSceneReplay* createGameSceneReplay(HWND hWnd, unsigned int width, unsigned int height, int replayNumber);
@@ -39,8 +35,3 @@ void gameSceneReplayMouseMove(GameSceneReplay* scene, POINT point);
 unsigned char gameSceneReplayMouseLDown(GameSceneReplay* scene);
 unsigned char gameSceneReplayKeyDown(GameSceneReplay* scene, WPARAM key);
 void gameSceneReplayOnTimer(GameSceneReplay* scene);
-
-
-#ifdef __cplusplus
-}
-#endif

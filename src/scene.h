@@ -4,10 +4,6 @@
 
 #include "gtips.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 
 enum GameSceneKind {
     GSK_MENU,
@@ -28,8 +24,3 @@ void gameSceneMouseMove(GameScene* scene, POINT point);
 unsigned char gameSceneMouseLDown(GameScene* scene);
 unsigned char gameSceneKeyDown(GameScene* scene, WPARAM key);
 void gameSceneOnTimer(GameScene* scene);
-
-
-#ifdef __cplusplus
-}
-#endif

@@ -4,10 +4,6 @@
 
 #include "gtips.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 
 typedef struct tagGameSceneGame {
     Surface* surface;
@@ -28,8 +24,8 @@ typedef struct tagGameSceneGame {
     unsigned long              m_Score; // プレイヤースコア
     unsigned long              m_GameNum; // ゲームナンバー（乱数の種）
     RECT                       m_rcArea; // ゲーム盤エリア
-    int                       m_bDraw; // 連打抑え
-    int                       m_bReGame; // クリックフラグ
+    _Bool                       m_bDraw; // 連打抑え
+    _Bool                       m_bReGame; // クリックフラグ
     char                       m_cMaskNum; // マスクレベル
 } GameSceneGame;
 
@@ -40,8 +36,3 @@ void gameSceneGameDraw(GameSceneGame* scene, Surface* backSurface);
 void gameSceneGameMouseMove(GameSceneGame* scene, POINT point);
 unsigned char gameSceneGameMouseLDown(GameSceneGame* scene);
 unsigned char gameSceneGameKeyDown(GameSceneGame* scene, WPARAM key);
-
-
-#ifdef __cplusplus
-}
-#endif

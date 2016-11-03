@@ -4,10 +4,6 @@
 
 #include "gtips.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 
 typedef struct tagGameSceneMenu {
     Surface* surface;
@@ -30,8 +26,3 @@ void gameSceneMenuDraw(GameSceneMenu* scene, Surface* backSurface);
 void gameSceneMenuMouseMove(GameSceneMenu* scene, POINT point);
 unsigned char gameSceneMenuMouseLDown(GameSceneMenu* scene);
 unsigned char gameSceneMenuKeyDown(GameSceneMenu* scene, WPARAM key);
-
-
-#ifdef __cplusplus
-}
-#endif
