@@ -1,9 +1,11 @@
 // replay.cpp
 
-#include "common.hxx"
 #include "replay.h"
 
-#include <random>
+#include <stdbool.h>
+
+#include "defines.h"
+#include "resource.h"
 
 
 static void Onselect(GameSceneReplay* scene, unsigned short pos);
@@ -21,8 +23,6 @@ static void AddScore(GameSceneReplay* scene, unsigned long add);
 static bool LoadReplay(GameSceneReplay* scene, char cNum);
 static void SaveReplay(GameSceneReplay* scene, char cNum);
 
-
-extern "C" {
 
 GameSceneReplay* createGameSceneReplay(HWND const hWnd, unsigned int const width, unsigned int const height, int const replayNumber) {
     GameSceneReplay* const scene = (GameSceneReplay*)malloc(sizeof(GameSceneReplay));
@@ -54,14 +54,13 @@ GameSceneReplay* createGameSceneReplay(HWND const hWnd, unsigned int const width
     scene->m_Tries  = 0;
     scene->m_bErase = false;
 
-    scene->m_Area = new unsigned char [scene->m_Width * scene->m_Height];
-    std::mt19937 engine { scene->m_GameNum };
+    scene->m_Area = malloc(sizeof(unsigned char) * scene->m_Width * scene->m_Height);
+    srand(scene->m_GameNum);
     for (i = 0; i < scene->m_Height; ++i)
     {
         for (j = 0; j < scene->m_Width; ++j)
         {
-            // for backward compatibility, not using uniform_int_distribution
-            scene->m_Area[i * scene->m_Width + j] = static_cast<unsigned char>(engine() % 5 + 1);
+            scene->m_Area[i * scene->m_Width + j] = (unsigned char)(rand() % 5 + 1);
         }
     }
 
@@ -81,7 +80,7 @@ void destroyGameSceneReplay(GameSceneReplay* const scene) {
 
     destroySurface(scene->cursorSurface);
     destroySurface(scene->surface);
-    delete [] scene->m_Area;
+    free(scene->m_Area);
     free(scene->m_Played);
 
     free(scene);
@@ -225,8 +224,6 @@ void gameSceneReplayOnTimer(GameSceneReplay* const scene) {
     }
 
     InvalidateRect(scene->m_hWnd, NULL, FALSE);
-}
-
 }
 
 
