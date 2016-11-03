@@ -8,13 +8,6 @@
 // 基本クラス
 class CGAME
 {
-protected:
-    Surface* surface;
-    unsigned char m_Level; // 隠し要素レベル（＝プレイヤーレベル）
-
-    virtual void LoadStatus(void);
-    virtual void SaveStatus(void);
-
 public:
     virtual void draw(Surface* backSurface) = 0;
     virtual void Select(POINT) = 0;
@@ -27,6 +20,8 @@ public:
 // ゲーム盤クラス
 class CSAME : public CGAME
 {
+    Surface* surface;
+    unsigned char m_Level; // 隠し要素レベル（＝プレイヤーレベル）
     std::vector<unsigned char> m_Played; // リプレイ用データ
     unsigned short             m_bx, m_by; // 前回のマウス位置
     unsigned short             m_Num; // 選択中の駒数
@@ -78,6 +73,8 @@ public:     // for tests
 // タイトルメニュークラス
 class CMENU : public CGAME
 {
+    Surface* surface;
+    unsigned char m_Level; // 隠し要素レベル（＝プレイヤーレベル）
     unsigned short m_Width; // 幅
     unsigned short m_Height; // 高さ
     unsigned char  m_Sel; // カーソル位置
@@ -96,11 +93,15 @@ public:
 
     unsigned char KeyDown(WPARAM) override;
     ~CMENU(void) override;
+
+    void LoadStatus(void);
+    void SaveStatus(void);
 };
 
 // リプレイ再生クラス
 class CREPLAY : public CGAME
 {
+    Surface* surface;
     std::vector<unsigned char> m_Played; // リプレイ用データ
     unsigned short             m_bx, m_by; // 前回のマウス位置
     unsigned short             m_Num; // 選択中の駒数
