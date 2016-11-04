@@ -16,9 +16,10 @@ cabal-version:       >=1.10
 
 library
   hs-source-dirs:      src
-  c-sources:           src-c/main.c src-c/tips.c src-c/gtips.c src-c/scene.c src-c/menu.c src-c/game.c src-c/replay.c
+  include-dirs:        src-c
+  c-sources:           src-c/main.c src-c/tips.c src-c/scene.c src-c/menu.c src-c/game.c src-c/replay.c
   ld-options:          dist/resource.o
-  exposed-modules:     Lib
+  exposed-modules:     Lib Same.Graphics.Surface
   ghc-options:         -Wall -Werror
   build-depends:       base >= 4.7 && < 5
                      , Win32

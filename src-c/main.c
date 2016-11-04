@@ -124,7 +124,7 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
 
         case WM_PAINT:
             hDC = BeginPaint(hWnd, &ps);
-            PatBlt(backSurface->hDC, 0, 0, WINX, WINY, BLACKNESS);
+            surfacePaintRect(backSurface, NULL, RGB(0, 0, 0));
             gameSceneDraw(scene, backSurface);
             BitBlt(hDC, 0, 0, WINX, WINY, backSurface->hDC, 0, 0, SRCCOPY);
             EndPaint(hWnd, &ps);
