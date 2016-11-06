@@ -4,6 +4,7 @@
 
 #include "scene.h"
 #include "menu.h"
+#include "Same/Scene/Menu_stub.h"
 #include "game.h"
 #include "replay.h"
 #include "gtips.h"

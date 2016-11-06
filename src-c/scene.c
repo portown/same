@@ -3,6 +3,7 @@
 #include "scene.h"
 
 #include "menu.h"
+#include "Same/Scene/Menu_stub.h"
 #include "game.h"
 #include "replay.h"
 
@@ -31,9 +32,9 @@ void gameSceneDraw(GameScene* const scene, Surface* const backSurface) {
     }
 }
 
-void gameSceneMouseMove(GameScene* const scene, POINT const point) {
+void gameSceneMouseMove(GameScene* const scene, POINT point) {
     switch (scene->kind) {
-        case GSK_MENU:      gameSceneMenuMouseMove(scene->data, point);     break;
+        case GSK_MENU:      gameSceneMenuMouseMove(scene->data, &point);    break;
         case GSK_GAME:      gameSceneGameMouseMove(scene->data, point);     break;
         case GSK_REPLAY:    gameSceneReplayMouseMove(scene->data, point);   break;
     }
