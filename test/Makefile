@@ -20,7 +20,7 @@ clean:
 $(TEST_BIN): $(TEST_OBJECTS)
 	$(CXX) $(CXXFLAGS) $(LDFLAGS) -o $@ $^ $(TEST_LIBS)
 ifeq ($(RELEASE),1)
-	strip $@
+	$(STRIP) $@
 endif
 
 

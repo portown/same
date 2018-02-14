@@ -1,5 +1,6 @@
 *.o
 *.d
 /*.exe
+/*.dll
 /same.dat
 /doc/class.png

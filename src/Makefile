@@ -11,11 +11,11 @@ clean:
 $(MAIN_BIN): $(MAIN_OBJECTS) $(MAIN_RESOURCES)
 	$(CXX) $(CXXFLAGS) $(LDFLAGS) -o $@ $^ $(MAIN_LIBS)
 ifeq ($(RELEASE),1)
-	strip $@
+	$(STRIP) $@
 endif
 
 $(MAIN_RESOURCES): $(MAIN_RCS) $(MAIN_RC_DEPENDS)
-	windres $< $@
+	$(WINDRES) $< $@
 
 
 %.o: %.cxx

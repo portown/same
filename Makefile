@@ -11,6 +11,7 @@ all: $(MAIN_BIN)
 $(MAIN_BIN):
 	$(MAKE) -C src $@
 	mv src/$@ .
+	cp /usr/local/mingw/x86_64-w64-mingw32/lib/libstdc++-6.dll /usr/local/mingw/x86_64-w64-mingw32/lib/libgcc_s_seh-1.dll .
 
 .PHONY: check
 check:

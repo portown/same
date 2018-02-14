@@ -1,0 +1,13 @@
+version: "3"
+services:
+    make: &defaults
+        build:
+            context: env
+        volumes:
+            - .:/home/same
+        environment:
+            CXX: x86_64-w64-mingw32-g++
+            DLLTOOL: x86_64-w64-mingw32-dlltool
+            STRIP: x86_64-w64-mingw32-strip
+            WINDRES: x86_64-w64-mingw32-windres
+        entrypoint: make
