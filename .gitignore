@@ -1,2 +1,5 @@
-/build/
+*.o
+*.d
+/*.exe
+/same.dat
 /doc/class.png
