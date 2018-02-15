@@ -2,11 +2,12 @@
 
 #include "common.hxx"
 
+#include <string>
+
 
 namespace
 {
     constexpr auto CLSNAME = "main";
-    constexpr auto WNDNAME = "Ç≥ÇﬂÇ™ÇﬂÅ[";
     constexpr auto WINX    = 640;
     constexpr auto WINY    = 480;
     constexpr auto GAMEX   = 320;
@@ -73,9 +74,13 @@ namespace
         szWnd.cx = WINX + GetSystemMetrics(SM_CXFIXEDFRAME) * 2;
         szWnd.cy = WINY + GetSystemMetrics(SM_CYFIXEDFRAME) * 2 + GetSystemMetrics(SM_CYCAPTION);
 
+        std::basic_string<TCHAR> title(256, '\0');
+        auto const ret = ::LoadString(hInst, IDS_TITLE, title.data(), title.size());
+        if (ret == 0) return FALSE;
+
         hWnd = CreateWindowEx(0,
                               CLSNAME,
-                              WNDNAME,
+                              title.data(),
                               WS_SYSMENU | WS_CAPTION | WS_MINIMIZEBOX,
                               (GetSystemMetrics(SM_CXSCREEN) - szWnd.cx) / 2,
                               (GetSystemMetrics(SM_CYSCREEN) - szWnd.cy) / 2,

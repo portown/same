@@ -42,4 +42,10 @@ IDC_SAME CURSOR "cursor.cur"
 IDB_SAMECUR BITMAP "cursor.bmp"
 
 
+STRINGTABLE
+BEGIN
+    IDS_TITLE   "さめがめー"
+END
+
+
 #endif    // 日本語 resources
