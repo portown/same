@@ -19,25 +19,25 @@ struct CGAME
 class CSAME : public CGAME
 {
     std::shared_ptr<same::ui::Surface> surface_;
-    unsigned char                      m_Level; // ‰B‚µ—v‘fƒŒƒxƒ‹iƒvƒŒƒCƒ„[ƒŒƒxƒ‹j
+    unsigned char                      m_Level; // éš ã—è¦ç´ ãƒ¬ãƒ™ãƒ«ï¼ˆï¼ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ãƒ¬ãƒ™ãƒ«ï¼‰
 
-    std::vector<unsigned char> m_Played; // ƒŠƒvƒŒƒC—pƒf[ƒ^
-    unsigned short             m_bx, m_by; // ‘O‰ñ‚Ìƒ}ƒEƒXˆÊ’u
-    unsigned short             m_Num; // ‘I‘ğ’†‚Ì‹î”
-    unsigned short             m_Tries; // è”
-    unsigned short             m_Width; // •
-    unsigned short             m_Height; // ‚‚³
-    std::vector<unsigned char> m_Area; // ‹îî•ñ
-    unsigned char              m_Pieces; // c‚è‹î”
-    unsigned char              m_Groups; // c‚è‰ò”
-    unsigned char              m_Status; // ƒQ[ƒ€‚Ìó‘Ô
-    unsigned long              m_HighScore; // ƒnƒCƒXƒRƒA
-    unsigned long              m_Score; // ƒvƒŒƒCƒ„[ƒXƒRƒA
-    unsigned long              m_GameNum; // ƒQ[ƒ€ƒiƒ“ƒo[i—”‚Ìíj
-    RECT                       m_rcArea; // ƒQ[ƒ€”ÕƒGƒŠƒA
-    bool                       m_bDraw; // ˜A‘Å—}‚¦
-    bool                       m_bReGame; // ƒNƒŠƒbƒNƒtƒ‰ƒO
-    char                       m_cMaskNum; // ƒ}ƒXƒNƒŒƒxƒ‹
+    std::vector<unsigned char> m_Played; // ãƒªãƒ—ãƒ¬ã‚¤ç”¨ãƒ‡ãƒ¼ã‚¿
+    unsigned short             m_bx, m_by; // å‰å›ã®ãƒã‚¦ã‚¹ä½ç½®
+    unsigned short             m_Num; // é¸æŠä¸­ã®é§’æ•°
+    unsigned short             m_Tries; // æ‰‹æ•°
+    unsigned short             m_Width; // å¹…
+    unsigned short             m_Height; // é«˜ã•
+    std::vector<unsigned char> m_Area; // é§’æƒ…å ±
+    unsigned char              m_Pieces; // æ®‹ã‚Šé§’æ•°
+    unsigned char              m_Groups; // æ®‹ã‚Šå¡Šæ•°
+    unsigned char              m_Status; // ã‚²ãƒ¼ãƒ ã®çŠ¶æ…‹
+    unsigned long              m_HighScore; // ãƒã‚¤ã‚¹ã‚³ã‚¢
+    unsigned long              m_Score; // ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã‚¹ã‚³ã‚¢
+    unsigned long              m_GameNum; // ã‚²ãƒ¼ãƒ ãƒŠãƒ³ãƒãƒ¼ï¼ˆä¹±æ•°ã®ç¨®ï¼‰
+    RECT                       m_rcArea; // ã‚²ãƒ¼ãƒ ç›¤ã‚¨ãƒªã‚¢
+    bool                       m_bDraw; // é€£æ‰“æŠ‘ãˆ
+    bool                       m_bReGame; // ã‚¯ãƒªãƒƒã‚¯ãƒ•ãƒ©ã‚°
+    char                       m_cMaskNum; // ãƒã‚¹ã‚¯ãƒ¬ãƒ™ãƒ«
 
     void          Unselect(void);
     void          Explore(unsigned short, unsigned char);
@@ -73,17 +73,17 @@ public:     // for tests
 class CMENU : public CGAME
 {
     std::shared_ptr<same::ui::Surface> surface_;
-    unsigned char                      m_Level; // ‰B‚µ—v‘fƒŒƒxƒ‹iƒvƒŒƒCƒ„[ƒŒƒxƒ‹j
+    unsigned char                      m_Level; // éš ã—è¦ç´ ãƒ¬ãƒ™ãƒ«ï¼ˆï¼ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ãƒ¬ãƒ™ãƒ«ï¼‰
 
-    unsigned short                     m_Width; // •
-    unsigned short                     m_Height; // ‚‚³
-    unsigned char                      m_Sel; // ƒJ[ƒ\ƒ‹ˆÊ’u
-    char                               m_MaskNum; // ƒ}ƒXƒNƒŒƒxƒ‹
-    char                               m_RepNum; // ƒŠƒvƒŒƒCƒiƒ“ƒo[
+    unsigned short                     m_Width; // å¹…
+    unsigned short                     m_Height; // é«˜ã•
+    unsigned char                      m_Sel; // ã‚«ãƒ¼ã‚½ãƒ«ä½ç½®
+    char                               m_MaskNum; // ãƒã‚¹ã‚¯ãƒ¬ãƒ™ãƒ«
+    char                               m_RepNum; // ãƒªãƒ—ãƒ¬ã‚¤ãƒŠãƒ³ãƒãƒ¼
     std::shared_ptr<same::ui::Surface> menuSurface_;
-    RECT                               m_rcMenu; // ƒƒjƒ…[ƒGƒŠƒA
-    RECT                               m_rcLeft; // ¶–îˆóƒGƒŠƒA
-    RECT                               m_rcRight; // ‰E–îˆóƒGƒŠƒA
+    RECT                               m_rcMenu; // ãƒ¡ãƒ‹ãƒ¥ãƒ¼ã‚¨ãƒªã‚¢
+    RECT                               m_rcLeft; // å·¦çŸ¢å°ã‚¨ãƒªã‚¢
+    RECT                               m_rcRight; // å³çŸ¢å°ã‚¨ãƒªã‚¢
 
     virtual void LoadStatus(void);
     virtual void SaveStatus(void);
@@ -103,23 +103,23 @@ class CREPLAY : public CGAME
 {
     std::shared_ptr<same::ui::Surface> surface_;
 
-    std::vector<unsigned char>         m_Played; // ƒŠƒvƒŒƒC—pƒf[ƒ^
-    unsigned short                     m_bx, m_by; // ‘O‰ñ‚Ìƒ}ƒEƒXˆÊ’u
-    unsigned short                     m_Num; // ‘I‘ğ’†‚Ì‹î”
-    unsigned short                     m_Tries; // è”
-    unsigned short                     m_Width; // •
-    unsigned short                     m_Height; // ‚‚³
-    std::vector<unsigned char>         m_Area; // ‹îî•ñ
-    unsigned char                      m_Pieces; // c‚è‹î”
-    unsigned char                      m_Groups; // c‚è‰ò”
-    unsigned char                      m_Status; // ƒQ[ƒ€‚Ìó‘Ô
-    unsigned long                      m_Score; // ƒvƒŒƒCƒ„[ƒXƒRƒA
-    unsigned long                      m_GameNum; // ƒQ[ƒ€ƒiƒ“ƒo[i—”‚Ìíj
+    std::vector<unsigned char>         m_Played; // ãƒªãƒ—ãƒ¬ã‚¤ç”¨ãƒ‡ãƒ¼ã‚¿
+    unsigned short                     m_bx, m_by; // å‰å›ã®ãƒã‚¦ã‚¹ä½ç½®
+    unsigned short                     m_Num; // é¸æŠä¸­ã®é§’æ•°
+    unsigned short                     m_Tries; // æ‰‹æ•°
+    unsigned short                     m_Width; // å¹…
+    unsigned short                     m_Height; // é«˜ã•
+    std::vector<unsigned char>         m_Area; // é§’æƒ…å ±
+    unsigned char                      m_Pieces; // æ®‹ã‚Šé§’æ•°
+    unsigned char                      m_Groups; // æ®‹ã‚Šå¡Šæ•°
+    unsigned char                      m_Status; // ã‚²ãƒ¼ãƒ ã®çŠ¶æ…‹
+    unsigned long                      m_Score; // ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã‚¹ã‚³ã‚¢
+    unsigned long                      m_GameNum; // ã‚²ãƒ¼ãƒ ãƒŠãƒ³ãƒãƒ¼ï¼ˆä¹±æ•°ã®ç¨®ï¼‰
     std::shared_ptr<same::ui::Surface> cursorSurface_;
-    RECT                               m_rcArea; // ƒQ[ƒ€”ÕƒGƒŠƒA
-    HWND                               m_hWnd; // ƒEƒBƒ“ƒhƒEƒnƒ“ƒhƒ‹
-    char                               m_cRepNum; // ƒŠƒvƒŒƒCƒiƒ“ƒo[
-    bool                               m_bErase; // Á‹ƒtƒ‰ƒO
+    RECT                               m_rcArea; // ã‚²ãƒ¼ãƒ ç›¤ã‚¨ãƒªã‚¢
+    HWND                               m_hWnd; // ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ãƒãƒ³ãƒ‰ãƒ«
+    char                               m_cRepNum; // ãƒªãƒ—ãƒ¬ã‚¤ãƒŠãƒ³ãƒãƒ¼
+    bool                               m_bErase; // æ¶ˆå»ãƒ•ãƒ©ã‚°
 
     void          Onselect(unsigned short);
     void          Unselect(void);

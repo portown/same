@@ -10,9 +10,9 @@
     | (((( char )sizeof(unsigned long) - (x)) * 77 % 100) & 0x0f)
 
 #define ADDSCORE(x) ( unsigned long )pow(1.6, x)
-#define PIX 32    // ‹î‚Ì•
-#define PIY 32    // ‹î‚Ì‚‚³
-#define MASKMAX 4 // ƒ}ƒXƒNƒ‚[ƒhŒÀŠE
+#define PIX 32    // é§’ã®å¹…
+#define PIY 32    // é§’ã®é«˜ã•
+#define MASKMAX 4 // ãƒã‚¹ã‚¯ãƒ¢ãƒ¼ãƒ‰é™ç•Œ
 
 #define SELWAV DATA("select.wav")
 #define ERSWAV DATA("erase.wav")
@@ -20,7 +20,7 @@
 #define DATFILE ".\\same.dat"
 #define REPFILE ".\\replay"
 
-// ƒNƒŠƒbƒN–ß‚è’l
+// ã‚¯ãƒªãƒƒã‚¯æˆ»ã‚Šå€¤
 enum CLICKRESULT
 {
     CR_NOSTATUS = 0,
@@ -46,7 +46,7 @@ enum CLICKRESULT
     CR_REPLAY9,
 };
 
-// ƒQ[ƒ€‚Ìó‘Ô
+// ã‚²ãƒ¼ãƒ ã®çŠ¶æ…‹
 enum GAMESTATUS
 {
     GS_NOSTATUS = 0,
