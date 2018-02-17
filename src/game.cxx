@@ -6,11 +6,6 @@
 #include <random>
 
 
-// ==============================================
-// 実装
-// ==============================================
-
-// 初期化
 CSAME::CSAME(unsigned short wx, unsigned short wy, char cMaskNum)
     : CSAME(wx, wy, cMaskNum, static_cast<unsigned long>(std::time(nullptr)))
 {
@@ -52,7 +47,6 @@ CSAME::CSAME(unsigned short wx, unsigned short wy, char cMaskNum, unsigned long 
     m_Played.clear();
 }
 
-// マス目の描画
 void CSAME::Draw(same::ui::Surface& backSurface)
 {
     // ゲーム盤の描画
@@ -440,14 +434,12 @@ bool CSAME::CntGroups(void)
     return cPiece == 0;
 }
 
-// スコア加算
 void CSAME::AddScore(unsigned long add)
 {
     m_Score += add;
     if (m_Score > m_HighScore) m_HighScore = m_Score;
 }
 
-// キーダウン
 unsigned char CSAME::KeyDown(WPARAM key)
 {
     switch (key)
@@ -483,13 +475,11 @@ unsigned char CSAME::KeyDown(WPARAM key)
     return CR_NOSTATUS;
 }
 
-// デストラクタ
 CSAME::~CSAME(void)
 {
     SaveStatus();
 }
 
-// ステータス読み込み
 void CSAME::LoadStatus(void)
 {
     auto const hFile = CreateFile(DATFILE, GENERIC_READ, 0, nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
@@ -508,7 +498,6 @@ void CSAME::LoadStatus(void)
     CloseHandle(hFile);
 }
 
-// ステータス書き込み
 void CSAME::SaveStatus(void)
 {
     auto const data = ( char* )&m_HighScore;
@@ -528,7 +517,6 @@ void CSAME::SaveStatus(void)
     CloseHandle(hFile);
 }
 
-// リプレイデータ書き込み
 void CSAME::SaveReplay(char cNum)
 {
     char strFName[0x100];
@@ -581,5 +569,3 @@ bool CSAME::selectsAt(unsigned short const x, unsigned short const y) const
 {
     return (m_Area[x + y * m_Width] & 0x80) != 0;
 }
-
-// EOF

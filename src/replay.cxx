@@ -5,11 +5,6 @@
 #include <random>
 
 
-// ==============================================
-// 実装
-// ==============================================
-
-// 初期化
 CREPLAY::CREPLAY(HWND hWnd, unsigned short wx, unsigned short wy, char cNum)
 {
     unsigned short i, j;
@@ -64,7 +59,6 @@ CREPLAY::CREPLAY(HWND hWnd, unsigned short wx, unsigned short wy, char cNum)
     SetTimer(m_hWnd, MINE_TIMER, 1000, nullptr);
 }
 
-// マス目の描画
 void CREPLAY::Draw(same::ui::Surface& backSurface)
 {
     unsigned short i, j;
@@ -155,7 +149,6 @@ void CREPLAY::Draw(same::ui::Surface& backSurface)
     }
 }
 
-// マウス移動
 void CREPLAY::Select(POINT)
 {
 }
@@ -235,7 +228,6 @@ void CREPLAY::Inexplore(unsigned short pos)
     }
 }
 
-// クリック
 unsigned char CREPLAY::Click(void)
 {
     if (m_Status == GS_NOREPLAY)
@@ -413,13 +405,11 @@ bool CREPLAY::CntGroups(void)
     return cPiece == 0;
 }
 
-// スコア加算
 void CREPLAY::AddScore(unsigned long add)
 {
     m_Score += add;
 }
 
-// キーダウン
 unsigned char CREPLAY::KeyDown(WPARAM key)
 {
     switch (key)
@@ -467,13 +457,11 @@ void CREPLAY::Replay(void)
     InvalidateRect(m_hWnd, nullptr, FALSE);
 }
 
-// デストラクタ
 CREPLAY::~CREPLAY(void)
 {
     KillTimer(m_hWnd, MINE_TIMER);
 }
 
-// リプレイデータ読み込み
 bool CREPLAY::LoadReplay(char cNum)
 {
     HANDLE         hFile;
@@ -510,7 +498,6 @@ bool CREPLAY::LoadReplay(char cNum)
     return true;
 }
 
-// リプレイデータ書き込み
 void CREPLAY::SaveReplay(char cNum)
 {
     char strSrcName[0x100], strDstName[0x100];
@@ -525,5 +512,3 @@ void CREPLAY::SaveReplay(char cNum)
 
     CopyFile(strSrcName, strDstName, TRUE);
 }
-
-// EOF

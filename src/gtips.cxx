@@ -3,7 +3,6 @@
 #include "common.hxx"
 
 
-// •¶Žš‚Ì•`‰æ
 bool PutText(HDC hDC, int x, int y, int f_size,
              COLORREF col, char const* str, int iLen)
 {

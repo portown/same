@@ -3,10 +3,6 @@
 #pragma once
 
 
-// ==============================================
-// ã§í ÉwÉbÉ_Å[
-// ==============================================
-
 #include <math.h>
 #include <vector>
 #include <windows.h>
@@ -17,6 +13,3 @@
 #include "resource.h"
 #include "structs.hxx"
 #include "funcs.hxx"
-
-
-// EOF

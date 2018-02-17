@@ -3,11 +3,6 @@
 #include "common.hxx"
 
 
-// ==============================================
-// 実装
-// ==============================================
-
-// コンストラクタ
 CMENU::CMENU(unsigned short width, unsigned short height)
 {
     m_Level = 0;
@@ -28,7 +23,6 @@ CMENU::CMENU(unsigned short width, unsigned short height)
     menuSurface_ = same::ui::Surface::fromBitmapFile(DATA("menu.bmp"));
 }
 
-// 描画
 void CMENU::Draw(same::ui::Surface& backSurface)
 {
     int i;
@@ -129,7 +123,6 @@ void CMENU::Draw(same::ui::Surface& backSurface)
     }
 }
 
-// 選択中
 void CMENU::Select(POINT pt)
 {
     unsigned char before = m_Sel;
@@ -168,7 +161,6 @@ void CMENU::Select(POINT pt)
         PlaySound(SELWAV, nullptr, SND_FILENAME | SND_ASYNC);
 }
 
-// 選択
 unsigned char CMENU::Click(void)
 {
     switch (m_Sel)
@@ -209,7 +201,6 @@ unsigned char CMENU::Click(void)
     return CR_NOSTATUS;
 }
 
-// キーダウン
 unsigned char CMENU::KeyDown(WPARAM key)
 {
     switch (key)
@@ -221,13 +212,11 @@ unsigned char CMENU::KeyDown(WPARAM key)
     return CR_NOSTATUS;
 }
 
-// デストラクタ
 CMENU::~CMENU(void)
 {
     SaveStatus();
 }
 
-// ステータス読み込み
 void CMENU::LoadStatus(void)
 {
     HANDLE hFile;
@@ -242,7 +231,6 @@ void CMENU::LoadStatus(void)
     CloseHandle(hFile);
 }
 
-// ステータス書き込み
 void CMENU::SaveStatus(void)
 {
     HANDLE hFile;
@@ -256,5 +244,3 @@ void CMENU::SaveStatus(void)
 
     CloseHandle(hFile);
 }
-
-// EOF

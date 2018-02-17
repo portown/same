@@ -3,10 +3,6 @@
 #pragma once
 
 
-// ==============================================
-// 定数定義ヘッダー
-// ==============================================
-
 #define MINE_TIMER 1000
 
 #define DATA(fname) "data\\" fname
@@ -60,6 +56,3 @@ enum GAMESTATUS
     GS_ALLCLEAR,
     GS_NOREPLAY,
 };
-
-
-// EOF

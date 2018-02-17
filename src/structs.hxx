@@ -5,11 +5,6 @@
 #include "same/ui/surface.hxx"
 
 
-// ==============================================
-// 構造体定義ヘッダー
-// ==============================================
-
-// 基本クラス
 struct CGAME
 {
     virtual void Draw(same::ui::Surface& backSurface) = 0;
@@ -21,7 +16,6 @@ struct CGAME
     virtual ~CGAME(void) {}
 };
 
-// ゲーム盤クラス
 class CSAME : public CGAME
 {
     std::shared_ptr<same::ui::Surface> surface_;
@@ -76,7 +70,6 @@ public:     // for tests
     bool                       selectsAt(unsigned short x, unsigned short y) const;
 };
 
-// タイトルメニュークラス
 class CMENU : public CGAME
 {
     std::shared_ptr<same::ui::Surface> surface_;
@@ -106,7 +99,6 @@ public:
     ~CMENU(void) override;
 };
 
-// リプレイ再生クラス
 class CREPLAY : public CGAME
 {
     std::shared_ptr<same::ui::Surface> surface_;
@@ -156,6 +148,3 @@ public:
 
     ~CREPLAY(void) override;
 };
-
-
-// EOF

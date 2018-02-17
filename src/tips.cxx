@@ -3,17 +3,11 @@
 #include "common.hxx"
 
 
-// ==============================================
-// 実装
-// ==============================================
-
-// 簡易メッセージボックス
 int Mes(LPCTSTR lpText, LPCTSTR lpCaption, UINT uType, HWND hWnd)
 {
     return MessageBox(hWnd, lpText, lpCaption, uType);
 }
 
-// カレントディレクトリの修正
 bool SetCurDir(void)
 {
     LPTSTR pstrDir;
@@ -33,5 +27,3 @@ bool SetCurDir(void)
 
     return true;
 }
-
-// EOF
