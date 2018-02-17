@@ -73,9 +73,9 @@ void CREPLAY::Draw(same::ui::Surface& backSurface)
     if (m_Status == GS_NOREPLAY)
     {
         PutText(backSurface.getDC(), 320 - 13 * 20, 220, 40, RGB(255, 255, 255),
-                win::loadString(instance, IDS_NO_REPLAY).value().data(), 26);
+                win::loadString(instance, IDS_NO_REPLAY).value());
         PutText(backSurface.getDC(), 320, 272, 20, RGB(255, 255, 255),
-                win::loadString(instance, IDS_CLICK_TO_TITLE).value().data(), 24);
+                win::loadString(instance, IDS_CLICK_TO_TITLE).value());
         return;
     }
 
@@ -122,53 +122,53 @@ void CREPLAY::Draw(same::ui::Surface& backSurface)
     tch::tostringstream oss;
     oss.str("");
     oss << win::loadString(instance, IDS_SCORE).value() << m_Score;
-    PutText(backSurface.getDC(), m_rcArea.right, 0, 20, RGB(255, 255, 255), oss.str().data());
+    PutText(backSurface.getDC(), m_rcArea.right, 0, 20, RGB(255, 255, 255), oss.str());
     PutText(backSurface.getDC(), m_rcArea.right + 80, 24, 24, RGB(255, 255, 255),
-            win::loadString(instance, IDS_REPLAYING).value().data());
+            win::loadString(instance, IDS_REPLAYING).value());
 
     oss.str("");
     oss << win::loadString(instance, IDS_SELECTED_AREA).value() << m_Num;
-    PutText(backSurface.getDC(), m_rcArea.right, 60, 20, RGB(255, 255, 255), oss.str().data());
+    PutText(backSurface.getDC(), m_rcArea.right, 60, 20, RGB(255, 255, 255), oss.str());
     oss.str("");
     oss << win::loadString(instance, IDS_TRIES).value() << m_Tries;
-    PutText(backSurface.getDC(), m_rcArea.right, 80, 20, RGB(255, 255, 255), oss.str().data());
+    PutText(backSurface.getDC(), m_rcArea.right, 80, 20, RGB(255, 255, 255), oss.str());
     oss.str("");
     oss << win::loadString(instance, IDS_REST_PIECES).value() << static_cast<unsigned int>(m_Pieces);
-    PutText(backSurface.getDC(), m_rcArea.right, 100, 20, RGB(255, 255, 255), oss.str().data());
+    PutText(backSurface.getDC(), m_rcArea.right, 100, 20, RGB(255, 255, 255), oss.str());
     oss.str("");
     oss << win::loadString(instance, IDS_REST_GROUPS).value() << static_cast<unsigned int>(m_Groups);
-    PutText(backSurface.getDC(), m_rcArea.right, 120, 20, RGB(255, 255, 255), oss.str().data());
+    PutText(backSurface.getDC(), m_rcArea.right, 120, 20, RGB(255, 255, 255), oss.str());
 
     oss.str("");
     oss << win::loadString(instance, IDS_CURSOR_X).value() << (m_bx < m_Width ? m_bx : 0);
-    PutText(backSurface.getDC(), m_rcArea.right + 152, 60, 20, RGB(255, 255, 255), oss.str().data());
+    PutText(backSurface.getDC(), m_rcArea.right + 152, 60, 20, RGB(255, 255, 255), oss.str());
     oss.str("");
     oss << win::loadString(instance, IDS_CURSOR_Y).value() << (m_by < m_Height ? m_by : 0);
-    PutText(backSurface.getDC(), m_rcArea.right + 152, 80, 20, RGB(255, 255, 255), oss.str().data());
+    PutText(backSurface.getDC(), m_rcArea.right + 152, 80, 20, RGB(255, 255, 255), oss.str());
 
     oss.str("");
     oss << win::loadString(instance, IDS_GAME_NUMBER).value() << m_GameNum;
-    PutText(backSurface.getDC(), m_rcArea.right + 160, m_rcArea.bottom - 12, 12, RGB(255, 255, 255), oss.str().data());
+    PutText(backSurface.getDC(), m_rcArea.right + 160, m_rcArea.bottom - 12, 12, RGB(255, 255, 255), oss.str());
 
     // クリア後の描画
     if (m_Status == GS_CLEAR || m_Status == GS_ALLCLEAR)
     {
         if (m_Status == GS_CLEAR)
             PutText(backSurface.getDC(), m_rcArea.right + 100, 180, 40, RGB(255, 255, 255),
-                    win::loadString(instance, IDS_FINISH).value().data());
+                    win::loadString(instance, IDS_FINISH).value());
         else
             PutText(backSurface.getDC(), m_rcArea.right + 80, 180, 40, RGB(255, 255, 255),
-                    win::loadString(instance, IDS_ALL_CLEAR).value().data());
+                    win::loadString(instance, IDS_ALL_CLEAR).value());
 
         PutText(backSurface.getDC(), m_rcArea.right, 280, 20, RGB(255, 255, 255),
-                win::loadString(instance, IDS_BACK_TO_TITLE).value().data());
+                win::loadString(instance, IDS_BACK_TO_TITLE).value());
         PutText(backSurface.getDC(), m_rcArea.right, 300, 20, RGB(255, 255, 255),
-                win::loadString(instance, IDS_END).value().data());
+                win::loadString(instance, IDS_END).value());
 
         PutText(backSurface.getDC(), m_rcArea.right, 340, 20, RGB(255, 255, 255),
-                win::loadString(instance, IDS_SAVE_REPLAY_0).value().data());
+                win::loadString(instance, IDS_SAVE_REPLAY_0).value());
         PutText(backSurface.getDC(), m_rcArea.right + 40, 360, 20, RGB(255, 255, 255),
-                win::loadString(instance, IDS_SAVE_REPLAY_1).value().data());
+                win::loadString(instance, IDS_SAVE_REPLAY_1).value());
     }
 }
 

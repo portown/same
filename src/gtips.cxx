@@ -4,13 +4,11 @@
 
 
 bool PutText(HDC hDC, int x, int y, int f_size,
-             COLORREF col, char const* str, int iLen)
+             COLORREF col, tch::tstring_view str)
 {
     COLORREF clOld;
     HFONT    hFont, hOldFont;
     int      iOldMode;
-
-    if (iLen == 0) iLen = lstrlen(str);
 
     hFont = CreateFont(f_size,
                        0,
@@ -34,7 +32,7 @@ bool PutText(HDC hDC, int x, int y, int f_size,
     hOldFont = ( HFONT )SelectObject(hDC, hFont);
     clOld    = SetTextColor(hDC, col);
 
-    TextOut(hDC, x, y, str, iLen);
+    TextOut(hDC, x, y, str.data(), str.size());
 
     SetTextColor(hDC, clOld);
     SelectObject(hDC, hOldFont);
