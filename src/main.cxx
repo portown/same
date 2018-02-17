@@ -4,7 +4,6 @@
 
 #include "defines.hxx"
 #include "structs.hxx"
-#include "funcs.hxx"
 #include "win_utils.hxx"
 
 #include "resource.h"
@@ -34,8 +33,6 @@ auto WINAPI _tWinMain(
 {
     ::CreateMutex(nullptr, FALSE, TEXT("jp.portown.same"));
     if (::GetLastError() == ERROR_ALREADY_EXISTS) return 0;
-
-    if (!::SetCurDir()) return 0;
 
     if (!InitApp(instance_handle)) return 0;
     if (!InitInstance(instance_handle, showing_command)) return 0;
