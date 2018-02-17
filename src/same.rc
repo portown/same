@@ -45,6 +45,30 @@ IDB_SAMECUR BITMAP "cursor.bmp"
 STRINGTABLE
 BEGIN
     IDS_TITLE   "さめがめー"
+
+    IDS_SCORE           "　　スコア："
+    IDS_HIGH_SCORE      "ハイスコア："
+    IDS_SELECTED_AREA   "選択エリア："
+    IDS_TRIES           "　　　手数："
+    IDS_REST_PIECES     "　残り個数："
+    IDS_REST_GROUPS     "　残り塊数："
+    IDS_CURSOR_X        "　　 X座標："
+    IDS_CURSOR_Y        "　　 Y座標："
+    IDS_GAME_NUMBER     "Game Number:"
+    IDS_FINISH          "終了！"
+    IDS_ALL_CLEAR       "全消し！"
+    IDS_RESTART         "Enter:再ゲーム"
+    IDS_BACK_TO_TITLE   "F12  :メニューに戻る"
+    IDS_END             "Esc  :終了"
+    IDS_SAVE_REPLAY_0   "キーボードの0～9を押すと"
+    IDS_SAVE_REPLAY_1   "リプレイを保存します"
+    IDS_CLEAR_BONUS_0   "“マスクモード”出現！"
+    IDS_CLEAR_BONUS_1   "マスクモードレベル２出現！"
+    IDS_CLEAR_BONUS_2   "マスクモードレベル３出現！"
+    IDS_CLEAR_BONUS_3   "マスクモードレベル４出現！"
+    IDS_REPLAYING       "- リプレイ -"
+    IDS_NO_REPLAY       "リプレイデータがありません"
+    IDS_CLICK_TO_TITLE  "クリックでタイトルに戻る"
 END
 
 

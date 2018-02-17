@@ -4,6 +4,11 @@
 
 #include <random>
 
+#include "tstringstream.hxx"
+#include "win_utils.hxx"
+
+#include "resource.h"
+
 
 CREPLAY::CREPLAY(HWND hWnd, unsigned short wx, unsigned short wy, char cNum)
 {
@@ -63,12 +68,14 @@ void CREPLAY::Draw(same::ui::Surface& backSurface)
 {
     unsigned short i, j;
     unsigned char  tmp;
-    char           strTmp[0x100];
+    auto const instance = ::GetModuleHandle(nullptr);
 
     if (m_Status == GS_NOREPLAY)
     {
-        PutText(backSurface.getDC(), 320 - 13 * 20, 220, 40, RGB(255, 255, 255), "リプレイデータがありません", 26);
-        PutText(backSurface.getDC(), 320, 272, 20, RGB(255, 255, 255), "クリックでタイトルに戻る", 24);
+        PutText(backSurface.getDC(), 320 - 13 * 20, 220, 40, RGB(255, 255, 255),
+                win::loadString(instance, IDS_NO_REPLAY).value().data(), 26);
+        PutText(backSurface.getDC(), 320, 272, 20, RGB(255, 255, 255),
+                win::loadString(instance, IDS_CLICK_TO_TITLE).value().data(), 24);
         return;
     }
 
@@ -112,40 +119,56 @@ void CREPLAY::Draw(same::ui::Surface& backSurface)
     }
 
     // その他の描画
-    wsprintf(strTmp, "　　スコア：%lu", m_Score);
-    PutText(backSurface.getDC(), m_rcArea.right, 0, 20, RGB(255, 255, 255), strTmp);
-    PutText(backSurface.getDC(), m_rcArea.right + 80, 24, 24, RGB(255, 255, 255), "- リプレイ -");
+    tch::tostringstream oss;
+    oss.str("");
+    oss << win::loadString(instance, IDS_SCORE).value() << m_Score;
+    PutText(backSurface.getDC(), m_rcArea.right, 0, 20, RGB(255, 255, 255), oss.str().data());
+    PutText(backSurface.getDC(), m_rcArea.right + 80, 24, 24, RGB(255, 255, 255),
+            win::loadString(instance, IDS_REPLAYING).value().data());
 
-    wsprintf(strTmp, "選択エリア：%u", m_Num);
-    PutText(backSurface.getDC(), m_rcArea.right, 60, 20, RGB(255, 255, 255), strTmp);
-    wsprintf(strTmp, "　　　手数：%u", m_Tries);
-    PutText(backSurface.getDC(), m_rcArea.right, 80, 20, RGB(255, 255, 255), strTmp);
-    wsprintf(strTmp, "　残り個数：%u", m_Pieces);
-    PutText(backSurface.getDC(), m_rcArea.right, 100, 20, RGB(255, 255, 255), strTmp);
-    wsprintf(strTmp, "　残り塊数：%u", m_Groups);
-    PutText(backSurface.getDC(), m_rcArea.right, 120, 20, RGB(255, 255, 255), strTmp);
+    oss.str("");
+    oss << win::loadString(instance, IDS_SELECTED_AREA).value() << m_Num;
+    PutText(backSurface.getDC(), m_rcArea.right, 60, 20, RGB(255, 255, 255), oss.str().data());
+    oss.str("");
+    oss << win::loadString(instance, IDS_TRIES).value() << m_Tries;
+    PutText(backSurface.getDC(), m_rcArea.right, 80, 20, RGB(255, 255, 255), oss.str().data());
+    oss.str("");
+    oss << win::loadString(instance, IDS_REST_PIECES).value() << static_cast<unsigned int>(m_Pieces);
+    PutText(backSurface.getDC(), m_rcArea.right, 100, 20, RGB(255, 255, 255), oss.str().data());
+    oss.str("");
+    oss << win::loadString(instance, IDS_REST_GROUPS).value() << static_cast<unsigned int>(m_Groups);
+    PutText(backSurface.getDC(), m_rcArea.right, 120, 20, RGB(255, 255, 255), oss.str().data());
 
-    wsprintf(strTmp, "　　 X座標：%u", (m_bx < m_Width ? m_bx : 0));
-    PutText(backSurface.getDC(), m_rcArea.right + 152, 60, 20, RGB(255, 255, 255), strTmp);
-    wsprintf(strTmp, "　　 Y座標：%u", (m_by < m_Height ? m_by : 0));
-    PutText(backSurface.getDC(), m_rcArea.right + 152, 80, 20, RGB(255, 255, 255), strTmp);
+    oss.str("");
+    oss << win::loadString(instance, IDS_CURSOR_X).value() << (m_bx < m_Width ? m_bx : 0);
+    PutText(backSurface.getDC(), m_rcArea.right + 152, 60, 20, RGB(255, 255, 255), oss.str().data());
+    oss.str("");
+    oss << win::loadString(instance, IDS_CURSOR_Y).value() << (m_by < m_Height ? m_by : 0);
+    PutText(backSurface.getDC(), m_rcArea.right + 152, 80, 20, RGB(255, 255, 255), oss.str().data());
 
-    wsprintf(strTmp, "Game Number:%lu", m_GameNum);
-    PutText(backSurface.getDC(), m_rcArea.right + 160, m_rcArea.bottom - 12, 12, RGB(255, 255, 255), strTmp);
+    oss.str("");
+    oss << win::loadString(instance, IDS_GAME_NUMBER).value() << m_GameNum;
+    PutText(backSurface.getDC(), m_rcArea.right + 160, m_rcArea.bottom - 12, 12, RGB(255, 255, 255), oss.str().data());
 
     // クリア後の描画
     if (m_Status == GS_CLEAR || m_Status == GS_ALLCLEAR)
     {
         if (m_Status == GS_CLEAR)
-            PutText(backSurface.getDC(), m_rcArea.right + 100, 180, 40, RGB(255, 255, 255), "終了！");
+            PutText(backSurface.getDC(), m_rcArea.right + 100, 180, 40, RGB(255, 255, 255),
+                    win::loadString(instance, IDS_FINISH).value().data());
         else
-            PutText(backSurface.getDC(), m_rcArea.right + 80, 180, 40, RGB(255, 255, 255), "全消し！");
+            PutText(backSurface.getDC(), m_rcArea.right + 80, 180, 40, RGB(255, 255, 255),
+                    win::loadString(instance, IDS_ALL_CLEAR).value().data());
 
-        PutText(backSurface.getDC(), m_rcArea.right, 280, 20, RGB(255, 255, 255), "F12  :メニューに戻る");
-        PutText(backSurface.getDC(), m_rcArea.right, 300, 20, RGB(255, 255, 255), "Esc  :終了");
+        PutText(backSurface.getDC(), m_rcArea.right, 280, 20, RGB(255, 255, 255),
+                win::loadString(instance, IDS_BACK_TO_TITLE).value().data());
+        PutText(backSurface.getDC(), m_rcArea.right, 300, 20, RGB(255, 255, 255),
+                win::loadString(instance, IDS_END).value().data());
 
-        PutText(backSurface.getDC(), m_rcArea.right, 340, 20, RGB(255, 255, 255), "キーボードの0～9を押すと");
-        PutText(backSurface.getDC(), m_rcArea.right + 40, 360, 20, RGB(255, 255, 255), "リプレイを保存します");
+        PutText(backSurface.getDC(), m_rcArea.right, 340, 20, RGB(255, 255, 255),
+                win::loadString(instance, IDS_SAVE_REPLAY_0).value().data());
+        PutText(backSurface.getDC(), m_rcArea.right + 40, 360, 20, RGB(255, 255, 255),
+                win::loadString(instance, IDS_SAVE_REPLAY_1).value().data());
     }
 }
 
