@@ -1,8 +1,13 @@
 // main.cpp
 
-#include "common.hxx"
+#include <windows.h>
 
+#include "defines.hxx"
+#include "structs.hxx"
+#include "funcs.hxx"
 #include "win_utils.hxx"
+
+#include "resource.h"
 
 
 namespace

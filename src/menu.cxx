@@ -1,6 +1,7 @@
 // menu.cpp
 
-#include "common.hxx"
+#include "defines.hxx"
+#include "structs.hxx"
 
 
 CMENU::CMENU(unsigned short width, unsigned short height)

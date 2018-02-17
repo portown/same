@@ -1,9 +1,10 @@
 // replay.cpp
 
-#include "common.hxx"
-
 #include <random>
 
+#include "defines.hxx"
+#include "structs.hxx"
+#include "funcs.hxx"
 #include "tstringstream.hxx"
 #include "win_utils.hxx"
 

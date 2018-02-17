@@ -1,10 +1,11 @@
 // game.cpp
 
-#include "common.hxx"
-
 #include <ctime>
 #include <random>
 
+#include "defines.hxx"
+#include "structs.hxx"
+#include "funcs.hxx"
 #include "tstringstream.hxx"
 #include "win_utils.hxx"
 

@@ -1,6 +1,8 @@
 // tips.cpp
 
-#include "common.hxx"
+#include "funcs.hxx"
+
+#include <shlwapi.h>
 
 
 int Mes(LPCTSTR lpText, LPCTSTR lpCaption, UINT uType, HWND hWnd)

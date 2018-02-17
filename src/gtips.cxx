@@ -1,6 +1,6 @@
 // gtips.cpp
 
-#include "common.hxx"
+#include "funcs.hxx"
 
 
 bool PutText(HDC hDC, int x, int y, int f_size,
