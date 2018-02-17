@@ -5,7 +5,7 @@
 
 #define MINE_TIMER 1000
 
-#define DATA(fname) "data\\" fname
+#define DATA(fname) TEXT("data\\") fname
 #define CODE(x) (((x) * 7 % 10 * 10) & 0xf0)  \
     | (((( char )sizeof(unsigned long) - (x)) * 77 % 100) & 0x0f)
 
@@ -14,11 +14,11 @@
 #define PIY 32    // 駒の高さ
 #define MASKMAX 4 // マスクモード限界
 
-#define SELWAV DATA("select.wav")
-#define ERSWAV DATA("erase.wav")
-#define CLRWAV DATA("clear.wav")
-#define DATFILE ".\\same.dat"
-#define REPFILE ".\\replay"
+#define SELWAV DATA(TEXT("select.wav"))
+#define ERSWAV DATA(TEXT("erase.wav"))
+#define CLRWAV DATA(TEXT("clear.wav"))
+#define DATFILE TEXT(".\\same.dat")
+#define REPFILE TEXT(".\\replay")
 
 // クリック戻り値
 enum CLICKRESULT

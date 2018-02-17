@@ -7,7 +7,7 @@
 
 namespace
 {
-    constexpr auto CLSNAME = "main";
+    constexpr auto CLSNAME = TEXT("main");
     constexpr auto WINX    = 640;
     constexpr auto WINY    = 480;
     constexpr auto GAMEX   = 320;
@@ -20,14 +20,14 @@ namespace
 }
 
 
-auto WINAPI WinMain(
+auto WINAPI _tWinMain(
     ::HINSTANCE const instance_handle,
     ::HINSTANCE,
-    ::LPSTR,
+    ::LPTSTR,
     int const showing_command)
 ->int
 {
-    ::CreateMutex(nullptr, FALSE, "jp.portown.same");
+    ::CreateMutex(nullptr, FALSE, TEXT("jp.portown.same"));
     if (::GetLastError() == ERROR_ALREADY_EXISTS) return 0;
 
     if (!::SetCurDir()) return 0;

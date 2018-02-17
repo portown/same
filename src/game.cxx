@@ -18,7 +18,7 @@ CSAME::CSAME(unsigned short wx, unsigned short wy, char cMaskNum)
 
 CSAME::CSAME(unsigned short wx, unsigned short wy, char cMaskNum, unsigned long gameNum)
 {
-    surface_ = same::ui::Surface::fromBitmapFile(DATA("system.bmp"));
+    surface_ = same::ui::Surface::fromBitmapFile(DATA(TEXT("system.bmp")));
 
     m_Level     = 0;
     m_HighScore = 0;
@@ -97,34 +97,34 @@ void CSAME::Draw(same::ui::Surface& backSurface)
     auto const          instance = ::GetModuleHandle(nullptr);
 
     // その他の描画
-    oss.str("");
+    oss.str({});
     oss << win::loadString(instance, IDS_SCORE).value() << m_Score;
     PutText(backSurface.getDC(), m_rcArea.right, 0, 20, RGB(255, 255, 255), oss.str());
-    oss.str("");
+    oss.str({});
     oss << win::loadString(instance, IDS_HIGH_SCORE).value() << m_HighScore;
     PutText(backSurface.getDC(), m_rcArea.right, 20, 20, RGB(255, 255, 255), oss.str());
 
-    oss.str("");
+    oss.str({});
     oss << win::loadString(instance, IDS_SELECTED_AREA).value() << m_Num;
     PutText(backSurface.getDC(), m_rcArea.right, 60, 20, RGB(255, 255, 255), oss.str());
-    oss.str("");
+    oss.str({});
     oss << win::loadString(instance, IDS_TRIES).value() << m_Tries;
     PutText(backSurface.getDC(), m_rcArea.right, 80, 20, RGB(255, 255, 255), oss.str());
-    oss.str("");
+    oss.str({});
     oss << win::loadString(instance, IDS_REST_PIECES).value() << static_cast<unsigned int>(m_Pieces);
     PutText(backSurface.getDC(), m_rcArea.right, 100, 20, RGB(255, 255, 255), oss.str());
-    oss.str("");
+    oss.str({});
     oss << win::loadString(instance, IDS_REST_GROUPS).value() << static_cast<unsigned int>(m_Groups);
     PutText(backSurface.getDC(), m_rcArea.right, 120, 20, RGB(255, 255, 255), oss.str());
 
-    oss.str("");
+    oss.str({});
     oss << win::loadString(instance, IDS_CURSOR_X).value() << (m_bx < m_Width ? m_bx : 0);
     PutText(backSurface.getDC(), m_rcArea.right + 152, 60, 20, RGB(255, 255, 255), oss.str());
-    oss.str("");
+    oss.str({});
     oss << win::loadString(instance, IDS_CURSOR_Y).value() << (m_by < m_Height ? m_by : 0);
     PutText(backSurface.getDC(), m_rcArea.right + 152, 80, 20, RGB(255, 255, 255), oss.str());
 
-    oss.str("");
+    oss.str({});
     oss << win::loadString(instance, IDS_GAME_NUMBER).value() << m_GameNum;
     PutText(backSurface.getDC(), m_rcArea.right + 160, m_rcArea.bottom - 12, 12, RGB(255, 255, 255), oss.str());
 
@@ -541,7 +541,7 @@ void CSAME::SaveStatus(void)
 
 void CSAME::SaveReplay(char cNum)
 {
-    char strFName[0x100];
+    TCHAR strFName[0x100];
 
     lstrcpy(strFName, REPFILE);
     strFName[lstrlen(strFName) + 1] = '\0';

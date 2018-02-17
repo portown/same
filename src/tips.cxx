@@ -20,7 +20,7 @@ bool SetCurDir(void)
     if (!pstrDir)
         return false;
 
-    lstrcpy(pstrDir, "");
+    lstrcpy(pstrDir, TEXT(""));
 
     if (!SetCurrentDirectory(strDir))
         return false;

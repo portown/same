@@ -11,7 +11,7 @@ namespace
     {
     public:
         explicit SurfaceDDBImpl(HDC const dcHandle, HBITMAP const bitmapHandle)
-            : dcHandle_ { dcHandle }, bitmapHandle_ { bitmapHandle }
+            : dcHandle_ {dcHandle}, bitmapHandle_ {bitmapHandle}
         {
             SelectObject(dcHandle, bitmapHandle);
         }
@@ -38,7 +38,7 @@ namespace
         }
 
     private:
-        HDC     dcHandle_;
+        HDC dcHandle_;
         HBITMAP bitmapHandle_;
     };
 
@@ -46,7 +46,7 @@ namespace
     {
     public:
         explicit SurfacePaintImpl(HWND const windowHandle, PAINTSTRUCT& paintStruct)
-            : windowHandle_ { windowHandle }, paintStruct_ { paintStruct }
+            : windowHandle_ {windowHandle}, paintStruct_ {paintStruct}
         {
             dcHandle_ = BeginPaint(windowHandle, &paintStruct);
         }
@@ -70,15 +70,15 @@ namespace
         }
 
     private:
-        HWND         windowHandle_;
+        HWND windowHandle_;
         PAINTSTRUCT& paintStruct_;
-        HDC          dcHandle_;
+        HDC dcHandle_;
     };
 
     class SurfaceViewImpl : public same::ui::SurfaceImpl
     {
     public:
-        SurfaceViewImpl(same::ui::ImplPtr impl, geom::Box const& box) : original_ { impl }, box_(box)
+        SurfaceViewImpl(same::ui::ImplPtr impl, geom::Box const& box) : original_ {impl}, box_(box)
         {}
 
         geom::Box box() const override { return box_; }
@@ -86,12 +86,12 @@ namespace
 
     private:
         same::ui::ImplPtr original_;
-        geom::Box         box_;
+        geom::Box box_;
     };
 }
 
 
-auto same::ui::Surface::create(geometry::Size const & size)->SurfacePtr
+auto same::ui::Surface::create(geometry::Size const& size)->SurfacePtr
 {
     using namespace same::ui::geometry;
 
@@ -108,9 +108,9 @@ auto same::ui::Surface::create(geometry::Size const & size)->SurfacePtr
     return create<SurfaceDDBImpl>(dcHandle, bitmapHandle);
 }
 
-auto same::ui::Surface::fromBitmapFile(std::string const & fileName)->SurfacePtr
+auto same::ui::Surface::fromBitmapFile(tch::tstring_view fileName)->SurfacePtr
 {
-    auto const bitmapHandle = static_cast<HBITMAP>(LoadImage(nullptr, fileName.c_str(), IMAGE_BITMAP, 0, 0,
+    auto const bitmapHandle = static_cast<HBITMAP>(LoadImage(nullptr, fileName.data(), IMAGE_BITMAP, 0, 0,
                                                              LR_CREATEDIBSECTION | LR_LOADFROMFILE));
     auto const dcHandle = CreateCompatibleDC(nullptr);
 
@@ -132,7 +132,7 @@ auto same::ui::Surface::fromBitmapResource(
 
 auto same::ui::Surface::onPaint(
     HWND const windowHandle,
-    PAINTSTRUCT & paintStruct)
+    PAINTSTRUCT& paintStruct)
 ->SurfacePtr
 {
     return create<SurfacePaintImpl>(windowHandle, paintStruct);
@@ -165,7 +165,7 @@ void same::ui::Surface::blitTo(Surface& surface, geom::Point const& point) const
            getDC(), geom::getLeft(box), geom::getTop(box), SRCCOPY);
 }
 
-auto same::ui::Surface::view(geometry::Box const & box) const->SurfacePtr
+auto same::ui::Surface::view(geometry::Box const& box) const->SurfacePtr
 {
     return create<SurfaceViewImpl>(impl_, box);
 }

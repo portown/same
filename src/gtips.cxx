@@ -23,7 +23,7 @@ bool PutText(HDC hDC, int x, int y, int f_size,
                        CLIP_DEFAULT_PRECIS,
                        DEFAULT_QUALITY,
                        DEFAULT_PITCH | FF_DONTCARE,
-                       "MS Gothic");
+                       TEXT("MS Gothic"));
 
     if (!hFont)
         return false;
