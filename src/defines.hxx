@@ -9,7 +9,7 @@
 
 #define MINE_TIMER 1000
 
-#define DATA(fname) "data\\" #fname
+#define DATA(fname) "data\\" fname
 #define CODE(x) (((x) * 7 % 10 * 10) & 0xf0)  \
     | (((( char )sizeof(unsigned long) - (x)) * 77 % 100) & 0x0f)
 
@@ -18,9 +18,9 @@
 #define PIY 32    // 駒の高さ
 #define MASKMAX 4 // マスクモード限界
 
-#define SELWAV DATA(select.wav)
-#define ERSWAV DATA(erase.wav)
-#define CLRWAV DATA(clear.wav)
+#define SELWAV DATA("select.wav")
+#define ERSWAV DATA("erase.wav")
+#define CLRWAV DATA("clear.wav")
 #define DATFILE ".\\same.dat"
 #define REPFILE ".\\replay"
 

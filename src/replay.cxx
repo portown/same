@@ -54,7 +54,7 @@ CREPLAY::CREPLAY(HWND hWnd, unsigned short wx, unsigned short wy, char cNum)
 
     CntGroups();
 
-    surface_ = same::ui::Surface::fromBitmapFile(DATA(system.bmp));
+    surface_ = same::ui::Surface::fromBitmapFile(DATA("system.bmp"));
 
     cursorSurface_ = same::ui::Surface::fromBitmapResource(
         reinterpret_cast<HINSTANCE>(GetWindowLongPtr(hWnd, GWLP_HINSTANCE)),
