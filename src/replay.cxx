@@ -79,7 +79,7 @@ void CREPLAY::Draw(same::ui::Surface& backSurface)
         return;
     }
 
-    // ƒQ[ƒ€”Õ‚Ì•`‰æ
+    // ã‚²ãƒ¼ãƒ ç›¤ã®æç”»
     for (i = 0; i < m_Height; ++i)
     {
         for (j = 0; j < m_Width; ++j)
@@ -109,7 +109,7 @@ void CREPLAY::Draw(same::ui::Surface& backSurface)
         }
     }
 
-    // ƒJ[ƒ\ƒ‹‚Ì•`‰æ
+    // ã‚«ãƒ¼ã‚½ãƒ«ã®æç”»
     if (m_bx < m_Width && m_by < m_Height)
     {
         BitBlt(backSurface.getDC(), m_bx * 32 + PIX / 2, m_by * 32 + PIY / 2, 32, 32, cursorSurface_->getDC(), 32, 0,
@@ -118,7 +118,7 @@ void CREPLAY::Draw(same::ui::Surface& backSurface)
                SRCPAINT);
     }
 
-    // ‚»‚Ì‘¼‚Ì•`‰æ
+    // ãã®ä»–ã®æç”»
     tch::tostringstream oss;
     oss.str("");
     oss << win::loadString(instance, IDS_SCORE).value() << m_Score;
@@ -150,7 +150,7 @@ void CREPLAY::Draw(same::ui::Surface& backSurface)
     oss << win::loadString(instance, IDS_GAME_NUMBER).value() << m_GameNum;
     PutText(backSurface.getDC(), m_rcArea.right + 160, m_rcArea.bottom - 12, 12, RGB(255, 255, 255), oss.str().data());
 
-    // ƒNƒŠƒAŒã‚Ì•`‰æ
+    // ã‚¯ãƒªã‚¢å¾Œã®æç”»
     if (m_Status == GS_CLEAR || m_Status == GS_ALLCLEAR)
     {
         if (m_Status == GS_CLEAR)
@@ -176,7 +176,7 @@ void CREPLAY::Select(POINT)
 {
 }
 
-// ƒ}ƒX–Úƒ`ƒFƒbƒN
+// ãƒã‚¹ç›®ãƒã‚§ãƒƒã‚¯
 void CREPLAY::Onselect(unsigned short pos)
 {
     static unsigned short s_sBef = 0;
@@ -211,7 +211,7 @@ void CREPLAY::Onselect(unsigned short pos)
     s_sBef = pos;
 }
 
-// ƒ}ƒX–Úƒ`ƒFƒbƒNEÄ‹A
+// ãƒã‚¹ç›®ãƒã‚§ãƒƒã‚¯ãƒ»å†å¸°
 void CREPLAY::Explore(unsigned short pos, unsigned char piece)
 {
     if (pos >= m_Width * m_Height) return;
@@ -230,13 +230,13 @@ void CREPLAY::Explore(unsigned short pos, unsigned char piece)
     }
 }
 
-// ƒ}ƒX–Ú‘I‘ğÁ‹
+// ãƒã‚¹ç›®é¸æŠæ¶ˆå»
 void CREPLAY::Unselect(void)
 {
     Inexplore(m_by * m_Width + m_bx);
 }
 
-// ƒ}ƒX–Úƒ`ƒFƒbƒNE”½“]Ä‹A
+// ãƒã‚¹ç›®ãƒã‚§ãƒƒã‚¯ãƒ»åè»¢å†å¸°
 void CREPLAY::Inexplore(unsigned short pos)
 {
     if (pos >= m_Width * m_Height) return;
@@ -259,7 +259,7 @@ unsigned char CREPLAY::Click(void)
     return CR_NOSTATUS;
 }
 
-// ‹îÁ‹
+// é§’æ¶ˆå»
 unsigned char CREPLAY::Onclick(void)
 {
     unsigned char cRet;
@@ -303,7 +303,7 @@ unsigned char CREPLAY::Onclick(void)
     return cRet;
 }
 
-// ‹îÁ‹EÄ‹A
+// é§’æ¶ˆå»ãƒ»å†å¸°
 void CREPLAY::Exexplore(unsigned short pos)
 {
     if (pos >= m_Width * m_Height) return;
@@ -319,7 +319,7 @@ void CREPLAY::Exexplore(unsigned short pos)
     }
 }
 
-// ‹î—‚¿ƒ`ƒFƒbƒN
+// é§’è½ã¡ãƒã‚§ãƒƒã‚¯
 void CREPLAY::Check(void)
 {
     unsigned short i, j, max;
@@ -351,7 +351,7 @@ void CREPLAY::Check(void)
     }
 }
 
-// c•ûŒüƒVƒtƒgEÄ‹A
+// ç¸¦æ–¹å‘ã‚·ãƒ•ãƒˆãƒ»å†å¸°
 void CREPLAY::VShift(unsigned short pos)
 {
     if (pos >= m_Width * m_Height) return;
@@ -365,7 +365,7 @@ void CREPLAY::VShift(unsigned short pos)
         m_Area[pos] = 0;
 }
 
-// ‰¡•ûŒüƒVƒtƒgEÄ‹A
+// æ¨ªæ–¹å‘ã‚·ãƒ•ãƒˆãƒ»å†å¸°
 void CREPLAY::HShift(unsigned short pos)
 {
     if (pos >= m_Width * m_Height) return;
@@ -379,7 +379,7 @@ void CREPLAY::HShift(unsigned short pos)
         m_Area[pos] = 0;
 }
 
-// I—¹ƒ`ƒFƒbƒN
+// çµ‚äº†ãƒã‚§ãƒƒã‚¯
 unsigned char CREPLAY::EndCheck(void)
 {
     bool bAll;
@@ -393,7 +393,7 @@ unsigned char CREPLAY::EndCheck(void)
     return CR_NOSTATUS;
 }
 
-// ‰ò‚ÌŒÂ”ŒvZ
+// å¡Šã®å€‹æ•°è¨ˆç®—
 bool CREPLAY::CntGroups(void)
 {
     unsigned short max, i;
@@ -416,7 +416,7 @@ bool CREPLAY::CntGroups(void)
         }
     }
 
-    // Œãn––
+    // å¾Œå§‹æœ«
     for (i = 0; i < max; ++i)
     {
         if (m_Area[i] == 0) continue;
@@ -460,7 +460,7 @@ unsigned char CREPLAY::KeyDown(WPARAM key)
     return CR_NOSTATUS;
 }
 
-// ƒŠƒvƒŒƒCÄ¶’†
+// ãƒªãƒ—ãƒ¬ã‚¤å†ç”Ÿä¸­
 void CREPLAY::Replay(void)
 {
     unsigned short i = ( unsigned short )m_Played.size();

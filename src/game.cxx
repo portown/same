@@ -54,7 +54,7 @@ CSAME::CSAME(unsigned short wx, unsigned short wy, char cMaskNum, unsigned long 
 
 void CSAME::Draw(same::ui::Surface& backSurface)
 {
-    // ƒQ[ƒ€”Õ‚Ì•`‰æ
+    // ã‚²ãƒ¼ãƒ ç›¤ã®æç”»
     if (m_cMaskNum < 4)
     {
         for (auto i = 0; i < m_Height; ++i)
@@ -96,7 +96,7 @@ void CSAME::Draw(same::ui::Surface& backSurface)
     tch::tostringstream oss;
     auto const instance = ::GetModuleHandle(nullptr);
 
-    // ‚»‚Ì‘¼‚Ì•`‰æ
+    // ãã®ä»–ã®æç”»
     oss.str("");
     oss << win::loadString(instance, IDS_SCORE).value() << m_Score;
     PutText(backSurface.getDC(), m_rcArea.right, 0, 20, RGB(255, 255, 255), oss.str().data());
@@ -128,7 +128,7 @@ void CSAME::Draw(same::ui::Surface& backSurface)
     oss << win::loadString(instance, IDS_GAME_NUMBER).value() << m_GameNum;
     PutText(backSurface.getDC(), m_rcArea.right + 160, m_rcArea.bottom - 12, 12, RGB(255, 255, 255), oss.str().data());
 
-    // ƒNƒŠƒAŒã‚Ì•`‰æ
+    // ã‚¯ãƒªã‚¢å¾Œã®æç”»
     if (m_Status == GS_CLEAR || m_Status == GS_ALLCLEAR)
     {
         if (m_Status == GS_CLEAR)
@@ -180,7 +180,7 @@ void CSAME::Draw(same::ui::Surface& backSurface)
     m_bDraw = true;
 }
 
-// ƒ}ƒX–Úƒ`ƒFƒbƒN
+// ãƒã‚¹ç›®ãƒã‚§ãƒƒã‚¯
 void CSAME::Select(POINT pt)
 {
     static unsigned short s_sBef = m_Width * m_Height;
@@ -235,7 +235,7 @@ void CSAME::Select(POINT pt)
     }
 }
 
-// ƒ}ƒX–Úƒ`ƒFƒbƒNEÄ‹A
+// ãƒã‚¹ç›®ãƒã‚§ãƒƒã‚¯ãƒ»å†å¸°
 void CSAME::Explore(unsigned short pos, unsigned char piece)
 {
     if (pos >= m_Width * m_Height) return;
@@ -254,13 +254,13 @@ void CSAME::Explore(unsigned short pos, unsigned char piece)
     }
 }
 
-// ƒ}ƒX–Ú‘I‘ğÁ‹
+// ãƒã‚¹ç›®é¸æŠæ¶ˆå»
 void CSAME::Unselect(void)
 {
     Inexplore(m_by * m_Width + m_bx);
 }
 
-// ƒ}ƒX–Úƒ`ƒFƒbƒNE”½“]Ä‹A
+// ãƒã‚¹ç›®ãƒã‚§ãƒƒã‚¯ãƒ»åè»¢å†å¸°
 void CSAME::Inexplore(unsigned short pos)
 {
     if (pos >= m_Width * m_Height) return;
@@ -275,7 +275,7 @@ void CSAME::Inexplore(unsigned short pos)
     }
 }
 
-// ‹îÁ‹
+// é§’æ¶ˆå»
 unsigned char CSAME::Click(void)
 {
     if (!m_bDraw) return CR_NOSTATUS;
@@ -335,7 +335,7 @@ unsigned char CSAME::Click(void)
     return cRet;
 }
 
-// ‹îÁ‹EÄ‹A
+// é§’æ¶ˆå»ãƒ»å†å¸°
 void CSAME::Exexplore(unsigned short pos)
 {
     if (pos >= m_Width * m_Height) return;
@@ -351,7 +351,7 @@ void CSAME::Exexplore(unsigned short pos)
     }
 }
 
-// ‹î—‚¿ƒ`ƒFƒbƒN
+// é§’è½ã¡ãƒã‚§ãƒƒã‚¯
 void CSAME::Check(void)
 {
     auto const max = m_Width * m_Height;
@@ -382,7 +382,7 @@ void CSAME::Check(void)
     }
 }
 
-// c•ûŒüƒVƒtƒgEÄ‹A
+// ç¸¦æ–¹å‘ã‚·ãƒ•ãƒˆãƒ»å†å¸°
 void CSAME::VShift(unsigned short pos)
 {
     if (pos >= m_Width * m_Height) return;
@@ -396,7 +396,7 @@ void CSAME::VShift(unsigned short pos)
         m_Area[pos] = 0;
 }
 
-// ‰¡•ûŒüƒVƒtƒgEÄ‹A
+// æ¨ªæ–¹å‘ã‚·ãƒ•ãƒˆãƒ»å†å¸°
 void CSAME::HShift(unsigned short pos)
 {
     if (pos >= m_Width * m_Height) return;
@@ -410,7 +410,7 @@ void CSAME::HShift(unsigned short pos)
         m_Area[pos] = 0;
 }
 
-// I—¹ƒ`ƒFƒbƒN
+// çµ‚äº†ãƒã‚§ãƒƒã‚¯
 unsigned char CSAME::EndCheck(void)
 {
     auto const bAll = CntGroups();
@@ -422,7 +422,7 @@ unsigned char CSAME::EndCheck(void)
     return CR_NOSTATUS;
 }
 
-// ‰ò‚ÌŒÂ”ŒvZ
+// å¡Šã®å€‹æ•°è¨ˆç®—
 bool CSAME::CntGroups(void)
 {
     unsigned char cPiece = 0;
@@ -444,7 +444,7 @@ bool CSAME::CntGroups(void)
         }
     }
 
-    // Œãn––
+    // å¾Œå§‹æœ«
     for (auto i = 0; i < max; ++i)
     {
         if (m_Area[i] == 0) continue;
