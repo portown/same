@@ -208,7 +208,7 @@ void CSAME::Select(POINT pt)
         {
             if (!(m_Area[s_sBef] & 0x80))
             {
-                PlaySound(SELWAV, NULL, SND_FILENAME | SND_ASYNC);
+                PlaySound(SELWAV, nullptr, SND_FILENAME | SND_ASYNC);
             }
         }
         s_sBef = pos;
@@ -287,20 +287,20 @@ unsigned char CSAME::Click(void)
     switch (cRet)
     {
         case CR_NOSTATUS:
-            PlaySound(ERSWAV, NULL, SND_FILENAME | SND_SYNC);
+            PlaySound(ERSWAV, nullptr, SND_FILENAME | SND_SYNC);
             m_Num = 0;
             Explore(m_by * m_Width + m_bx, m_Area[m_by * m_Width + m_bx]);
             if (m_Num == 1) Unselect();
             break;
 
         case CR_CLEAR:
-            PlaySound(CLRWAV, NULL, SND_FILENAME | SND_ASYNC);
+            PlaySound(CLRWAV, nullptr, SND_FILENAME | SND_ASYNC);
             m_Status = GS_CLEAR;
             break;
 
         case CR_ALLCLEAR:
             AddScore(1000000);
-            PlaySound(CLRWAV, NULL, SND_FILENAME | SND_ASYNC);
+            PlaySound(CLRWAV, nullptr, SND_FILENAME | SND_ASYNC);
             m_Status = GS_ALLCLEAR;
             break;
     }
@@ -492,15 +492,15 @@ CSAME::~CSAME(void)
 // ステータス読み込み
 void CSAME::LoadStatus(void)
 {
-    auto const hFile = CreateFile(DATFILE, GENERIC_READ, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+    auto const hFile = CreateFile(DATFILE, GENERIC_READ, 0, nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
     if (hFile == INVALID_HANDLE_VALUE) return;
 
-    SetFilePointer(hFile, 0, NULL, FILE_BEGIN);
+    SetFilePointer(hFile, 0, nullptr, FILE_BEGIN);
     DWORD dwRead;
-    ReadFile(hFile, &m_Level, 1, &dwRead, NULL);
+    ReadFile(hFile, &m_Level, 1, &dwRead, nullptr);
 
     DWORD const dwSize = sizeof(unsigned long);
-    ReadFile(hFile, &m_HighScore, dwSize, &dwRead, NULL);
+    ReadFile(hFile, &m_HighScore, dwSize, &dwRead, nullptr);
     auto const data = ( char* )&m_HighScore;
     for (auto i = 0; i < static_cast<int>(sizeof(unsigned long)); ++i)
         data[i] -= CODE(i + 1);
@@ -515,15 +515,15 @@ void CSAME::SaveStatus(void)
     for (auto i = 0; i < static_cast<int>(sizeof(unsigned long)); ++i)
         data[i] += CODE(i + 1);
 
-    auto const hFile = CreateFile(DATFILE, GENERIC_WRITE, 0, NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+    auto const hFile = CreateFile(DATFILE, GENERIC_WRITE, 0, nullptr, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr);
     if (hFile == INVALID_HANDLE_VALUE) return;
 
-    SetFilePointer(hFile, 0, NULL, FILE_BEGIN);
+    SetFilePointer(hFile, 0, nullptr, FILE_BEGIN);
     DWORD dwWritten;
-    WriteFile(hFile, &m_Level, 1, &dwWritten, NULL);
+    WriteFile(hFile, &m_Level, 1, &dwWritten, nullptr);
 
     DWORD const dwSize = sizeof(unsigned long);
-    WriteFile(hFile, &m_HighScore, dwSize, &dwWritten, NULL);
+    WriteFile(hFile, &m_HighScore, dwSize, &dwWritten, nullptr);
 
     CloseHandle(hFile);
 }
@@ -537,17 +537,17 @@ void CSAME::SaveReplay(char cNum)
     strFName[lstrlen(strFName) + 1] = '\0';
     strFName[lstrlen(strFName)]     = cNum;
 
-    auto const hFile = CreateFile(strFName, GENERIC_WRITE, 0, NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+    auto const hFile = CreateFile(strFName, GENERIC_WRITE, 0, nullptr, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr);
     if (hFile == INVALID_HANDLE_VALUE) return;
 
-    SetFilePointer(hFile, 0, NULL, FILE_BEGIN);
+    SetFilePointer(hFile, 0, nullptr, FILE_BEGIN);
     DWORD dwWritten;
-    WriteFile(hFile, &m_GameNum, sizeof(unsigned long), &dwWritten, NULL);
-    WriteFile(hFile, &m_Tries, sizeof(unsigned short), &dwWritten, NULL);
+    WriteFile(hFile, &m_GameNum, sizeof(unsigned long), &dwWritten, nullptr);
+    WriteFile(hFile, &m_Tries, sizeof(unsigned short), &dwWritten, nullptr);
 
     for (auto i = 0; i < m_Tries; ++i)
     {
-        WriteFile(hFile, &m_Played[i], 1, &dwWritten, NULL);
+        WriteFile(hFile, &m_Played[i], 1, &dwWritten, nullptr);
     }
 
     CloseHandle(hFile);

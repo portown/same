@@ -10,7 +10,7 @@
 // ==============================================
 
 // tips.cpp
-int Mes(LPCTSTR = NULL, LPCTSTR = NULL, UINT = MB_OK, HWND = NULL);
+int Mes(LPCTSTR = nullptr, LPCTSTR = nullptr, UINT = MB_OK, HWND = nullptr);
 bool SetCurDir(void);
 
 // gtips.cpp

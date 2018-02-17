@@ -27,7 +27,7 @@ auto WINAPI WinMain(
     int const showing_command)
 ->int
 {
-    ::CreateMutex(NULL, FALSE, "jp.portown.same");
+    ::CreateMutex(nullptr, FALSE, "jp.portown.same");
     if (::GetLastError() == ERROR_ALREADY_EXISTS) return 0;
 
     if (!::SetCurDir()) return 0;
@@ -57,7 +57,7 @@ namespace
         wc.hInstance     = hInst;
         wc.lpfnWndProc   = (WNDPROC)WndProc;
         wc.lpszClassName = CLSNAME;
-        wc.lpszMenuName  = NULL;
+        wc.lpszMenuName  = nullptr;
         wc.style         = CS_HREDRAW | CS_VREDRAW;
 
         if (!RegisterClassEx(&wc))
@@ -86,10 +86,10 @@ namespace
                               (GetSystemMetrics(SM_CYSCREEN) - szWnd.cy) / 2,
                               szWnd.cx,
                               szWnd.cy,
-                              NULL,
-                              NULL,
+                              nullptr,
+                              nullptr,
                               hInst,
-                              NULL);
+                              nullptr);
 
         if (!hWnd) return FALSE;
 
@@ -103,7 +103,7 @@ namespace
     {
         MSG msg;
 
-        while (GetMessage(&msg, NULL, 0, 0L) > 0)
+        while (GetMessage(&msg, nullptr, 0, 0L) > 0)
         {
             TranslateMessage(&msg);
             DispatchMessage(&msg);
@@ -114,7 +114,7 @@ namespace
 
     LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
     {
-        static CGAME*                             s_pcGame = NULL;
+        static CGAME*                             s_pcGame = nullptr;
         static std::shared_ptr<same::ui::Surface> backSurface;
         POINT                                     pt;
         unsigned char                             ucRet;
@@ -140,7 +140,7 @@ namespace
                 pt.x = LOWORD(lp);
                 pt.y = HIWORD(lp);
                 s_pcGame->Select(pt);
-                InvalidateRect(hWnd, NULL, FALSE);
+                InvalidateRect(hWnd, nullptr, FALSE);
                 break;
 
             case WM_LBUTTONUP:
@@ -180,7 +180,7 @@ namespace
                         s_pcGame = new CREPLAY(hWnd, GAMEX, GAMEY, ucRet - CR_REPLAY0);
                         break;
                 }
-                InvalidateRect(hWnd, NULL, FALSE);
+                InvalidateRect(hWnd, nullptr, FALSE);
                 break;
 
             case WM_KEYDOWN:
@@ -208,7 +208,7 @@ namespace
                     default:
                         return DefWindowProc(hWnd, msg, wp, lp);
                 }
-                InvalidateRect(hWnd, NULL, FALSE);
+                InvalidateRect(hWnd, nullptr, FALSE);
                 break;
 
             case WM_TIMER:

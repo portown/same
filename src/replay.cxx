@@ -61,7 +61,7 @@ CREPLAY::CREPLAY(HWND hWnd, unsigned short wx, unsigned short wy, char cNum)
         IDB_SAMECUR);
 
     m_hWnd = hWnd;
-    SetTimer(m_hWnd, MINE_TIMER, 1000, NULL);
+    SetTimer(m_hWnd, MINE_TIMER, 1000, nullptr);
 }
 
 // マス目の描画
@@ -189,7 +189,7 @@ void CREPLAY::Onselect(unsigned short pos)
     {
         if (!(m_Area[s_sBef] & 0x80))
         {
-            PlaySound(SELWAV, NULL, SND_FILENAME | SND_ASYNC);
+            PlaySound(SELWAV, nullptr, SND_FILENAME | SND_ASYNC);
         }
     }
     s_sBef = pos;
@@ -267,20 +267,20 @@ unsigned char CREPLAY::Onclick(void)
     switch (cRet)
     {
         case CR_NOSTATUS:
-            PlaySound(ERSWAV, NULL, SND_FILENAME | SND_SYNC);
+            PlaySound(ERSWAV, nullptr, SND_FILENAME | SND_SYNC);
             m_Num = 0;
             Explore(m_by * m_Width + m_bx, m_Area[m_by * m_Width + m_bx]);
             if (m_Num == 1) Unselect();
             break;
 
         case CR_CLEAR:
-            PlaySound(CLRWAV, NULL, SND_FILENAME | SND_ASYNC);
+            PlaySound(CLRWAV, nullptr, SND_FILENAME | SND_ASYNC);
             m_Status = GS_CLEAR;
             break;
 
         case CR_ALLCLEAR:
             AddScore(1000000);
-            PlaySound(CLRWAV, NULL, SND_FILENAME | SND_ASYNC);
+            PlaySound(CLRWAV, nullptr, SND_FILENAME | SND_ASYNC);
             m_Status = GS_ALLCLEAR;
             break;
     }
@@ -464,7 +464,7 @@ void CREPLAY::Replay(void)
         m_bErase = true;
     }
 
-    InvalidateRect(m_hWnd, NULL, FALSE);
+    InvalidateRect(m_hWnd, nullptr, FALSE);
 }
 
 // デストラクタ
@@ -486,19 +486,19 @@ bool CREPLAY::LoadReplay(char cNum)
     strFName[lstrlen(strFName) + 1] = '\0';
     strFName[lstrlen(strFName)]     = cNum;
 
-    hFile = CreateFile(strFName, GENERIC_READ, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+    hFile = CreateFile(strFName, GENERIC_READ, 0, nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
     if (hFile == INVALID_HANDLE_VALUE) return false;
 
-    SetFilePointer(hFile, 0, NULL, FILE_BEGIN);
-    ReadFile(hFile, ( LPVOID )&m_GameNum, sizeof(unsigned long), &dwRead, NULL);
+    SetFilePointer(hFile, 0, nullptr, FILE_BEGIN);
+    ReadFile(hFile, ( LPVOID )&m_GameNum, sizeof(unsigned long), &dwRead, nullptr);
     if (dwRead != sizeof(unsigned long)) return false;
 
-    ReadFile(hFile, ( LPVOID )&m_Tries, sizeof(unsigned short), &dwRead, NULL);
+    ReadFile(hFile, ( LPVOID )&m_Tries, sizeof(unsigned short), &dwRead, nullptr);
     if (dwRead != sizeof(unsigned short)) return false;
 
     for (i = 0; i < m_Tries; ++i)
     {
-        ReadFile(hFile, ( LPVOID )&ucDat, 1, &dwRead, NULL);
+        ReadFile(hFile, ( LPVOID )&ucDat, 1, &dwRead, nullptr);
         if (dwRead != 1) return false;
         m_Played.push_back(ucDat);
     }

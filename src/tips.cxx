@@ -19,10 +19,10 @@ bool SetCurDir(void)
     LPTSTR pstrDir;
     TCHAR  strDir[MAX_PATH];
 
-    if (!GetModuleFileName(NULL, strDir, MAX_PATH))
+    if (!GetModuleFileName(nullptr, strDir, MAX_PATH))
         return false;
 
-    pstrDir = StrRChr(strDir, NULL, '\\');
+    pstrDir = StrRChr(strDir, nullptr, '\\');
     if (!pstrDir)
         return false;
 
