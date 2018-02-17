@@ -94,7 +94,7 @@ void CSAME::Draw(same::ui::Surface& backSurface)
     }
 
     tch::tostringstream oss;
-    auto const instance = ::GetModuleHandle(nullptr);
+    auto const          instance = ::GetModuleHandle(nullptr);
 
     // その他の描画
     oss.str("");
@@ -567,7 +567,7 @@ std::vector<unsigned char> CSAME::makeArea(unsigned short const width,
                                            unsigned short const height,
                                            unsigned long const gameNumber) const
 {
-    std::vector<unsigned char> area(width * height);
+    std::vector<unsigned char> area(width* height);
 
     std::mt19937 engine { gameNumber };
     for (auto y = 0; y < height; ++y)

@@ -68,7 +68,7 @@ void CREPLAY::Draw(same::ui::Surface& backSurface)
 {
     unsigned short i, j;
     unsigned char  tmp;
-    auto const instance = ::GetModuleHandle(nullptr);
+    auto const     instance = ::GetModuleHandle(nullptr);
 
     if (m_Status == GS_NOREPLAY)
     {
