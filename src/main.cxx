@@ -75,7 +75,7 @@ namespace
         szWnd.cy = WINY + GetSystemMetrics(SM_CYFIXEDFRAME) * 2 + GetSystemMetrics(SM_CYCAPTION);
 
         std::basic_string<TCHAR> title(256, '\0');
-        auto const ret = ::LoadString(hInst, IDS_TITLE, title.data(), title.size());
+        auto const               ret = ::LoadString(hInst, IDS_TITLE, title.data(), title.size());
         if (ret == 0) return FALSE;
 
         hWnd = CreateWindowEx(0,
@@ -114,7 +114,7 @@ namespace
 
     LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
     {
-        static CGAME*                             s_pcGame = nullptr;
+        static std::shared_ptr<CGAME>             s_pcGame;
         static std::shared_ptr<same::ui::Surface> backSurface;
         POINT                                     pt;
         unsigned char                             ucRet;
@@ -123,7 +123,7 @@ namespace
         {
             case WM_CREATE:
                 backSurface = same::ui::Surface::create(same::ui::geometry::makeSize(WINX, WINY));
-                s_pcGame    = new CMENU(WINX, WINY);
+                s_pcGame    = std::make_shared<CMENU>(WINX, WINY);
                 break;
 
             case WM_PAINT:
@@ -152,8 +152,7 @@ namespace
                         break;
 
                     case CR_TITLEMENU:
-                        _DELETE(s_pcGame);
-                        s_pcGame = new CMENU(WINX, WINY);
+                        s_pcGame = std::make_shared<CMENU>(WINX, WINY);
                         break;
 
                     case CR_BEGINNORMAL:
@@ -161,8 +160,7 @@ namespace
                     case CR_BEGINMASK2:
                     case CR_BEGINMASK3:
                     case CR_BEGINMASK4:
-                        _DELETE(s_pcGame);
-                        s_pcGame = new CSAME(GAMEX, GAMEY, ucRet - CR_BEGINNORMAL);
+                        s_pcGame = std::make_shared<CSAME>(GAMEX, GAMEY, ucRet - CR_BEGINNORMAL);
                         break;
 
                     case CR_REPLAY:
@@ -176,8 +174,7 @@ namespace
                     case CR_REPLAY7:
                     case CR_REPLAY8:
                     case CR_REPLAY9:
-                        _DELETE(s_pcGame);
-                        s_pcGame = new CREPLAY(hWnd, GAMEX, GAMEY, ucRet - CR_REPLAY0);
+                        s_pcGame = std::make_shared<CREPLAY>(hWnd, GAMEX, GAMEY, ucRet - CR_REPLAY0);
                         break;
                 }
                 InvalidateRect(hWnd, nullptr, FALSE);
@@ -188,8 +185,7 @@ namespace
                 switch (ucRet)
                 {
                     case CR_TITLEMENU:
-                        _DELETE(s_pcGame);
-                        s_pcGame = new CMENU(WINX, WINY);
+                        s_pcGame = std::make_shared<CMENU>(WINX, WINY);
                         break;
 
                     case CR_BEGINNORMAL:
@@ -197,8 +193,7 @@ namespace
                     case CR_BEGINMASK2:
                     case CR_BEGINMASK3:
                     case CR_BEGINMASK4:
-                        _DELETE(s_pcGame);
-                        s_pcGame = new CSAME(GAMEX, GAMEY, ucRet - CR_BEGINNORMAL);
+                        s_pcGame = std::make_shared<CSAME>(GAMEX, GAMEY, ucRet - CR_BEGINNORMAL);
                         break;
 
                     case CR_ENDGAME:
@@ -214,12 +209,12 @@ namespace
             case WM_TIMER:
                 if (wp == MINE_TIMER)
                 {
-                    ((CREPLAY*)s_pcGame)->Replay();
+                    std::dynamic_pointer_cast<CREPLAY>(s_pcGame)->Replay();
                 }
                 break;
 
             case WM_DESTROY:
-                _DELETE(s_pcGame);
+                s_pcGame.reset();
                 backSurface.reset();
                 PostQuitMessage(0);
                 break;
