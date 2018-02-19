@@ -40,7 +40,6 @@ CSAME::CSAME(unsigned short wx, unsigned short wy, char cMaskNum, unsigned long 
     SetRect(&m_rcArea, 0, 0, wx, wy);
 
     m_Num    = 0;
-    m_Tries  = 0;
     m_Pieces = m_Width * m_Height;
     m_Groups = 0;
     m_Score  = 0;
@@ -109,7 +108,7 @@ void CSAME::Draw(same::ui::Surface& backSurface)
     oss << win::loadString(instance, IDS_SELECTED_AREA).value() << m_Num;
     PutText(backSurface.getDC(), m_rcArea.right, 60, 20, RGB(255, 255, 255), oss.str());
     oss.str({});
-    oss << win::loadString(instance, IDS_TRIES).value() << m_Tries;
+    oss << win::loadString(instance, IDS_TRIES).value() << m_Played.size();
     PutText(backSurface.getDC(), m_rcArea.right, 80, 20, RGB(255, 255, 255), oss.str());
     oss.str({});
     oss << win::loadString(instance, IDS_REST_PIECES).value() << static_cast<unsigned int>(m_Pieces);
@@ -293,7 +292,6 @@ unsigned char CSAME::Click(void)
 
     Exexplore(m_by * m_Width + m_bx);
 
-    ++m_Tries;
     m_Pieces -= m_Num;
     AddScore(ADDSCORE(m_Num));
     m_Played.push_back(( unsigned char )(m_by * m_Width + m_bx));
@@ -554,9 +552,10 @@ void CSAME::SaveReplay(char cNum)
     SetFilePointer(hFile, 0, nullptr, FILE_BEGIN);
     DWORD dwWritten;
     WriteFile(hFile, &m_GameNum, sizeof(unsigned long), &dwWritten, nullptr);
-    WriteFile(hFile, &m_Tries, sizeof(unsigned short), &dwWritten, nullptr);
+    auto const tries = static_cast<unsigned short>(m_Played.size());
+    WriteFile(hFile, &tries, sizeof(tries), &dwWritten, nullptr);
 
-    for (auto i = 0; i < m_Tries; ++i)
+    for (auto i = 0; i < tries; ++i)
     {
         WriteFile(hFile, &m_Played[i], 1, &dwWritten, nullptr);
     }

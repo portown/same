@@ -29,7 +29,6 @@ class CSAME : public CGAME
     std::vector<unsigned char> m_Played; // リプレイ用データ
     unsigned short m_bx, m_by;             // 前回のマウス位置
     unsigned short m_Num;             // 選択中の駒数
-    unsigned short m_Tries;             // 手数
     unsigned short m_Width;             // 幅
     unsigned short m_Height;             // 高さ
     std::vector<unsigned char> m_Area; // 駒情報
