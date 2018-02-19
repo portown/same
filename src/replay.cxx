@@ -91,9 +91,9 @@ void CREPLAY::Draw(same::ui::Surface& backSurface)
             {
                 --tmp;
 
-                if (tmp & ( unsigned char )0x80)
+                if (tmp & static_cast<unsigned char>(0x80))
                 {
-                    tmp = tmp ^ ( unsigned char )0x80;
+                    tmp = tmp ^ static_cast<unsigned char>(0x80);
 
                     BitBlt(backSurface.getDC(), j * PIX, i * PIY, PIX, PIY, surface_->getDC(), tmp * PIX, PIY * 2,
                            SRCAND);
@@ -217,11 +217,11 @@ void CREPLAY::Explore(unsigned short pos, unsigned char piece)
 {
     if (pos >= m_Width * m_Height) return;
     if (piece == 0) return;
-    if (m_Area[pos] & ( unsigned char )0x80) return;
+    if (m_Area[pos] & static_cast<unsigned char>(0x80)) return;
 
     if (m_Area[pos] == piece)
     {
-        m_Area[pos] |= ( unsigned char )0x80;
+        m_Area[pos] |= static_cast<unsigned char>(0x80);
         ++m_Num;
 
         if (pos >= m_Width) Explore(pos - m_Width, piece);
@@ -241,9 +241,9 @@ void CREPLAY::Unselect(void)
 void CREPLAY::Inexplore(unsigned short pos)
 {
     if (pos >= m_Width * m_Height) return;
-    if (m_Area[pos] & ( unsigned char )0x80)
+    if (m_Area[pos] & static_cast<unsigned char>(0x80))
     {
-        m_Area[pos] ^= ( unsigned char )0x80;
+        m_Area[pos] ^= static_cast<unsigned char>(0x80);
 
         if (pos >= m_Width) Inexplore(pos - m_Width);
         if ((pos % m_Width) != 0) Inexplore(pos - 1);
@@ -309,7 +309,7 @@ void CREPLAY::Exexplore(unsigned short pos)
 {
     if (pos >= m_Width * m_Height) return;
 
-    if (m_Area[pos] & ( unsigned char )0x80)
+    if (m_Area[pos] & static_cast<unsigned char>(0x80))
     {
         m_Area[pos] = 0;
 
@@ -407,7 +407,7 @@ bool CREPLAY::CntGroups(void)
     {
         cPiece |= (m_Area[i] != 0);
         if (m_Area[i] == 0) continue;
-        if (m_Area[i] & ( unsigned char )0x80) continue;
+        if (m_Area[i] & static_cast<unsigned char>(0x80)) continue;
 
         m_Num = 0;
         Explore(i, m_Area[i]);
@@ -421,7 +421,7 @@ bool CREPLAY::CntGroups(void)
     for (i = 0; i < max; ++i)
     {
         if (m_Area[i] == 0) continue;
-        if (!(m_Area[i] & ( unsigned char )0x80)) continue;
+        if (!(m_Area[i] & static_cast<unsigned char>(0x80))) continue;
 
         Inexplore(i);
     }
@@ -448,7 +448,7 @@ unsigned char CREPLAY::KeyDown(WPARAM key)
         case '7':
         case '8':
         case '9':
-            SaveReplay(( char )key);
+            SaveReplay(static_cast<char>(key));
             break;
 
         case VK_F12:
@@ -464,7 +464,7 @@ unsigned char CREPLAY::KeyDown(WPARAM key)
 // リプレイ再生中
 void CREPLAY::Replay(void)
 {
-    unsigned short i = ( unsigned short )m_Played.size();
+    unsigned short i = static_cast<unsigned short>(m_Played.size());
     if (m_Tries > i) return;
 
     if (m_bErase)
@@ -502,15 +502,15 @@ bool CREPLAY::LoadReplay(char cNum)
     if (hFile == INVALID_HANDLE_VALUE) return false;
 
     SetFilePointer(hFile, 0, nullptr, FILE_BEGIN);
-    ReadFile(hFile, ( LPVOID )&m_GameNum, sizeof(unsigned long), &dwRead, nullptr);
+    ReadFile(hFile, &m_GameNum, sizeof(unsigned long), &dwRead, nullptr);
     if (dwRead != sizeof(unsigned long)) return false;
 
-    ReadFile(hFile, ( LPVOID )&m_Tries, sizeof(unsigned short), &dwRead, nullptr);
+    ReadFile(hFile, &m_Tries, sizeof(unsigned short), &dwRead, nullptr);
     if (dwRead != sizeof(unsigned short)) return false;
 
     for (i = 0; i < m_Tries; ++i)
     {
-        ReadFile(hFile, ( LPVOID )&ucDat, 1, &dwRead, nullptr);
+        ReadFile(hFile, &ucDat, 1, &dwRead, nullptr);
         if (dwRead != 1) return false;
         m_Played.push_back(ucDat);
     }

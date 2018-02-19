@@ -49,15 +49,15 @@ namespace
         wc.cbSize        = sizeof(WNDCLASSEX);
         wc.cbClsExtra    = 0;
         wc.cbWndExtra    = 0;
-        wc.hbrBackground = (HBRUSH)GetStockObject(WHITE_BRUSH);
-        wc.hCursor       = (HCURSOR)LoadImage(hInst, MAKEINTRESOURCE(IDC_SAME),
-                                              IMAGE_CURSOR, 0, 0, LR_DEFAULTSIZE | LR_SHARED);
-        wc.hIcon = (HICON)LoadImage(hInst, MAKEINTRESOURCE(IDI_SAME),
-                                    IMAGE_ICON, 0, 0, LR_DEFAULTSIZE | LR_SHARED);
-        wc.hIconSm = (HICON)LoadImage(hInst, MAKEINTRESOURCE(IDI_SAME),
-                                      IMAGE_ICON, 0, 0, LR_DEFAULTSIZE | LR_SHARED);
+        wc.hbrBackground = static_cast<HBRUSH>(GetStockObject(WHITE_BRUSH));
+        wc.hCursor       = static_cast<HCURSOR>(LoadImage(hInst, MAKEINTRESOURCE(IDC_SAME),
+                                                          IMAGE_CURSOR, 0, 0, LR_DEFAULTSIZE | LR_SHARED));
+        wc.hIcon = static_cast<HICON>(LoadImage(hInst, MAKEINTRESOURCE(IDI_SAME),
+                                                IMAGE_ICON, 0, 0, LR_DEFAULTSIZE | LR_SHARED));
+        wc.hIconSm = static_cast<HICON>(LoadImage(hInst, MAKEINTRESOURCE(IDI_SAME),
+                                                  IMAGE_ICON, 0, 0, LR_DEFAULTSIZE | LR_SHARED));
         wc.hInstance     = hInst;
-        wc.lpfnWndProc   = (WNDPROC)WndProc;
+        wc.lpfnWndProc   = WndProc;
         wc.lpszClassName = CLSNAME;
         wc.lpszMenuName  = nullptr;
         wc.style         = CS_HREDRAW | CS_VREDRAW;
@@ -107,7 +107,7 @@ namespace
             DispatchMessage(&msg);
         }
 
-        return (int)msg.wParam;
+        return static_cast<int>(msg.wParam);
     }
 
     LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)

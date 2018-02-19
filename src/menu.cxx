@@ -132,7 +132,7 @@ void CMENU::Select(POINT pt)
 
     if (PtInRect(&m_rcMenu, pt))
     {
-        m_Sel = ( unsigned short )(pt.y - m_rcMenu.top) / 40 + 1;
+        m_Sel = static_cast<unsigned short>(pt.y - m_rcMenu.top) / 40 + 1;
         if (m_Sel == 2)
         {
             m_Sel = 0;
@@ -141,7 +141,7 @@ void CMENU::Select(POINT pt)
     }
     if (PtInRect(&m_rcLeft, pt))
     {
-        m_Sel = ( unsigned short )(pt.y - m_rcLeft.top) / 40 + 5;
+        m_Sel = static_cast<unsigned short>(pt.y - m_rcLeft.top) / 40 + 5;
         if (m_Sel != 7 && (m_Level < 1 || m_Sel != 6))
         {
             m_Sel = 0;
@@ -150,7 +150,7 @@ void CMENU::Select(POINT pt)
     }
     if (PtInRect(&m_rcRight, pt))
     {
-        m_Sel = ( unsigned short )(pt.y - m_rcLeft.top) / 40 + 9;
+        m_Sel = static_cast<unsigned short>(pt.y - m_rcLeft.top) / 40 + 9;
         if (m_Sel != 11 && (m_Level < 1 || m_Sel != 10))
         {
             m_Sel = 0;
@@ -227,7 +227,7 @@ void CMENU::LoadStatus(void)
     if (hFile == INVALID_HANDLE_VALUE) return;
 
     SetFilePointer(hFile, 0, nullptr, FILE_BEGIN);
-    ReadFile(hFile, ( LPVOID )&m_Level, 1, &dwRead, nullptr);
+    ReadFile(hFile, &m_Level, 1, &dwRead, nullptr);
 
     CloseHandle(hFile);
 }
@@ -241,7 +241,7 @@ void CMENU::SaveStatus(void)
     if (hFile == INVALID_HANDLE_VALUE) return;
 
     SetFilePointer(hFile, 0, nullptr, FILE_BEGIN);
-    WriteFile(hFile, ( LPCVOID )&m_Level, 1, &dwWritten, nullptr);
+    WriteFile(hFile, &m_Level, 1, &dwWritten, nullptr);
 
     CloseHandle(hFile);
 }

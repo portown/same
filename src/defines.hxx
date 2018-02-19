@@ -7,9 +7,9 @@
 
 #define DATA(fname) TEXT("data\\") fname
 #define CODE(x) (((x) * 7 % 10 * 10) & 0xf0)  \
-    | (((( char )sizeof(unsigned long) - (x)) * 77 % 100) & 0x0f)
+    | (((static_cast<char>(sizeof(unsigned long)) - (x)) * 77 % 100) & 0x0f)
 
-#define ADDSCORE(x) ( unsigned long )pow(1.6, x)
+#define ADDSCORE(x) static_cast<unsigned long>(pow(1.6, x))
 #define PIX 32    // 駒の幅
 #define PIY 32    // 駒の高さ
 #define MASKMAX 4 // マスクモード限界

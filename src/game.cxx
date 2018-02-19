@@ -72,7 +72,7 @@ void CSAME::Draw(same::ui::Surface& backSurface)
                     {
                         if (m_cMaskNum == 1) continue;
 
-                        tmp = tmp ^ ( unsigned char )0x80;
+                        tmp = tmp ^ static_cast<unsigned char>(0x80);
 
                         BitBlt(backSurface.getDC(), j * PIX, i * PIY, PIX, PIY, surface_->getDC(), tmp * PIX, PIY * 2,
                                SRCAND);
@@ -204,8 +204,8 @@ void CSAME::Select(POINT pt)
 
     if (PtInRect(&m_rcArea, pt))
     {
-        unsigned short const x = ( unsigned short )pt.x / PIX;
-        unsigned short const y = ( unsigned short )pt.y / PIY;
+        unsigned short const x = static_cast<unsigned short>(pt.x) / PIX;
+        unsigned short const y = static_cast<unsigned short>(pt.y) / PIY;
         m_bx = x;
         m_by = y;
 
@@ -240,11 +240,11 @@ void CSAME::Explore(unsigned short pos, unsigned char piece)
 {
     if (pos >= m_Width * m_Height) return;
     if (piece == 0) return;
-    if (m_Area[pos] & ( unsigned char )0x80) return;
+    if (m_Area[pos] & static_cast<unsigned char>(0x80)) return;
 
     if (m_Area[pos] == piece)
     {
-        m_Area[pos] |= ( unsigned char )0x80;
+        m_Area[pos] |= static_cast<unsigned char>(0x80);
         ++m_Num;
 
         if (pos >= m_Width) Explore(pos - m_Width, piece);
@@ -264,9 +264,9 @@ void CSAME::Unselect(void)
 void CSAME::Inexplore(unsigned short pos)
 {
     if (pos >= m_Width * m_Height) return;
-    if (m_Area[pos] & ( unsigned char )0x80)
+    if (m_Area[pos] & static_cast<unsigned char>(0x80))
     {
-        m_Area[pos] ^= ( unsigned char )0x80;
+        m_Area[pos] ^= static_cast<unsigned char>(0x80);
 
         if (pos >= m_Width) Inexplore(pos - m_Width);
         if ((pos % m_Width) != 0) Inexplore(pos - 1);
@@ -294,7 +294,7 @@ unsigned char CSAME::Click(void)
 
     m_Pieces -= m_Num;
     AddScore(ADDSCORE(m_Num));
-    m_Played.push_back(( unsigned char )(m_by * m_Width + m_bx));
+    m_Played.push_back(static_cast<unsigned char>(m_by * m_Width + m_bx));
 
     Check();
 
@@ -339,7 +339,7 @@ void CSAME::Exexplore(unsigned short pos)
 {
     if (pos >= m_Width * m_Height) return;
 
-    if (m_Area[pos] & ( unsigned char )0x80)
+    if (m_Area[pos] & static_cast<unsigned char>(0x80))
     {
         m_Area[pos] = 0;
 
@@ -433,7 +433,7 @@ bool CSAME::CntGroups(void)
     {
         cPiece |= (m_Area[i] != 0);
         if (m_Area[i] == 0) continue;
-        if (m_Area[i] & ( unsigned char )0x80) continue;
+        if (m_Area[i] & static_cast<unsigned char>(0x80)) continue;
 
         m_Num = 0;
         Explore(i, m_Area[i]);
@@ -447,7 +447,7 @@ bool CSAME::CntGroups(void)
     for (auto i = 0; i < max; ++i)
     {
         if (m_Area[i] == 0) continue;
-        if (!(m_Area[i] & ( unsigned char )0x80)) continue;
+        if (!(m_Area[i] & static_cast<unsigned char>(0x80))) continue;
 
         Inexplore(i);
     }
@@ -480,7 +480,7 @@ unsigned char CSAME::KeyDown(WPARAM key)
         case '7':
         case '8':
         case '9':
-            SaveReplay(( char )key);
+            SaveReplay(static_cast<char>(key));
             break;
 
         case VK_F8:
@@ -512,7 +512,7 @@ void CSAME::LoadStatus(void)
 
     DWORD const dwSize = sizeof(unsigned long);
     ReadFile(hFile, &m_HighScore, dwSize, &dwRead, nullptr);
-    auto const data = ( char* )&m_HighScore;
+    auto const data = reinterpret_cast<char*>(&m_HighScore);
     for (auto i = 0; i < static_cast<int>(sizeof(unsigned long)); ++i)
         data[i] -= CODE(i + 1);
 
@@ -521,7 +521,7 @@ void CSAME::LoadStatus(void)
 
 void CSAME::SaveStatus(void)
 {
-    auto const data = ( char* )&m_HighScore;
+    auto const data = reinterpret_cast<char*>(&m_HighScore);
     for (auto i = 0; i < static_cast<int>(sizeof(unsigned long)); ++i)
         data[i] += CODE(i + 1);
 
