@@ -39,8 +39,7 @@ auto ns::makeWindow(::HINSTANCE instance)->std::unique_ptr<Window>
     wc.lpszMenuName  = nullptr;
     wc.style         = CS_HREDRAW | CS_VREDRAW;
 
-    if (!RegisterClassEx(&wc))
-        return nullptr;
+    if (!RegisterClassEx(&wc)) return nullptr;
 
     struct WindowImpl : public Window {};
     auto window = std::make_unique<WindowImpl>();
@@ -74,126 +73,137 @@ void ns::Window::show(int command)
 
 ::LRESULT CALLBACK ns::Window::windowProcedure(::HWND hwnd, ::UINT msg, ::WPARAM wp, ::LPARAM lp)
 {
-    static std::shared_ptr<CGAME>             s_pcGame;
-    static std::shared_ptr<same::ui::Surface> backSurface;
-    POINT                                     pt;
-    unsigned char                             ucRet;
-
-    Window* window;
     if (msg == WM_CREATE)
     {
-        window        = reinterpret_cast<Window*>(reinterpret_cast<::LPCREATESTRUCT>(lp)->lpCreateParams);
-        window->hwnd_ = hwnd;
-        ::SetWindowLongPtr(hwnd, GWLP_USERDATA, reinterpret_cast<::LONG_PTR>(window));
+        auto& window = *static_cast<Window*>(reinterpret_cast<::LPCREATESTRUCT>(lp)->lpCreateParams);
+        window.hwnd_ = hwnd;
+        ::SetWindowLongPtr(hwnd, GWLP_USERDATA, reinterpret_cast<::LONG_PTR>(&window));
+        window.onCreate();
+        return 0L;
     }
-    else
-    {
-        window = reinterpret_cast<Window*>(::GetWindowLongPtr(hwnd, GWLP_USERDATA));
-    }
+
+    auto& window = *reinterpret_cast<Window*>(::GetWindowLongPtr(hwnd, GWLP_USERDATA));
 
     switch (msg)
     {
-        case WM_CREATE:
-            backSurface = same::ui::Surface::create(same::ui::geometry::makeSize(WINX, WINY));
-            s_pcGame    = std::make_shared<CMENU>(WINX, WINY);
-            break;
-
         case WM_PAINT:
-        {
-            PAINTSTRUCT ps;
-            auto const  surface = same::ui::Surface::onPaint(hwnd, ps);
-            backSurface->paint(RGB(0, 0, 0));
-            s_pcGame->Draw(*backSurface);
-            backSurface->blitTo(*surface);
+            window.onPaint();
             break;
-        }
 
         case WM_MOUSEMOVE:
-            pt.x = LOWORD(lp);
-            pt.y = HIWORD(lp);
-            s_pcGame->Select(pt);
-            InvalidateRect(hwnd, nullptr, FALSE);
+            window.onMouseMove(LOWORD(lp), HIWORD(lp));
             break;
 
         case WM_LBUTTONUP:
-            ucRet = s_pcGame->Click();
-            switch (ucRet)
-            {
-                case CR_ENDGAME:
-                    DestroyWindow(hwnd);
-                    break;
-
-                case CR_TITLEMENU:
-                    s_pcGame = std::make_shared<CMENU>(WINX, WINY);
-                    break;
-
-                case CR_BEGINNORMAL:
-                case CR_BEGINMASK1:
-                case CR_BEGINMASK2:
-                case CR_BEGINMASK3:
-                case CR_BEGINMASK4:
-                    s_pcGame = std::make_shared<CSAME>(GAMEX, GAMEY, ucRet - CR_BEGINNORMAL);
-                    break;
-
-                case CR_REPLAY:
-                case CR_REPLAY0:
-                case CR_REPLAY1:
-                case CR_REPLAY2:
-                case CR_REPLAY3:
-                case CR_REPLAY4:
-                case CR_REPLAY5:
-                case CR_REPLAY6:
-                case CR_REPLAY7:
-                case CR_REPLAY8:
-                case CR_REPLAY9:
-                    s_pcGame = std::make_shared<CREPLAY>(hwnd, GAMEX, GAMEY, ucRet - CR_REPLAY0);
-                    break;
-            }
-            InvalidateRect(hwnd, nullptr, FALSE);
+            window.onLButtonUp();
             break;
 
         case WM_KEYDOWN:
-            ucRet = s_pcGame->KeyDown(wp);
-            switch (ucRet)
-            {
-                case CR_TITLEMENU:
-                    s_pcGame = std::make_shared<CMENU>(WINX, WINY);
-                    break;
-
-                case CR_BEGINNORMAL:
-                case CR_BEGINMASK1:
-                case CR_BEGINMASK2:
-                case CR_BEGINMASK3:
-                case CR_BEGINMASK4:
-                    s_pcGame = std::make_shared<CSAME>(GAMEX, GAMEY, ucRet - CR_BEGINNORMAL);
-                    break;
-
-                case CR_ENDGAME:
-                    DestroyWindow(hwnd);
-                    break;
-
-                default:
-                    return DefWindowProc(hwnd, msg, wp, lp);
-            }
-            InvalidateRect(hwnd, nullptr, FALSE);
+            window.onKeyDown(wp);
             break;
 
         case WM_TIMER:
             if (wp == MINE_TIMER)
             {
-                std::dynamic_pointer_cast<CREPLAY>(s_pcGame)->Replay();
+                window.onTimer();
             }
             break;
 
         case WM_DESTROY:
-            s_pcGame.reset();
-            backSurface.reset();
-            PostQuitMessage(0);
+            ::PostQuitMessage(0);
             break;
 
         default:
-            return DefWindowProc(hwnd, msg, wp, lp);
+            return ::DefWindowProc(hwnd, msg, wp, lp);
     }
 
     return 0L;
+}
+
+void ns::Window::onCreate()
+{
+    backSurface_ = Surface::create(geometry::makeSize(WINX, WINY));
+    gameState_   = std::make_shared<CMENU>(WINX, WINY);
+}
+
+void ns::Window::onPaint()
+{
+    ::PAINTSTRUCT ps;
+    auto const surface = Surface::onPaint(hwnd_, ps);
+    backSurface_->paint(RGB(0, 0, 0));
+    gameState_->Draw(*backSurface_);
+    backSurface_->blitTo(*surface);
+}
+
+void ns::Window::onMouseMove(::WORD x, ::WORD y)
+{
+    gameState_->Select({ x, y });
+    ::InvalidateRect(hwnd_, nullptr, FALSE);
+}
+
+void ns::Window::onLButtonUp()
+{
+    auto const nextState = gameState_->Click();
+    switch (nextState)
+    {
+        case CR_ENDGAME:
+            ::DestroyWindow(hwnd_);
+            break;
+
+        case CR_TITLEMENU:
+            gameState_ = std::make_shared<CMENU>(WINX, WINY);
+            break;
+
+        case CR_BEGINNORMAL:
+        case CR_BEGINMASK1:
+        case CR_BEGINMASK2:
+        case CR_BEGINMASK3:
+        case CR_BEGINMASK4:
+            gameState_ = std::make_shared<CSAME>(GAMEX, GAMEY, nextState - CR_BEGINNORMAL);
+            break;
+
+        case CR_REPLAY:
+        case CR_REPLAY0:
+        case CR_REPLAY1:
+        case CR_REPLAY2:
+        case CR_REPLAY3:
+        case CR_REPLAY4:
+        case CR_REPLAY5:
+        case CR_REPLAY6:
+        case CR_REPLAY7:
+        case CR_REPLAY8:
+        case CR_REPLAY9:
+            gameState_ = std::make_shared<CREPLAY>(hwnd_, GAMEX, GAMEY, nextState - CR_REPLAY0);
+            break;
+    }
+    ::InvalidateRect(hwnd_, nullptr, FALSE);
+}
+
+void ns::Window::onKeyDown(::WPARAM keyCode)
+{
+    auto const nextState = gameState_->KeyDown(keyCode);
+    switch (nextState)
+    {
+        case CR_TITLEMENU:
+            gameState_ = std::make_shared<CMENU>(WINX, WINY);
+            break;
+
+        case CR_BEGINNORMAL:
+        case CR_BEGINMASK1:
+        case CR_BEGINMASK2:
+        case CR_BEGINMASK3:
+        case CR_BEGINMASK4:
+            gameState_ = std::make_shared<CSAME>(GAMEX, GAMEY, nextState - CR_BEGINNORMAL);
+            break;
+
+        case CR_ENDGAME:
+            ::DestroyWindow(hwnd_);
+            break;
+    }
+    ::InvalidateRect(hwnd_, nullptr, FALSE);
+}
+
+void ns::Window::onTimer()
+{
+    std::dynamic_pointer_cast<CREPLAY>(gameState_)->Replay();
 }

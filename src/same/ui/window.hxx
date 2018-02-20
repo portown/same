@@ -7,6 +7,9 @@
 
 #include <windows.h>
 
+#include "../../structs.hxx"
+#include "surface.hxx"
+
 namespace same::ui
 {
     class Window;
@@ -30,9 +33,18 @@ namespace same::ui
     private:
         static ::LRESULT CALLBACK windowProcedure(::HWND hwnd, ::UINT msg, ::WPARAM wp, ::LPARAM lp);
 
+        void onCreate();
+        void onPaint();
+        void onMouseMove(::WORD x, ::WORD y);
+        void onLButtonUp();
+        void onKeyDown(::WPARAM keyCode);
+        void onTimer();
+
         friend auto makeWindow(::HINSTANCE instance)->std::unique_ptr<Window>;
 
         ::HWND hwnd_{};
+        std::shared_ptr<CGAME> gameState_;
+        std::shared_ptr<Surface> backSurface_;
     };
 }
 
