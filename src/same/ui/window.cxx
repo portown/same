@@ -73,6 +73,16 @@ void ns::Window::show(int command)
 
 void ns::Window::onIdle()
 {
+    if (!frameRendered_) return;
+
+    using namespace std::literals::chrono_literals;
+
+    auto const now = Clock::now();
+    if (now - previousFrameTime_ < 1000ms / 60) return;
+    previousFrameTime_ = now;
+
+    frameRendered_ = false;
+    ::InvalidateRect(hwnd_, nullptr, FALSE);
 }
 
 ::LRESULT CALLBACK ns::Window::windowProcedure(::HWND hwnd, ::UINT msg, ::WPARAM wp, ::LPARAM lp)
@@ -137,12 +147,12 @@ void ns::Window::onPaint()
     backSurface_->paint(RGB(0, 0, 0));
     gameState_->Draw(*backSurface_);
     backSurface_->blitTo(*surface);
+    frameRendered_ = true;
 }
 
 void ns::Window::onMouseMove(::WORD x, ::WORD y)
 {
     gameState_->Select({ x, y });
-    ::InvalidateRect(hwnd_, nullptr, FALSE);
 }
 
 void ns::Window::onLButtonUp()
@@ -180,7 +190,6 @@ void ns::Window::onLButtonUp()
             gameState_ = std::make_shared<CREPLAY>(hwnd_, GAMEX, GAMEY, nextState - CR_REPLAY0);
             break;
     }
-    ::InvalidateRect(hwnd_, nullptr, FALSE);
 }
 
 void ns::Window::onKeyDown(::WPARAM keyCode)
@@ -204,7 +213,6 @@ void ns::Window::onKeyDown(::WPARAM keyCode)
             ::DestroyWindow(hwnd_);
             break;
     }
-    ::InvalidateRect(hwnd_, nullptr, FALSE);
 }
 
 void ns::Window::onTimer()

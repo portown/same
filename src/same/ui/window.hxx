@@ -3,6 +3,7 @@
 #ifndef SAME_UI_WINDOW_HXX
 #define SAME_UI_WINDOW_HXX
 
+#include <chrono>
 #include <memory>
 
 #include <windows.h>
@@ -44,6 +45,11 @@ namespace same::ui
         friend auto makeWindow(::HINSTANCE instance)->std::unique_ptr<Window>;
 
         ::HWND hwnd_{};
+
+        using Clock = std::chrono::steady_clock;
+        Clock::time_point previousFrameTime_;
+        bool frameRendered_ = false;
+
         std::shared_ptr<CGAME> gameState_;
         std::shared_ptr<Surface> backSurface_;
     };
