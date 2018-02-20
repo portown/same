@@ -21,10 +21,24 @@ auto WINAPI _tWinMain(
     window->show(showCmd);
 
     ::MSG msg;
-    while (::GetMessage(&msg, nullptr, 0, 0L) > 0)
+    for ( ; ;)
     {
-        ::TranslateMessage(&msg);
-        ::DispatchMessage(&msg);
+        if (::PeekMessage(&msg, nullptr, 0, 0, PM_NOREMOVE))
+        {
+            auto const result = ::GetMessage(&msg, nullptr, 0, 0);
+            if (!result || result == -1)
+            {
+                break;
+            }
+
+            ::TranslateMessage(&msg);
+            ::DispatchMessage(&msg);
+        }
+        else
+        {
+            window->onIdle();
+            ::Sleep(1);
+        }
     }
 
     return static_cast<int>(msg.wParam);

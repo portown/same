@@ -71,6 +71,10 @@ void ns::Window::show(int command)
     UpdateWindow(hwnd_);
 }
 
+void ns::Window::onIdle()
+{
+}
+
 ::LRESULT CALLBACK ns::Window::windowProcedure(::HWND hwnd, ::UINT msg, ::WPARAM wp, ::LPARAM lp)
 {
     if (msg == WM_CREATE)

@@ -29,6 +29,7 @@ namespace same::ui
 
     public:
         void show(int command);
+        void onIdle();
 
     private:
         static ::LRESULT CALLBACK windowProcedure(::HWND hwnd, ::UINT msg, ::WPARAM wp, ::LPARAM lp);
