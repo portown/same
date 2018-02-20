@@ -1,6 +1,7 @@
 // tstringstream.hxx
 
-#pragma once
+#ifndef TSTRINGSTREAM_HXX
+#define TSTRINGSTREAM_HXX
 
 #include <sstream>
 
@@ -11,3 +12,5 @@ namespace tch
 {
     using tostringstream = std::basic_ostringstream<TCHAR>;
 }
+
+#endif  // TSTRINGSTREAM_HXX

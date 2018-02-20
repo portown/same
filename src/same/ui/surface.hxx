@@ -1,6 +1,7 @@
 // surface.hxx
 
-#pragma once
+#ifndef SAME_UI_SURFACE_HXX
+#define SAME_UI_SURFACE_HXX
 
 #include <memory>
 #include <string>
@@ -59,3 +60,5 @@ namespace same::ui
         ImplPtr impl_;
     };
 }
+
+#endif  // SAME_UI_SURFACE_HXX

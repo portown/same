@@ -1,6 +1,7 @@
 // resource.h
 
-#pragma once
+#ifndef RESOURCE_H
+#define RESOURCE_H
 
 #define IDI_SAME      1
 
@@ -33,3 +34,5 @@
 #define IDS_REPLAYING       1030
 #define IDS_NO_REPLAY       1031
 #define IDS_CLICK_TO_TITLE  1032
+
+#endif  // RESOURCE_H

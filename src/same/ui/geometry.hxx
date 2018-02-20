@@ -1,6 +1,7 @@
 // geometry.hxx
 
-#pragma once
+#ifndef SAME_UI_GEOMETRY_HXX
+#define SAME_UI_GEOMETRY_HXX
 
 #include <windows.h>
 
@@ -100,3 +101,5 @@ namespace same::ui::geometry
         return result;
     }
 }
+
+#endif  // SAME_UI_GEOMETRY_HXX

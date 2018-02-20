@@ -1,6 +1,7 @@
 // win_utils.hxx
 
-#pragma once
+#ifndef WIN_UTILS_HXX
+#define WIN_UTILS_HXX
 
 #include <optional>
 #include <string>
@@ -31,3 +32,5 @@ namespace win
         return std::make_optional(std::move(str));
     }
 }
+
+#endif  // WIN_UTILS_HXX

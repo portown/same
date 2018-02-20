@@ -1,6 +1,7 @@
-// structs.h
+// structs.hxx
 
-#pragma once
+#ifndef STRUCTS_HXX
+#define STRUCTS_HXX
 
 #include <memory>
 #include <vector>
@@ -152,3 +153,5 @@ public:
 
     ~CREPLAY(void) override;
 };
+
+#endif  // STRUCTS_HXX

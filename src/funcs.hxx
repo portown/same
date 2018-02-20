@@ -1,6 +1,7 @@
-// funcs.h
+// funcs.hxx
 
-#pragma once
+#ifndef FUNCS_HXX
+#define FUNCS_HXX
 
 #include <windows.h>
 
@@ -8,3 +9,5 @@
 
 
 bool PutText(HDC, int, int, int, COLORREF, tch::tstring_view str);
+
+#endif  // FUNCS_HXX

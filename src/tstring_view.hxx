@@ -1,6 +1,7 @@
 // tstring_view.hxx
 
-#pragma once
+#ifndef TSTRING_VIEW_HXX
+#define TSTRING_VIEW_HXX
 
 #include <string_view>
 
@@ -11,3 +12,5 @@ namespace tch
 {
     using tstring_view = std::basic_string_view<TCHAR>;
 }
+
+#endif  // TSTRING_VIEW_HXX

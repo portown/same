@@ -1,6 +1,7 @@
-// defines.h
+// defines.hxx
 
-#pragma once
+#ifndef DEFINES_HXX
+#define DEFINES_HXX
 
 
 #define MINE_TIMER 1000
@@ -56,3 +57,5 @@ enum GAMESTATUS
     GS_ALLCLEAR,
     GS_NOREPLAY,
 };
+
+#endif  // DEFINES_HXX

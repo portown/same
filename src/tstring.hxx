@@ -1,6 +1,7 @@
 // tstring.hxx
 
-#pragma once
+#ifndef TSTRING_HXX
+#define TSTRING_HXX
 
 #include <string>
 
@@ -11,3 +12,5 @@ namespace tch
 {
     using tstring = std::basic_string<TCHAR>;
 }
+
+#endif  // TSTRING_HXX
