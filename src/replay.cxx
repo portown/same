@@ -74,83 +74,32 @@ void CREPLAY::onFrame(same::GameContext& context, same::Input const& input)
         previousTime_ = now;
     }
 
-    if (input.isMouseMoved())
+    if (input.isMouseLButtonUp() && m_Status == GS_NOREPLAY)
     {
-        onMouseMove(input.getMousePosition());
-    }
-
-    if (input.isMouseLButtonUp())
-    {
-        auto const nextState = onMouseLButtonUp();
-        switch (nextState)
-        {
-            case CR_ENDGAME:
-                context.finish();
-                break;
-
-            case CR_TITLEMENU:
-                context.changeState<CMENU>(WINX, WINY);
-                break;
-
-            case CR_BEGINNORMAL:
-            case CR_BEGINMASK1:
-            case CR_BEGINMASK2:
-            case CR_BEGINMASK3:
-            case CR_BEGINMASK4:
-                context.changeState<CSAME>(GAMEX, GAMEY, nextState - CR_BEGINNORMAL);
-                break;
-
-            case CR_REPLAY:
-            case CR_REPLAY0:
-            case CR_REPLAY1:
-            case CR_REPLAY2:
-            case CR_REPLAY3:
-            case CR_REPLAY4:
-            case CR_REPLAY5:
-            case CR_REPLAY6:
-            case CR_REPLAY7:
-            case CR_REPLAY8:
-            case CR_REPLAY9:
-                context.changeState<CREPLAY>(GAMEX, GAMEY, nextState - CR_REPLAY0);
-                break;
-        }
+        context.changeState<CMENU>(WINX, WINY);
+        return;
     }
     else
     {
-        decltype(onKeyDown(VK_RETURN))nextState;
-
-        if (input.isKeyDown(VK_RETURN)) nextState = onKeyDown(VK_RETURN);
-        if (input.isKeyDown('0')) nextState = onKeyDown('0');
-        if (input.isKeyDown('1')) nextState = onKeyDown('1');
-        if (input.isKeyDown('2')) nextState = onKeyDown('2');
-        if (input.isKeyDown('3')) nextState = onKeyDown('3');
-        if (input.isKeyDown('4')) nextState = onKeyDown('4');
-        if (input.isKeyDown('5')) nextState = onKeyDown('5');
-        if (input.isKeyDown('6')) nextState = onKeyDown('6');
-        if (input.isKeyDown('7')) nextState = onKeyDown('7');
-        if (input.isKeyDown('8')) nextState = onKeyDown('8');
-        if (input.isKeyDown('9')) nextState = onKeyDown('9');
-        if (input.isKeyDown(VK_F8)) nextState = onKeyDown(VK_F8);
-        if (input.isKeyDown(VK_F12)) nextState = onKeyDown(VK_F12);
-        if (input.isKeyDown(VK_ESCAPE)) nextState = onKeyDown(VK_ESCAPE);
-
-        switch (nextState)
+        if (input.isKeyDown('0')) SaveReplay('0');
+        if (input.isKeyDown('1')) SaveReplay('1');
+        if (input.isKeyDown('2')) SaveReplay('2');
+        if (input.isKeyDown('3')) SaveReplay('3');
+        if (input.isKeyDown('4')) SaveReplay('4');
+        if (input.isKeyDown('5')) SaveReplay('5');
+        if (input.isKeyDown('6')) SaveReplay('6');
+        if (input.isKeyDown('7')) SaveReplay('7');
+        if (input.isKeyDown('8')) SaveReplay('8');
+        if (input.isKeyDown('9')) SaveReplay('9');
+        if (input.isKeyDown(VK_F12))
         {
-            case CR_TITLEMENU:
-                context.changeState<CMENU>(WINX, WINY);
-                break;
-
-            case CR_BEGINNORMAL:
-            case CR_BEGINMASK1:
-            case CR_BEGINMASK2:
-            case CR_BEGINMASK3:
-            case CR_BEGINMASK4:
-                context.changeState<CSAME>(GAMEX, GAMEY, nextState - CR_BEGINNORMAL);
-                break;
-
-            case CR_ENDGAME:
-                context.finish();
-                break;
+            context.changeState<CMENU>(WINX, WINY);
+            return;
+        }
+        if (input.isKeyDown(VK_ESCAPE))
+        {
+            context.finish();
+            return;
         }
     }
 }
@@ -263,10 +212,6 @@ void CREPLAY::draw(same::ui::Surface& backSurface)
     }
 }
 
-void CREPLAY::onMouseMove(POINT const&)
-{
-}
-
 // マス目チェック
 void CREPLAY::Onselect(unsigned short pos)
 {
@@ -340,14 +285,6 @@ void CREPLAY::Inexplore(unsigned short pos)
         if ((pos % m_Width) < m_Width - 1) Inexplore(pos + 1);
         if ((pos / m_Width) < m_Height - 1) Inexplore(pos + m_Width);
     }
-}
-
-unsigned char CREPLAY::onMouseLButtonUp()
-{
-    if (m_Status == GS_NOREPLAY)
-        return CR_TITLEMENU;
-
-    return CR_NOSTATUS;
 }
 
 // 駒消去
@@ -522,33 +459,6 @@ bool CREPLAY::CntGroups()
 void CREPLAY::AddScore(unsigned long add)
 {
     m_Score += add;
-}
-
-unsigned char CREPLAY::onKeyDown(::WPARAM key)
-{
-    switch (key)
-    {
-        case '0':
-        case '1':
-        case '2':
-        case '3':
-        case '4':
-        case '5':
-        case '6':
-        case '7':
-        case '8':
-        case '9':
-            SaveReplay(static_cast<char>(key));
-            break;
-
-        case VK_F12:
-            return CR_TITLEMENU;
-
-        case VK_ESCAPE:
-            return CR_ENDGAME;
-    }
-
-    return CR_NOSTATUS;
 }
 
 // リプレイ再生中
