@@ -55,6 +55,8 @@ namespace same::ui
 
         bool mouseMoved_ = false;
         ::POINT mousePosition{ 0, 0 };
+
+        bool mouseLButtonUp_ = false;
     };
 }
 

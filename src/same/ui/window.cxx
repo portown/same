@@ -87,6 +87,44 @@ void ns::Window::onIdle()
         mouseMoved_ = false;
     }
 
+    if (mouseLButtonUp_)
+    {
+        auto const nextState = gameState_->Click();
+        switch (nextState)
+        {
+            case CR_ENDGAME:
+                ::DestroyWindow(hwnd_);
+                break;
+
+            case CR_TITLEMENU:
+                gameState_ = std::make_shared<CMENU>(WINX, WINY);
+                break;
+
+            case CR_BEGINNORMAL:
+            case CR_BEGINMASK1:
+            case CR_BEGINMASK2:
+            case CR_BEGINMASK3:
+            case CR_BEGINMASK4:
+                gameState_ = std::make_shared<CSAME>(GAMEX, GAMEY, nextState - CR_BEGINNORMAL);
+                break;
+
+            case CR_REPLAY:
+            case CR_REPLAY0:
+            case CR_REPLAY1:
+            case CR_REPLAY2:
+            case CR_REPLAY3:
+            case CR_REPLAY4:
+            case CR_REPLAY5:
+            case CR_REPLAY6:
+            case CR_REPLAY7:
+            case CR_REPLAY8:
+            case CR_REPLAY9:
+                gameState_ = std::make_shared<CREPLAY>(hwnd_, GAMEX, GAMEY, nextState - CR_REPLAY0);
+                break;
+        }
+        mouseLButtonUp_ = false;
+    }
+
     frameRendered_ = false;
     ::InvalidateRect(hwnd_, nullptr, FALSE);
 }
@@ -164,39 +202,7 @@ void ns::Window::onMouseMove(::WORD x, ::WORD y)
 
 void ns::Window::onLButtonUp()
 {
-    auto const nextState = gameState_->Click();
-    switch (nextState)
-    {
-        case CR_ENDGAME:
-            ::DestroyWindow(hwnd_);
-            break;
-
-        case CR_TITLEMENU:
-            gameState_ = std::make_shared<CMENU>(WINX, WINY);
-            break;
-
-        case CR_BEGINNORMAL:
-        case CR_BEGINMASK1:
-        case CR_BEGINMASK2:
-        case CR_BEGINMASK3:
-        case CR_BEGINMASK4:
-            gameState_ = std::make_shared<CSAME>(GAMEX, GAMEY, nextState - CR_BEGINNORMAL);
-            break;
-
-        case CR_REPLAY:
-        case CR_REPLAY0:
-        case CR_REPLAY1:
-        case CR_REPLAY2:
-        case CR_REPLAY3:
-        case CR_REPLAY4:
-        case CR_REPLAY5:
-        case CR_REPLAY6:
-        case CR_REPLAY7:
-        case CR_REPLAY8:
-        case CR_REPLAY9:
-            gameState_ = std::make_shared<CREPLAY>(hwnd_, GAMEX, GAMEY, nextState - CR_REPLAY0);
-            break;
-    }
+    mouseLButtonUp_ = true;
 }
 
 void ns::Window::onKeyDown(::WPARAM keyCode)
