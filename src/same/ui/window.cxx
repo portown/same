@@ -124,6 +124,32 @@ void ns::Window::onIdle()
         }
         mouseLButtonUp_ = false;
     }
+    else
+    {
+        for (auto&& k : pressedKeys_)
+        {
+            auto const nextState = gameState_->KeyDown(k);
+            switch (nextState)
+            {
+                case CR_TITLEMENU:
+                    gameState_ = std::make_shared<CMENU>(WINX, WINY);
+                    break;
+
+                case CR_BEGINNORMAL:
+                case CR_BEGINMASK1:
+                case CR_BEGINMASK2:
+                case CR_BEGINMASK3:
+                case CR_BEGINMASK4:
+                    gameState_ = std::make_shared<CSAME>(GAMEX, GAMEY, nextState - CR_BEGINNORMAL);
+                    break;
+
+                case CR_ENDGAME:
+                    ::DestroyWindow(hwnd_);
+                    break;
+            }
+        }
+    }
+    pressedKeys_.clear();
 
     frameRendered_ = false;
     ::InvalidateRect(hwnd_, nullptr, FALSE);
@@ -207,25 +233,7 @@ void ns::Window::onLButtonUp()
 
 void ns::Window::onKeyDown(::WPARAM keyCode)
 {
-    auto const nextState = gameState_->KeyDown(keyCode);
-    switch (nextState)
-    {
-        case CR_TITLEMENU:
-            gameState_ = std::make_shared<CMENU>(WINX, WINY);
-            break;
-
-        case CR_BEGINNORMAL:
-        case CR_BEGINMASK1:
-        case CR_BEGINMASK2:
-        case CR_BEGINMASK3:
-        case CR_BEGINMASK4:
-            gameState_ = std::make_shared<CSAME>(GAMEX, GAMEY, nextState - CR_BEGINNORMAL);
-            break;
-
-        case CR_ENDGAME:
-            ::DestroyWindow(hwnd_);
-            break;
-    }
+    pressedKeys_.insert(keyCode);
 }
 
 void ns::Window::onTimer()

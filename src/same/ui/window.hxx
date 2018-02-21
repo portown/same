@@ -5,6 +5,7 @@
 
 #include <chrono>
 #include <memory>
+#include <unordered_set>
 
 #include <windows.h>
 
@@ -57,6 +58,8 @@ namespace same::ui
         ::POINT mousePosition{ 0, 0 };
 
         bool mouseLButtonUp_ = false;
+
+        std::unordered_set<::WPARAM> pressedKeys_;
     };
 }
 
