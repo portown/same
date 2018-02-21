@@ -83,12 +83,12 @@ void ns::Window::onIdle()
 
     if (input_.isMouseMoved())
     {
-        gameState_->Select(input_.getMousePosition());
+        gameContext_.onMouseMove(input_.getMousePosition());
     }
 
     if (input_.isMouseLButtonUp())
     {
-        auto const nextState = gameState_->Click();
+        auto const nextState = gameContext_.onMouseLButtonUp();
         switch (nextState)
         {
             case CR_ENDGAME:
@@ -96,7 +96,7 @@ void ns::Window::onIdle()
                 break;
 
             case CR_TITLEMENU:
-                gameState_ = std::make_shared<CMENU>(WINX, WINY);
+                gameContext_.changeState<CMENU>(WINX, WINY);
                 break;
 
             case CR_BEGINNORMAL:
@@ -104,7 +104,7 @@ void ns::Window::onIdle()
             case CR_BEGINMASK2:
             case CR_BEGINMASK3:
             case CR_BEGINMASK4:
-                gameState_ = std::make_shared<CSAME>(GAMEX, GAMEY, nextState - CR_BEGINNORMAL);
+                gameContext_.changeState<CSAME>(GAMEX, GAMEY, nextState - CR_BEGINNORMAL);
                 break;
 
             case CR_REPLAY:
@@ -118,33 +118,33 @@ void ns::Window::onIdle()
             case CR_REPLAY7:
             case CR_REPLAY8:
             case CR_REPLAY9:
-                gameState_ = std::make_shared<CREPLAY>(hwnd_, GAMEX, GAMEY, nextState - CR_REPLAY0);
+                gameContext_.changeState<CREPLAY>(hwnd_, GAMEX, GAMEY, nextState - CR_REPLAY0);
                 break;
         }
     }
     else
     {
-        decltype(gameState_->KeyDown(VK_RETURN))nextState;
+        decltype(gameContext_.onKeyDown(VK_RETURN))nextState;
 
-        if (input_.isKeyDown(VK_RETURN)) nextState = gameState_->KeyDown(VK_RETURN);
-        if (input_.isKeyDown('0')) nextState = gameState_->KeyDown('0');
-        if (input_.isKeyDown('1')) nextState = gameState_->KeyDown('1');
-        if (input_.isKeyDown('2')) nextState = gameState_->KeyDown('2');
-        if (input_.isKeyDown('3')) nextState = gameState_->KeyDown('3');
-        if (input_.isKeyDown('4')) nextState = gameState_->KeyDown('4');
-        if (input_.isKeyDown('5')) nextState = gameState_->KeyDown('5');
-        if (input_.isKeyDown('6')) nextState = gameState_->KeyDown('6');
-        if (input_.isKeyDown('7')) nextState = gameState_->KeyDown('7');
-        if (input_.isKeyDown('8')) nextState = gameState_->KeyDown('8');
-        if (input_.isKeyDown('9')) nextState = gameState_->KeyDown('9');
-        if (input_.isKeyDown(VK_F8)) nextState = gameState_->KeyDown(VK_F8);
-        if (input_.isKeyDown(VK_F12)) nextState = gameState_->KeyDown(VK_F12);
-        if (input_.isKeyDown(VK_ESCAPE)) nextState = gameState_->KeyDown(VK_ESCAPE);
+        if (input_.isKeyDown(VK_RETURN)) nextState = gameContext_.onKeyDown(VK_RETURN);
+        if (input_.isKeyDown('0')) nextState = gameContext_.onKeyDown('0');
+        if (input_.isKeyDown('1')) nextState = gameContext_.onKeyDown('1');
+        if (input_.isKeyDown('2')) nextState = gameContext_.onKeyDown('2');
+        if (input_.isKeyDown('3')) nextState = gameContext_.onKeyDown('3');
+        if (input_.isKeyDown('4')) nextState = gameContext_.onKeyDown('4');
+        if (input_.isKeyDown('5')) nextState = gameContext_.onKeyDown('5');
+        if (input_.isKeyDown('6')) nextState = gameContext_.onKeyDown('6');
+        if (input_.isKeyDown('7')) nextState = gameContext_.onKeyDown('7');
+        if (input_.isKeyDown('8')) nextState = gameContext_.onKeyDown('8');
+        if (input_.isKeyDown('9')) nextState = gameContext_.onKeyDown('9');
+        if (input_.isKeyDown(VK_F8)) nextState = gameContext_.onKeyDown(VK_F8);
+        if (input_.isKeyDown(VK_F12)) nextState = gameContext_.onKeyDown(VK_F12);
+        if (input_.isKeyDown(VK_ESCAPE)) nextState = gameContext_.onKeyDown(VK_ESCAPE);
 
         switch (nextState)
         {
             case CR_TITLEMENU:
-                gameState_ = std::make_shared<CMENU>(WINX, WINY);
+                gameContext_.changeState<CMENU>(WINX, WINY);
                 break;
 
             case CR_BEGINNORMAL:
@@ -152,7 +152,7 @@ void ns::Window::onIdle()
             case CR_BEGINMASK2:
             case CR_BEGINMASK3:
             case CR_BEGINMASK4:
-                gameState_ = std::make_shared<CSAME>(GAMEX, GAMEY, nextState - CR_BEGINNORMAL);
+                gameContext_.changeState<CSAME>(GAMEX, GAMEY, nextState - CR_BEGINNORMAL);
                 break;
 
             case CR_ENDGAME:
@@ -218,7 +218,7 @@ void ns::Window::onIdle()
 void ns::Window::onCreate()
 {
     backSurface_ = Surface::create(geometry::makeSize(WINX, WINY));
-    gameState_   = std::make_shared<CMENU>(WINX, WINY);
+    gameContext_.changeState<CMENU>(WINX, WINY);
 }
 
 void ns::Window::onPaint()
@@ -226,7 +226,7 @@ void ns::Window::onPaint()
     ::PAINTSTRUCT ps;
     auto const surface = Surface::onPaint(hwnd_, ps);
     backSurface_->paint(RGB(0, 0, 0));
-    gameState_->Draw(*backSurface_);
+    gameContext_.draw(*backSurface_);
     backSurface_->blitTo(*surface);
     frameRendered_ = true;
 }
@@ -248,5 +248,5 @@ void ns::Window::onKeyDown(::WPARAM keyCode)
 
 void ns::Window::onTimer()
 {
-    std::dynamic_pointer_cast<CREPLAY>(gameState_)->Replay();
+    gameContext_.onReplay();
 }

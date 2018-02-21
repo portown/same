@@ -65,7 +65,7 @@ CREPLAY::CREPLAY(HWND hWnd, unsigned short wx, unsigned short wy, char cNum)
     SetTimer(m_hWnd, MINE_TIMER, 1000, nullptr);
 }
 
-void CREPLAY::Draw(same::ui::Surface& backSurface)
+void CREPLAY::draw(same::ui::Surface& backSurface)
 {
     unsigned short i, j;
     unsigned char  tmp;
@@ -173,7 +173,7 @@ void CREPLAY::Draw(same::ui::Surface& backSurface)
     }
 }
 
-void CREPLAY::Select(POINT)
+void CREPLAY::onMouseMove(POINT const&)
 {
 }
 
@@ -252,7 +252,7 @@ void CREPLAY::Inexplore(unsigned short pos)
     }
 }
 
-unsigned char CREPLAY::Click()
+unsigned char CREPLAY::onMouseLButtonUp()
 {
     if (m_Status == GS_NOREPLAY)
         return CR_TITLEMENU;
@@ -434,7 +434,7 @@ void CREPLAY::AddScore(unsigned long add)
     m_Score += add;
 }
 
-unsigned char CREPLAY::KeyDown(WPARAM key)
+unsigned char CREPLAY::onKeyDown(::WPARAM key)
 {
     switch (key)
     {

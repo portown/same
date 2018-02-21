@@ -52,7 +52,7 @@ CSAME::CSAME(unsigned short wx, unsigned short wy, char cMaskNum, unsigned long 
     m_Played.clear();
 }
 
-void CSAME::Draw(same::ui::Surface& backSurface)
+void CSAME::draw(same::ui::Surface& backSurface)
 {
     // ゲーム盤の描画
     if (m_cMaskNum < 4)
@@ -181,7 +181,7 @@ void CSAME::Draw(same::ui::Surface& backSurface)
 }
 
 // マス目チェック
-void CSAME::Select(POINT pt)
+void CSAME::onMouseMove(::POINT const& pt)
 {
     static unsigned short s_sBef = m_Width * m_Height;
 
@@ -276,7 +276,7 @@ void CSAME::Inexplore(unsigned short pos)
 }
 
 // 駒消去
-unsigned char CSAME::Click()
+unsigned char CSAME::onMouseLButtonUp()
 {
     if (!m_bDraw) return CR_NOSTATUS;
 
@@ -461,7 +461,7 @@ void CSAME::AddScore(unsigned long add)
     if (m_Score > m_HighScore) m_HighScore = m_Score;
 }
 
-unsigned char CSAME::KeyDown(WPARAM key)
+unsigned char CSAME::onKeyDown(::WPARAM key)
 {
     switch (key)
     {

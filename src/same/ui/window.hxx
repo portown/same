@@ -9,6 +9,7 @@
 #include <windows.h>
 
 #include "../input.hxx"
+#include "../game_context.hxx"
 #include "../../structs.hxx"
 #include "surface.hxx"
 
@@ -51,7 +52,7 @@ namespace same::ui
         Clock::time_point previousFrameTime_;
         bool frameRendered_ = false;
 
-        std::shared_ptr<CGAME> gameState_;
+        GameContext gameContext_;
         std::shared_ptr<Surface> backSurface_;
 
         Input input_;

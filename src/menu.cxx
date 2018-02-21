@@ -24,7 +24,7 @@ CMENU::CMENU(unsigned short width, unsigned short height)
     menuSurface_ = same::ui::Surface::fromBitmapFile(DATA("menu.bmp"));
 }
 
-void CMENU::Draw(same::ui::Surface& backSurface)
+void CMENU::draw(same::ui::Surface& backSurface)
 {
     int i;
 
@@ -124,7 +124,7 @@ void CMENU::Draw(same::ui::Surface& backSurface)
     }
 }
 
-void CMENU::Select(POINT pt)
+void CMENU::onMouseMove(::POINT const& pt)
 {
     unsigned char before = m_Sel;
 
@@ -162,7 +162,7 @@ void CMENU::Select(POINT pt)
         PlaySound(SELWAV, nullptr, SND_FILENAME | SND_ASYNC);
 }
 
-unsigned char CMENU::Click()
+unsigned char CMENU::onMouseLButtonUp()
 {
     switch (m_Sel)
     {
@@ -202,7 +202,7 @@ unsigned char CMENU::Click()
     return CR_NOSTATUS;
 }
 
-unsigned char CMENU::KeyDown(WPARAM key)
+unsigned char CMENU::onKeyDown(::WPARAM key)
 {
     switch (key)
     {

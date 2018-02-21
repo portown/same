@@ -8,20 +8,11 @@
 
 #include <windows.h>
 
+#include "same/game_context.hxx"
 #include "same/ui/surface.hxx"
 
 
-struct CGAME
-{
-    virtual void Draw(same::ui::Surface& backSurface) = 0;
-
-    virtual void          Select(POINT) = 0;
-    virtual unsigned char Click()       = 0;
-
-    virtual unsigned char KeyDown(WPARAM) = 0;
-};
-
-class CSAME : public CGAME
+class CSAME : public same::GameState
 {
     std::shared_ptr<same::ui::Surface> surface_;
     unsigned char m_Level;                      // 隠し要素レベル（＝プレイヤーレベル）
@@ -59,12 +50,13 @@ class CSAME : public CGAME
 
 public:
     CSAME(unsigned short, unsigned short, char);
-    void Draw(same::ui::Surface& backSurface) override;
+    void draw(same::ui::Surface& backSurface) override;
 
-    void Select(POINT) override;
-    unsigned char Click() override;
+    void          onMouseMove(::POINT const& point) override;
+    unsigned char onMouseLButtonUp() override;
 
-    unsigned char KeyDown(WPARAM) override;
+    unsigned char onKeyDown(::WPARAM keyCode) override;
+
     ~CSAME();
 
 public:     // for tests
@@ -74,7 +66,7 @@ public:     // for tests
     bool                       selectsAt(unsigned short x, unsigned short y) const;
 };
 
-class CMENU : public CGAME
+class CMENU : public same::GameState
 {
     std::shared_ptr<same::ui::Surface> surface_;
     unsigned char m_Level;                      // 隠し要素レベル（＝プレイヤーレベル）
@@ -94,16 +86,17 @@ class CMENU : public CGAME
 
 public:
     CMENU(unsigned short, unsigned short);
-    void Draw(same::ui::Surface& backSurface) override;
+    void draw(same::ui::Surface& backSurface) override;
 
-    void Select(POINT) override;
-    unsigned char Click() override;
+    void          onMouseMove(::POINT const& point) override;
+    unsigned char onMouseLButtonUp() override;
 
-    unsigned char KeyDown(WPARAM) override;
+    unsigned char onKeyDown(::WPARAM keyCode) override;
+
     ~CMENU();
 };
 
-class CREPLAY : public CGAME
+class CREPLAY : public same::GameState
 {
     std::shared_ptr<same::ui::Surface> surface_;
 
@@ -142,13 +135,13 @@ class CREPLAY : public CGAME
 
 public:
     CREPLAY(HWND, unsigned short, unsigned short, char);
-    void Draw(same::ui::Surface& backSurface) override;
+    void draw(same::ui::Surface& backSurface) override;
 
-    void Select(POINT) override;
-    unsigned char Click() override;
+    void          onMouseMove(::POINT const& point) override;
+    unsigned char onMouseLButtonUp() override;
 
-    unsigned char KeyDown(WPARAM) override;
-    void Replay();
+    unsigned char onKeyDown(::WPARAM keyCode) override;
+    void          Replay();
 
     ~CREPLAY();
 };
