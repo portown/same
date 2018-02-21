@@ -81,6 +81,12 @@ void ns::Window::onIdle()
     if (now - previousFrameTime_ < 1000ms / 60) return;
     previousFrameTime_ = now;
 
+    if (mouseMoved_)
+    {
+        gameState_->Select(mousePosition);
+        mouseMoved_ = false;
+    }
+
     frameRendered_ = false;
     ::InvalidateRect(hwnd_, nullptr, FALSE);
 }
@@ -152,7 +158,8 @@ void ns::Window::onPaint()
 
 void ns::Window::onMouseMove(::WORD x, ::WORD y)
 {
-    gameState_->Select({ x, y });
+    mouseMoved_   = true;
+    mousePosition = { x, y };
 }
 
 void ns::Window::onLButtonUp()

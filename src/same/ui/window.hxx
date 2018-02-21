@@ -52,6 +52,9 @@ namespace same::ui
 
         std::shared_ptr<CGAME> gameState_;
         std::shared_ptr<Surface> backSurface_;
+
+        bool mouseMoved_ = false;
+        ::POINT mousePosition{ 0, 0 };
     };
 }
 
