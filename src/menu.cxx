@@ -162,7 +162,7 @@ void CMENU::Select(POINT pt)
         PlaySound(SELWAV, nullptr, SND_FILENAME | SND_ASYNC);
 }
 
-unsigned char CMENU::Click(void)
+unsigned char CMENU::Click()
 {
     switch (m_Sel)
     {
@@ -213,12 +213,12 @@ unsigned char CMENU::KeyDown(WPARAM key)
     return CR_NOSTATUS;
 }
 
-CMENU::~CMENU(void)
+CMENU::~CMENU()
 {
     SaveStatus();
 }
 
-void CMENU::LoadStatus(void)
+void CMENU::LoadStatus()
 {
     HANDLE hFile;
     DWORD  dwRead;
@@ -232,7 +232,7 @@ void CMENU::LoadStatus(void)
     CloseHandle(hFile);
 }
 
-void CMENU::SaveStatus(void)
+void CMENU::SaveStatus()
 {
     HANDLE hFile;
     DWORD  dwWritten;

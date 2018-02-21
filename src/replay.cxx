@@ -232,7 +232,7 @@ void CREPLAY::Explore(unsigned short pos, unsigned char piece)
 }
 
 // マス目選択消去
-void CREPLAY::Unselect(void)
+void CREPLAY::Unselect()
 {
     Inexplore(m_by * m_Width + m_bx);
 }
@@ -252,7 +252,7 @@ void CREPLAY::Inexplore(unsigned short pos)
     }
 }
 
-unsigned char CREPLAY::Click(void)
+unsigned char CREPLAY::Click()
 {
     if (m_Status == GS_NOREPLAY)
         return CR_TITLEMENU;
@@ -261,7 +261,7 @@ unsigned char CREPLAY::Click(void)
 }
 
 // 駒消去
-unsigned char CREPLAY::Onclick(void)
+unsigned char CREPLAY::Onclick()
 {
     unsigned char cRet;
 
@@ -321,7 +321,7 @@ void CREPLAY::Exexplore(unsigned short pos)
 }
 
 // 駒落ちチェック
-void CREPLAY::Check(void)
+void CREPLAY::Check()
 {
     unsigned short i, j, max;
 
@@ -381,7 +381,7 @@ void CREPLAY::HShift(unsigned short pos)
 }
 
 // 終了チェック
-unsigned char CREPLAY::EndCheck(void)
+unsigned char CREPLAY::EndCheck()
 {
     bool bAll;
 
@@ -395,7 +395,7 @@ unsigned char CREPLAY::EndCheck(void)
 }
 
 // 塊の個数計算
-bool CREPLAY::CntGroups(void)
+bool CREPLAY::CntGroups()
 {
     unsigned short max, i;
     unsigned char  cPiece = 0;
@@ -462,7 +462,7 @@ unsigned char CREPLAY::KeyDown(WPARAM key)
 }
 
 // リプレイ再生中
-void CREPLAY::Replay(void)
+void CREPLAY::Replay()
 {
     unsigned short i = static_cast<unsigned short>(m_Played.size());
     if (m_Tries > i) return;
@@ -481,7 +481,7 @@ void CREPLAY::Replay(void)
     InvalidateRect(m_hWnd, nullptr, FALSE);
 }
 
-CREPLAY::~CREPLAY(void)
+CREPLAY::~CREPLAY()
 {
     KillTimer(m_hWnd, MINE_TIMER);
 }

@@ -255,7 +255,7 @@ void CSAME::Explore(unsigned short pos, unsigned char piece)
 }
 
 // マス目選択消去
-void CSAME::Unselect(void)
+void CSAME::Unselect()
 {
     Inexplore(m_by * m_Width + m_bx);
 }
@@ -276,7 +276,7 @@ void CSAME::Inexplore(unsigned short pos)
 }
 
 // 駒消去
-unsigned char CSAME::Click(void)
+unsigned char CSAME::Click()
 {
     if (!m_bDraw) return CR_NOSTATUS;
 
@@ -351,7 +351,7 @@ void CSAME::Exexplore(unsigned short pos)
 }
 
 // 駒落ちチェック
-void CSAME::Check(void)
+void CSAME::Check()
 {
     auto const max = m_Width * m_Height;
 
@@ -410,7 +410,7 @@ void CSAME::HShift(unsigned short pos)
 }
 
 // 終了チェック
-unsigned char CSAME::EndCheck(void)
+unsigned char CSAME::EndCheck()
 {
     auto const bAll = CntGroups();
 
@@ -422,7 +422,7 @@ unsigned char CSAME::EndCheck(void)
 }
 
 // 塊の個数計算
-bool CSAME::CntGroups(void)
+bool CSAME::CntGroups()
 {
     unsigned char cPiece = 0;
 
@@ -496,12 +496,12 @@ unsigned char CSAME::KeyDown(WPARAM key)
     return CR_NOSTATUS;
 }
 
-CSAME::~CSAME(void)
+CSAME::~CSAME()
 {
     SaveStatus();
 }
 
-void CSAME::LoadStatus(void)
+void CSAME::LoadStatus()
 {
     auto const hFile = CreateFile(DATFILE, GENERIC_READ, 0, nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
     if (hFile == INVALID_HANDLE_VALUE) return;
@@ -519,7 +519,7 @@ void CSAME::LoadStatus(void)
     CloseHandle(hFile);
 }
 
-void CSAME::SaveStatus(void)
+void CSAME::SaveStatus()
 {
     auto const data = reinterpret_cast<char*>(&m_HighScore);
     for (auto i = 0; i < static_cast<int>(sizeof(unsigned long)); ++i)

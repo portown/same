@@ -16,10 +16,10 @@ struct CGAME
     virtual void Draw(same::ui::Surface& backSurface) = 0;
 
     virtual void          Select(POINT) = 0;
-    virtual unsigned char Click(void)   = 0;
+    virtual unsigned char Click()       = 0;
 
     virtual unsigned char KeyDown(WPARAM) = 0;
-    virtual ~CGAME(void) {}
+    virtual ~CGAME() {}
 };
 
 class CSAME : public CGAME
@@ -44,18 +44,18 @@ class CSAME : public CGAME
     bool m_bReGame;                       // クリックフラグ
     char m_cMaskNum;                       // マスクレベル
 
-    void          Unselect(void);
+    void          Unselect();
     void          Explore(unsigned short, unsigned char);
     void          Inexplore(unsigned short);
     void          Exexplore(unsigned short);
-    void          Check(void);
+    void          Check();
     void          VShift(unsigned short);
     void          HShift(unsigned short);
-    unsigned char EndCheck(void);
-    bool          CntGroups(void);
+    unsigned char EndCheck();
+    bool          CntGroups();
     void          AddScore(unsigned long);
-    void          LoadStatus(void);
-    void          SaveStatus(void);
+    void          LoadStatus();
+    void          SaveStatus();
     void          SaveReplay(char);
 
 public:
@@ -63,10 +63,10 @@ public:
     void Draw(same::ui::Surface& backSurface) override;
 
     void Select(POINT) override;
-    unsigned char Click(void) override;
+    unsigned char Click() override;
 
     unsigned char KeyDown(WPARAM) override;
-    ~CSAME(void) override;
+    ~CSAME() override;
 
 public:     // for tests
     CSAME(unsigned short wx, unsigned short wy, char cMaskNum, unsigned long gameNum);
@@ -90,18 +90,18 @@ class CMENU : public CGAME
     RECT m_rcLeft;                               // 左矢印エリア
     RECT m_rcRight;                               // 右矢印エリア
 
-    virtual void LoadStatus(void);
-    virtual void SaveStatus(void);
+    virtual void LoadStatus();
+    virtual void SaveStatus();
 
 public:
     CMENU(unsigned short, unsigned short);
     void Draw(same::ui::Surface& backSurface) override;
 
     void Select(POINT) override;
-    unsigned char Click(void) override;
+    unsigned char Click() override;
 
     unsigned char KeyDown(WPARAM) override;
-    ~CMENU(void) override;
+    ~CMENU() override;
 };
 
 class CREPLAY : public CGAME
@@ -127,16 +127,16 @@ class CREPLAY : public CGAME
     bool m_bErase;                               // 消去フラグ
 
     void          Onselect(unsigned short);
-    void          Unselect(void);
+    void          Unselect();
     void          Explore(unsigned short, unsigned char);
     void          Inexplore(unsigned short);
     void          Exexplore(unsigned short);
-    unsigned char Onclick(void);
-    void          Check(void);
+    unsigned char Onclick();
+    void          Check();
     void          VShift(unsigned short);
     void          HShift(unsigned short);
-    unsigned char EndCheck(void);
-    bool          CntGroups(void);
+    unsigned char EndCheck();
+    bool          CntGroups();
     void          AddScore(unsigned long);
     bool          LoadReplay(char);
     void          SaveReplay(char);
@@ -146,12 +146,12 @@ public:
     void Draw(same::ui::Surface& backSurface) override;
 
     void Select(POINT) override;
-    unsigned char Click(void) override;
+    unsigned char Click() override;
 
     unsigned char KeyDown(WPARAM) override;
-    void Replay(void);
+    void Replay();
 
-    ~CREPLAY(void) override;
+    ~CREPLAY() override;
 };
 
 #endif  // STRUCTS_HXX
