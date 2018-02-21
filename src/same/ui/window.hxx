@@ -5,10 +5,10 @@
 
 #include <chrono>
 #include <memory>
-#include <unordered_set>
 
 #include <windows.h>
 
+#include "../input.hxx"
 #include "../../structs.hxx"
 #include "surface.hxx"
 
@@ -54,12 +54,7 @@ namespace same::ui
         std::shared_ptr<CGAME> gameState_;
         std::shared_ptr<Surface> backSurface_;
 
-        bool mouseMoved_ = false;
-        ::POINT mousePosition{ 0, 0 };
-
-        bool mouseLButtonUp_ = false;
-
-        std::unordered_set<::WPARAM> pressedKeys_;
+        Input input_;
     };
 }
 

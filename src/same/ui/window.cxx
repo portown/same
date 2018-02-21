@@ -81,13 +81,12 @@ void ns::Window::onIdle()
     if (now - previousFrameTime_ < 1000ms / 60) return;
     previousFrameTime_ = now;
 
-    if (mouseMoved_)
+    if (input_.isMouseMoved())
     {
-        gameState_->Select(mousePosition);
-        mouseMoved_ = false;
+        gameState_->Select(input_.getMousePosition());
     }
 
-    if (mouseLButtonUp_)
+    if (input_.isMouseLButtonUp())
     {
         auto const nextState = gameState_->Click();
         switch (nextState)
@@ -122,34 +121,46 @@ void ns::Window::onIdle()
                 gameState_ = std::make_shared<CREPLAY>(hwnd_, GAMEX, GAMEY, nextState - CR_REPLAY0);
                 break;
         }
-        mouseLButtonUp_ = false;
     }
     else
     {
-        for (auto&& k : pressedKeys_)
+        decltype(gameState_->KeyDown(VK_RETURN))nextState;
+
+        if (input_.isKeyDown(VK_RETURN)) nextState = gameState_->KeyDown(VK_RETURN);
+        if (input_.isKeyDown('0')) nextState = gameState_->KeyDown('0');
+        if (input_.isKeyDown('1')) nextState = gameState_->KeyDown('1');
+        if (input_.isKeyDown('2')) nextState = gameState_->KeyDown('2');
+        if (input_.isKeyDown('3')) nextState = gameState_->KeyDown('3');
+        if (input_.isKeyDown('4')) nextState = gameState_->KeyDown('4');
+        if (input_.isKeyDown('5')) nextState = gameState_->KeyDown('5');
+        if (input_.isKeyDown('6')) nextState = gameState_->KeyDown('6');
+        if (input_.isKeyDown('7')) nextState = gameState_->KeyDown('7');
+        if (input_.isKeyDown('8')) nextState = gameState_->KeyDown('8');
+        if (input_.isKeyDown('9')) nextState = gameState_->KeyDown('9');
+        if (input_.isKeyDown(VK_F8)) nextState = gameState_->KeyDown(VK_F8);
+        if (input_.isKeyDown(VK_F12)) nextState = gameState_->KeyDown(VK_F12);
+        if (input_.isKeyDown(VK_ESCAPE)) nextState = gameState_->KeyDown(VK_ESCAPE);
+
+        switch (nextState)
         {
-            auto const nextState = gameState_->KeyDown(k);
-            switch (nextState)
-            {
-                case CR_TITLEMENU:
-                    gameState_ = std::make_shared<CMENU>(WINX, WINY);
-                    break;
+            case CR_TITLEMENU:
+                gameState_ = std::make_shared<CMENU>(WINX, WINY);
+                break;
 
-                case CR_BEGINNORMAL:
-                case CR_BEGINMASK1:
-                case CR_BEGINMASK2:
-                case CR_BEGINMASK3:
-                case CR_BEGINMASK4:
-                    gameState_ = std::make_shared<CSAME>(GAMEX, GAMEY, nextState - CR_BEGINNORMAL);
-                    break;
+            case CR_BEGINNORMAL:
+            case CR_BEGINMASK1:
+            case CR_BEGINMASK2:
+            case CR_BEGINMASK3:
+            case CR_BEGINMASK4:
+                gameState_ = std::make_shared<CSAME>(GAMEX, GAMEY, nextState - CR_BEGINNORMAL);
+                break;
 
-                case CR_ENDGAME:
-                    ::DestroyWindow(hwnd_);
-                    break;
-            }
+            case CR_ENDGAME:
+                ::DestroyWindow(hwnd_);
+                break;
         }
     }
-    pressedKeys_.clear();
+    input_.clear();
 
     frameRendered_ = false;
     ::InvalidateRect(hwnd_, nullptr, FALSE);
@@ -222,18 +233,17 @@ void ns::Window::onPaint()
 
 void ns::Window::onMouseMove(::WORD x, ::WORD y)
 {
-    mouseMoved_   = true;
-    mousePosition = { x, y };
+    input_.onMouseMove({ x, y });
 }
 
 void ns::Window::onLButtonUp()
 {
-    mouseLButtonUp_ = true;
+    input_.onMouseLButtonUp();
 }
 
 void ns::Window::onKeyDown(::WPARAM keyCode)
 {
-    pressedKeys_.insert(keyCode);
+    input_.onKeyDown(keyCode);
 }
 
 void ns::Window::onTimer()
