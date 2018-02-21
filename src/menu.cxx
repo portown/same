@@ -33,78 +33,48 @@ void CMENU::onFrame(same::GameContext& context, same::Input const& input)
 
     if (input.isMouseLButtonUp())
     {
-        auto const nextState = onMouseLButtonUp();
-        switch (nextState)
+        switch (m_Sel)
         {
-            case CR_ENDGAME:
+            case 1:
+                ::PlaySound(CLRWAV, nullptr, SND_FILENAME | SND_ASYNC);
+                context.changeState<CSAME>(GAMEX, GAMEY, m_MaskNum);
+                break;
+
+            case 3:
+                ::PlaySound(CLRWAV, nullptr, SND_FILENAME | SND_ASYNC);
+                context.changeState<CREPLAY>(GAMEX, GAMEY, m_RepNum);
+                break;
+
+            case 4:
+                ::PlaySound(CLRWAV, nullptr, SND_FILENAME | SND_SYNC);
                 context.finish();
                 break;
 
-            case CR_TITLEMENU:
-                context.changeState<CMENU>(WINX, WINY);
+            case 6:
+                ::PlaySound(ERSWAV, nullptr, SND_FILENAME | SND_ASYNC);
+                if (--m_MaskNum < 0) m_MaskNum = 0;
                 break;
 
-            case CR_BEGINNORMAL:
-            case CR_BEGINMASK1:
-            case CR_BEGINMASK2:
-            case CR_BEGINMASK3:
-            case CR_BEGINMASK4:
-                context.changeState<CSAME>(GAMEX, GAMEY, nextState - CR_BEGINNORMAL);
+            case 7:
+                ::PlaySound(ERSWAV, nullptr, SND_FILENAME | SND_ASYNC);
+                if (--m_RepNum < -1) m_RepNum = -1;
                 break;
 
-            case CR_REPLAY:
-            case CR_REPLAY0:
-            case CR_REPLAY1:
-            case CR_REPLAY2:
-            case CR_REPLAY3:
-            case CR_REPLAY4:
-            case CR_REPLAY5:
-            case CR_REPLAY6:
-            case CR_REPLAY7:
-            case CR_REPLAY8:
-            case CR_REPLAY9:
-                context.changeState<CREPLAY>(GAMEX, GAMEY, nextState - CR_REPLAY0);
+            case 10:
+                ::PlaySound(ERSWAV, nullptr, SND_FILENAME | SND_ASYNC);
+                if (++m_MaskNum > std::min<char>(m_Level, MASKMAX)) m_MaskNum = std::min<char>(m_Level, MASKMAX);
+                break;
+
+            case 11:
+                ::PlaySound(ERSWAV, nullptr, SND_FILENAME | SND_ASYNC);
+                if (++m_RepNum > 9) m_RepNum = 9;
+                break;
+
+            default:
                 break;
         }
     }
-    else
-    {
-        decltype(onKeyDown(VK_RETURN))nextState;
-
-        if (input.isKeyDown(VK_RETURN)) nextState = onKeyDown(VK_RETURN);
-        if (input.isKeyDown('0')) nextState = onKeyDown('0');
-        if (input.isKeyDown('1')) nextState = onKeyDown('1');
-        if (input.isKeyDown('2')) nextState = onKeyDown('2');
-        if (input.isKeyDown('3')) nextState = onKeyDown('3');
-        if (input.isKeyDown('4')) nextState = onKeyDown('4');
-        if (input.isKeyDown('5')) nextState = onKeyDown('5');
-        if (input.isKeyDown('6')) nextState = onKeyDown('6');
-        if (input.isKeyDown('7')) nextState = onKeyDown('7');
-        if (input.isKeyDown('8')) nextState = onKeyDown('8');
-        if (input.isKeyDown('9')) nextState = onKeyDown('9');
-        if (input.isKeyDown(VK_F8)) nextState = onKeyDown(VK_F8);
-        if (input.isKeyDown(VK_F12)) nextState = onKeyDown(VK_F12);
-        if (input.isKeyDown(VK_ESCAPE)) nextState = onKeyDown(VK_ESCAPE);
-
-        switch (nextState)
-        {
-            case CR_TITLEMENU:
-                context.changeState<CMENU>(WINX, WINY);
-                break;
-
-            case CR_BEGINNORMAL:
-            case CR_BEGINMASK1:
-            case CR_BEGINMASK2:
-            case CR_BEGINMASK3:
-            case CR_BEGINMASK4:
-                context.changeState<CSAME>(GAMEX, GAMEY, nextState - CR_BEGINNORMAL);
-                break;
-
-            case CR_ENDGAME:
-                context.finish();
-                break;
-        }
-    }
+    else if (input.isKeyDown(VK_ESCAPE)) context.finish();
 }
 
 void CMENU::draw(same::ui::Surface& backSurface)
@@ -243,57 +213,6 @@ void CMENU::onMouseMove(::POINT const& pt)
 
     if (m_Sel != before && m_Sel)
         PlaySound(SELWAV, nullptr, SND_FILENAME | SND_ASYNC);
-}
-
-unsigned char CMENU::onMouseLButtonUp()
-{
-    switch (m_Sel)
-    {
-        case 1:
-            PlaySound(CLRWAV, nullptr, SND_FILENAME | SND_ASYNC);
-            return CR_BEGINNORMAL + m_MaskNum;
-
-        case 3:
-            PlaySound(CLRWAV, nullptr, SND_FILENAME | SND_ASYNC);
-            return CR_REPLAY0 + m_RepNum;
-
-        case 4:
-            PlaySound(CLRWAV, nullptr, SND_FILENAME | SND_SYNC);
-            return CR_ENDGAME;
-
-        case 6:
-            PlaySound(ERSWAV, nullptr, SND_FILENAME | SND_ASYNC);
-            if (--m_MaskNum < 0) m_MaskNum = 0;
-            break;
-
-        case 7:
-            PlaySound(ERSWAV, nullptr, SND_FILENAME | SND_ASYNC);
-            if (--m_RepNum < -1) m_RepNum = -1;
-            break;
-
-        case 10:
-            PlaySound(ERSWAV, nullptr, SND_FILENAME | SND_ASYNC);
-            if (++m_MaskNum > std::min<char>(m_Level, MASKMAX)) m_MaskNum = std::min<char>(m_Level, MASKMAX);
-            break;
-
-        case 11:
-            PlaySound(ERSWAV, nullptr, SND_FILENAME | SND_ASYNC);
-            if (++m_RepNum > 9) m_RepNum = 9;
-            break;
-    }
-
-    return CR_NOSTATUS;
-}
-
-unsigned char CMENU::onKeyDown(::WPARAM key)
-{
-    switch (key)
-    {
-        case VK_ESCAPE:
-            return CR_ENDGAME;
-    }
-
-    return CR_NOSTATUS;
 }
 
 CMENU::~CMENU()

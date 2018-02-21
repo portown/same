@@ -95,10 +95,7 @@ public:
     void draw(same::ui::Surface& backSurface) override;
 
 private:
-    void          onMouseMove(::POINT const& point);
-    unsigned char onMouseLButtonUp();
-
-    unsigned char onKeyDown(::WPARAM keyCode);
+    void onMouseMove(::POINT const& point);
 };
 
 class CREPLAY : public same::GameState
