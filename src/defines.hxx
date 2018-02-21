@@ -21,6 +21,11 @@
 #define DATFILE TEXT(".\\same.dat")
 #define REPFILE TEXT(".\\replay")
 
+constexpr auto WINX  = 640;
+constexpr auto WINY  = 480;
+constexpr auto GAMEX = 320;
+constexpr auto GAMEY = 480;
+
 // クリック戻り値
 enum CLICKRESULT
 {

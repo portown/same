@@ -42,7 +42,6 @@ namespace same::ui
         void onMouseMove(::WORD x, ::WORD y);
         void onLButtonUp();
         void onKeyDown(::WPARAM keyCode);
-        void onTimer();
 
         friend auto makeWindow(::HINSTANCE instance)->std::unique_ptr<Window>;
 

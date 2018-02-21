@@ -3,6 +3,7 @@
 #ifndef STRUCTS_HXX
 #define STRUCTS_HXX
 
+#include <chrono>
 #include <memory>
 #include <vector>
 
@@ -50,14 +51,16 @@ class CSAME : public same::GameState
 
 public:
     CSAME(unsigned short, unsigned short, char);
+    ~CSAME();
+
+    void onFrame(same::GameContext& context, same::Input const& input) override;
     void draw(same::ui::Surface& backSurface) override;
 
-    void          onMouseMove(::POINT const& point) override;
-    unsigned char onMouseLButtonUp() override;
+private:
+    void          onMouseMove(::POINT const& point);
+    unsigned char onMouseLButtonUp();
 
-    unsigned char onKeyDown(::WPARAM keyCode) override;
-
-    ~CSAME();
+    unsigned char onKeyDown(::WPARAM keyCode);
 
 public:     // for tests
     CSAME(unsigned short wx, unsigned short wy, char cMaskNum, unsigned long gameNum);
@@ -86,14 +89,16 @@ class CMENU : public same::GameState
 
 public:
     CMENU(unsigned short, unsigned short);
+    ~CMENU();
+
+    void onFrame(same::GameContext& context, same::Input const& input) override;
     void draw(same::ui::Surface& backSurface) override;
 
-    void          onMouseMove(::POINT const& point) override;
-    unsigned char onMouseLButtonUp() override;
+private:
+    void          onMouseMove(::POINT const& point);
+    unsigned char onMouseLButtonUp();
 
-    unsigned char onKeyDown(::WPARAM keyCode) override;
-
-    ~CMENU();
+    unsigned char onKeyDown(::WPARAM keyCode);
 };
 
 class CREPLAY : public same::GameState
@@ -114,9 +119,10 @@ class CREPLAY : public same::GameState
     unsigned long m_GameNum;                      // ゲームナンバー（乱数の種）
     std::shared_ptr<same::ui::Surface> cursorSurface_;
     RECT m_rcArea;                               // ゲーム盤エリア
-    HWND m_hWnd;                               // ウィンドウハンドル
     char m_cRepNum;                               // リプレイナンバー
     bool m_bErase;                               // 消去フラグ
+    using Clock = std::chrono::steady_clock;
+    Clock::time_point previousTime_;
 
     void          Onselect(unsigned short);
     void          Unselect();
@@ -134,16 +140,17 @@ class CREPLAY : public same::GameState
     void          SaveReplay(char);
 
 public:
-    CREPLAY(HWND, unsigned short, unsigned short, char);
+    CREPLAY(unsigned short, unsigned short, char);
+
+    void onFrame(same::GameContext& context, same::Input const& input) override;
     void draw(same::ui::Surface& backSurface) override;
 
-    void          onMouseMove(::POINT const& point) override;
-    unsigned char onMouseLButtonUp() override;
+private:
+    void          onMouseMove(::POINT const& point);
+    unsigned char onMouseLButtonUp();
 
-    unsigned char onKeyDown(::WPARAM keyCode) override;
+    unsigned char onKeyDown(::WPARAM keyCode);
     void          Replay();
-
-    ~CREPLAY();
 };
 
 #endif  // STRUCTS_HXX

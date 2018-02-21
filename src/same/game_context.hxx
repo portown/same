@@ -8,21 +8,28 @@
 
 #include <windows.h>
 
+#include "input.hxx"
 #include "ui/surface.hxx"
 
 namespace same
 {
+    class GameContext;
+
     struct GameState
     {
+        virtual void onFrame(GameContext& context, Input const& input) = 0;
         virtual void draw(ui::Surface& backSurface) = 0;
 
-        virtual void          onMouseMove(::POINT const& point) = 0;
-        virtual unsigned char onMouseLButtonUp() = 0;
+        explicit GameState() noexcept = default;
 
-        virtual unsigned char onKeyDown(::WPARAM keyCode) = 0;
+        GameState(GameState const&)            = delete;
+        GameState& operator=(GameState const&) = delete;
+
+        GameState(GameState&&)            = delete;
+        GameState& operator=(GameState&&) = delete;
     };
 
-    class GameContext : public GameState
+    class GameContext
     {
     public:
         explicit GameContext() = default;
@@ -33,34 +40,25 @@ namespace same
             setNextState(std::make_shared<T>(std::forward<Args>(args) ...));
         }
 
-        void draw(ui::Surface& backSurface) override
+        void finish() noexcept
+        {
+            finished_ = true;
+        }
+
+        bool isFinished() const noexcept { return finished_; }
+
+        void onFrame(Input const& input);
+
+        void draw(ui::Surface& backSurface)
         {
             if (state_) state_->draw(backSurface);
         }
-
-        void onMouseMove(::POINT const& point) override
-        {
-            if (state_) state_->onMouseMove(point);
-        }
-
-        unsigned char onMouseLButtonUp() override
-        {
-            if (state_) return state_->onMouseLButtonUp();
-            return 0;
-        }
-
-        unsigned char onKeyDown(::WPARAM keyCode) override
-        {
-            if (state_) return state_->onKeyDown(keyCode);
-            return 0;
-        }
-
-        void onReplay();
 
     private:
         void setNextState(std::shared_ptr<GameState>&& newState);
 
         std::shared_ptr<GameState> state_;
+        bool finished_;
     };
 }
 

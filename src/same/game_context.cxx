@@ -6,12 +6,12 @@
 
 namespace ns = same;
 
+void ns::GameContext::onFrame(Input const& input)
+{
+    if (auto current = state_) current->onFrame(*this, input);
+}
+
 void ns::GameContext::setNextState(std::shared_ptr<GameState>&& newState)
 {
     state_ = std::move(newState);
-}
-
-void ns::GameContext::onReplay()
-{
-    if (auto s = std::dynamic_pointer_cast<CREPLAY>(state_)) s->Replay();
 }

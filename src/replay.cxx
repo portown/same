@@ -11,7 +11,7 @@
 #include "resource.h"
 
 
-CREPLAY::CREPLAY(HWND hWnd, unsigned short wx, unsigned short wy, char cNum)
+CREPLAY::CREPLAY(unsigned short wx, unsigned short wy, char cNum)
 {
     unsigned short i, j;
 
@@ -58,11 +58,101 @@ CREPLAY::CREPLAY(HWND hWnd, unsigned short wx, unsigned short wy, char cNum)
     surface_ = same::ui::Surface::fromBitmapFile(DATA(TEXT("system.bmp")));
 
     cursorSurface_ = same::ui::Surface::fromBitmapResource(
-        reinterpret_cast<HINSTANCE>(GetWindowLongPtr(hWnd, GWLP_HINSTANCE)),
+        reinterpret_cast<HINSTANCE>(::GetModuleHandle(nullptr)),
         IDB_SAMECUR);
 
-    m_hWnd = hWnd;
-    SetTimer(m_hWnd, MINE_TIMER, 1000, nullptr);
+    previousTime_ = Clock::now();
+}
+
+void CREPLAY::onFrame(same::GameContext& context, same::Input const& input)
+{
+    using namespace std::literals::chrono_literals;
+    auto const now = Clock::now();
+    if (now - previousTime_ >= 1s)
+    {
+        Replay();
+        previousTime_ = now;
+    }
+
+    if (input.isMouseMoved())
+    {
+        onMouseMove(input.getMousePosition());
+    }
+
+    if (input.isMouseLButtonUp())
+    {
+        auto const nextState = onMouseLButtonUp();
+        switch (nextState)
+        {
+            case CR_ENDGAME:
+                context.finish();
+                break;
+
+            case CR_TITLEMENU:
+                context.changeState<CMENU>(WINX, WINY);
+                break;
+
+            case CR_BEGINNORMAL:
+            case CR_BEGINMASK1:
+            case CR_BEGINMASK2:
+            case CR_BEGINMASK3:
+            case CR_BEGINMASK4:
+                context.changeState<CSAME>(GAMEX, GAMEY, nextState - CR_BEGINNORMAL);
+                break;
+
+            case CR_REPLAY:
+            case CR_REPLAY0:
+            case CR_REPLAY1:
+            case CR_REPLAY2:
+            case CR_REPLAY3:
+            case CR_REPLAY4:
+            case CR_REPLAY5:
+            case CR_REPLAY6:
+            case CR_REPLAY7:
+            case CR_REPLAY8:
+            case CR_REPLAY9:
+                context.changeState<CREPLAY>(GAMEX, GAMEY, nextState - CR_REPLAY0);
+                break;
+        }
+    }
+    else
+    {
+        decltype(onKeyDown(VK_RETURN))nextState;
+
+        if (input.isKeyDown(VK_RETURN)) nextState = onKeyDown(VK_RETURN);
+        if (input.isKeyDown('0')) nextState = onKeyDown('0');
+        if (input.isKeyDown('1')) nextState = onKeyDown('1');
+        if (input.isKeyDown('2')) nextState = onKeyDown('2');
+        if (input.isKeyDown('3')) nextState = onKeyDown('3');
+        if (input.isKeyDown('4')) nextState = onKeyDown('4');
+        if (input.isKeyDown('5')) nextState = onKeyDown('5');
+        if (input.isKeyDown('6')) nextState = onKeyDown('6');
+        if (input.isKeyDown('7')) nextState = onKeyDown('7');
+        if (input.isKeyDown('8')) nextState = onKeyDown('8');
+        if (input.isKeyDown('9')) nextState = onKeyDown('9');
+        if (input.isKeyDown(VK_F8)) nextState = onKeyDown(VK_F8);
+        if (input.isKeyDown(VK_F12)) nextState = onKeyDown(VK_F12);
+        if (input.isKeyDown(VK_ESCAPE)) nextState = onKeyDown(VK_ESCAPE);
+
+        switch (nextState)
+        {
+            case CR_TITLEMENU:
+                context.changeState<CMENU>(WINX, WINY);
+                break;
+
+            case CR_BEGINNORMAL:
+            case CR_BEGINMASK1:
+            case CR_BEGINMASK2:
+            case CR_BEGINMASK3:
+            case CR_BEGINMASK4:
+                context.changeState<CSAME>(GAMEX, GAMEY, nextState - CR_BEGINNORMAL);
+                break;
+
+            case CR_ENDGAME:
+                context.finish();
+                break;
+        }
+    }
 }
 
 void CREPLAY::draw(same::ui::Surface& backSurface)
@@ -477,13 +567,6 @@ void CREPLAY::Replay()
         Onselect(m_Played[m_Tries]);
         m_bErase = true;
     }
-
-    InvalidateRect(m_hWnd, nullptr, FALSE);
-}
-
-CREPLAY::~CREPLAY()
-{
-    KillTimer(m_hWnd, MINE_TIMER);
 }
 
 bool CREPLAY::LoadReplay(char cNum)

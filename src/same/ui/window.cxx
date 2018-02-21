@@ -12,14 +12,6 @@
 
 namespace ns = same::ui;
 
-namespace
-{
-    constexpr auto WINX  = 640;
-    constexpr auto WINY  = 480;
-    constexpr auto GAMEX = 320;
-    constexpr auto GAMEY = 480;
-}
-
 auto ns::makeWindow(::HINSTANCE instance)->std::unique_ptr<Window>
 {
     ::WNDCLASSEX wc;
@@ -81,86 +73,14 @@ void ns::Window::onIdle()
     if (now - previousFrameTime_ < 1000ms / 60) return;
     previousFrameTime_ = now;
 
-    if (input_.isMouseMoved())
-    {
-        gameContext_.onMouseMove(input_.getMousePosition());
-    }
-
-    if (input_.isMouseLButtonUp())
-    {
-        auto const nextState = gameContext_.onMouseLButtonUp();
-        switch (nextState)
-        {
-            case CR_ENDGAME:
-                ::DestroyWindow(hwnd_);
-                break;
-
-            case CR_TITLEMENU:
-                gameContext_.changeState<CMENU>(WINX, WINY);
-                break;
-
-            case CR_BEGINNORMAL:
-            case CR_BEGINMASK1:
-            case CR_BEGINMASK2:
-            case CR_BEGINMASK3:
-            case CR_BEGINMASK4:
-                gameContext_.changeState<CSAME>(GAMEX, GAMEY, nextState - CR_BEGINNORMAL);
-                break;
-
-            case CR_REPLAY:
-            case CR_REPLAY0:
-            case CR_REPLAY1:
-            case CR_REPLAY2:
-            case CR_REPLAY3:
-            case CR_REPLAY4:
-            case CR_REPLAY5:
-            case CR_REPLAY6:
-            case CR_REPLAY7:
-            case CR_REPLAY8:
-            case CR_REPLAY9:
-                gameContext_.changeState<CREPLAY>(hwnd_, GAMEX, GAMEY, nextState - CR_REPLAY0);
-                break;
-        }
-    }
-    else
-    {
-        decltype(gameContext_.onKeyDown(VK_RETURN))nextState;
-
-        if (input_.isKeyDown(VK_RETURN)) nextState = gameContext_.onKeyDown(VK_RETURN);
-        if (input_.isKeyDown('0')) nextState = gameContext_.onKeyDown('0');
-        if (input_.isKeyDown('1')) nextState = gameContext_.onKeyDown('1');
-        if (input_.isKeyDown('2')) nextState = gameContext_.onKeyDown('2');
-        if (input_.isKeyDown('3')) nextState = gameContext_.onKeyDown('3');
-        if (input_.isKeyDown('4')) nextState = gameContext_.onKeyDown('4');
-        if (input_.isKeyDown('5')) nextState = gameContext_.onKeyDown('5');
-        if (input_.isKeyDown('6')) nextState = gameContext_.onKeyDown('6');
-        if (input_.isKeyDown('7')) nextState = gameContext_.onKeyDown('7');
-        if (input_.isKeyDown('8')) nextState = gameContext_.onKeyDown('8');
-        if (input_.isKeyDown('9')) nextState = gameContext_.onKeyDown('9');
-        if (input_.isKeyDown(VK_F8)) nextState = gameContext_.onKeyDown(VK_F8);
-        if (input_.isKeyDown(VK_F12)) nextState = gameContext_.onKeyDown(VK_F12);
-        if (input_.isKeyDown(VK_ESCAPE)) nextState = gameContext_.onKeyDown(VK_ESCAPE);
-
-        switch (nextState)
-        {
-            case CR_TITLEMENU:
-                gameContext_.changeState<CMENU>(WINX, WINY);
-                break;
-
-            case CR_BEGINNORMAL:
-            case CR_BEGINMASK1:
-            case CR_BEGINMASK2:
-            case CR_BEGINMASK3:
-            case CR_BEGINMASK4:
-                gameContext_.changeState<CSAME>(GAMEX, GAMEY, nextState - CR_BEGINNORMAL);
-                break;
-
-            case CR_ENDGAME:
-                ::DestroyWindow(hwnd_);
-                break;
-        }
-    }
+    gameContext_.onFrame(input_);
     input_.clear();
+
+    if (gameContext_.isFinished())
+    {
+        ::DestroyWindow(hwnd_);
+        return;
+    }
 
     frameRendered_ = false;
     ::InvalidateRect(hwnd_, nullptr, FALSE);
@@ -195,13 +115,6 @@ void ns::Window::onIdle()
 
         case WM_KEYDOWN:
             window.onKeyDown(wp);
-            break;
-
-        case WM_TIMER:
-            if (wp == MINE_TIMER)
-            {
-                window.onTimer();
-            }
             break;
 
         case WM_DESTROY:
@@ -244,9 +157,4 @@ void ns::Window::onLButtonUp()
 void ns::Window::onKeyDown(::WPARAM keyCode)
 {
     input_.onKeyDown(keyCode);
-}
-
-void ns::Window::onTimer()
-{
-    gameContext_.onReplay();
 }
