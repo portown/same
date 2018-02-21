@@ -19,7 +19,6 @@ struct CGAME
     virtual unsigned char Click()       = 0;
 
     virtual unsigned char KeyDown(WPARAM) = 0;
-    virtual ~CGAME() {}
 };
 
 class CSAME : public CGAME
@@ -66,7 +65,7 @@ public:
     unsigned char Click() override;
 
     unsigned char KeyDown(WPARAM) override;
-    ~CSAME() override;
+    ~CSAME();
 
 public:     // for tests
     CSAME(unsigned short wx, unsigned short wy, char cMaskNum, unsigned long gameNum);
@@ -101,7 +100,7 @@ public:
     unsigned char Click() override;
 
     unsigned char KeyDown(WPARAM) override;
-    ~CMENU() override;
+    ~CMENU();
 };
 
 class CREPLAY : public CGAME
@@ -151,7 +150,7 @@ public:
     unsigned char KeyDown(WPARAM) override;
     void Replay();
 
-    ~CREPLAY() override;
+    ~CREPLAY();
 };
 
 #endif  // STRUCTS_HXX
