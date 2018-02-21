@@ -34,7 +34,6 @@ CSAME::CSAME(unsigned short wx, unsigned short wy, char cMaskNum, unsigned long 
     m_Height  = wy / PIY;
     m_bx      = m_Width;
     m_by      = m_Height;
-    m_bDraw   = false;
     m_bReGame = false;
 
     SetRect(&m_rcArea, 0, 0, wx, wy);
@@ -61,76 +60,86 @@ void CSAME::onFrame(same::GameContext& context, same::Input const& input)
 
     if (input.isMouseLButtonUp())
     {
-        auto const nextState = onMouseLButtonUp();
-        switch (nextState)
+        if (m_Status == GS_CLEAR || m_Status == GS_ALLCLEAR)
         {
-            case CR_ENDGAME:
-                context.finish();
+            if (m_bReGame) context.changeState<CSAME>(GAMEX, GAMEY, m_cMaskNum);
+            return;
+        }
+
+        if (m_Num < 2) return;
+        if (m_bx >= m_Width || m_by >= m_Height) return;
+        if (m_Area[m_by * m_Width + m_bx] == 0) return;
+
+        Exexplore(m_by * m_Width + m_bx);
+
+        m_Pieces -= m_Num;
+        AddScore(ADDSCORE(m_Num));
+        m_Played.push_back(static_cast<unsigned char>(m_by * m_Width + m_bx));
+
+        Check();
+
+        auto const cRet = EndCheck();
+        switch (cRet)
+        {
+            case CR_NOSTATUS:
+                PlaySound(ERSWAV, nullptr, SND_FILENAME | SND_SYNC);
+                m_Num = 0;
+                Explore(m_by * m_Width + m_bx, m_Area[m_by * m_Width + m_bx]);
+                if (m_Num == 1) Unselect();
                 break;
 
-            case CR_TITLEMENU:
-                context.changeState<CMENU>(WINX, WINY);
+            case CR_CLEAR:
+                PlaySound(CLRWAV, nullptr, SND_FILENAME | SND_ASYNC);
+                m_Status = GS_CLEAR;
                 break;
 
-            case CR_BEGINNORMAL:
-            case CR_BEGINMASK1:
-            case CR_BEGINMASK2:
-            case CR_BEGINMASK3:
-            case CR_BEGINMASK4:
-                context.changeState<CSAME>(GAMEX, GAMEY, nextState - CR_BEGINNORMAL);
+            case CR_ALLCLEAR:
+                AddScore(1000000);
+                PlaySound(CLRWAV, nullptr, SND_FILENAME | SND_ASYNC);
+                m_Status = GS_ALLCLEAR;
                 break;
+        }
 
-            case CR_REPLAY:
-            case CR_REPLAY0:
-            case CR_REPLAY1:
-            case CR_REPLAY2:
-            case CR_REPLAY3:
-            case CR_REPLAY4:
-            case CR_REPLAY5:
-            case CR_REPLAY6:
-            case CR_REPLAY7:
-            case CR_REPLAY8:
-            case CR_REPLAY9:
-                context.changeState<CREPLAY>(GAMEX, GAMEY, nextState - CR_REPLAY0);
-                break;
+        if (cRet == CR_CLEAR || cRet == CR_ALLCLEAR)
+        {
+            SaveReplay('\0');
+            if (m_Score >= 10000 && m_Level == m_cMaskNum)
+            {
+                if (++m_Level > MASKMAX + 1) m_Level = MASKMAX + 1;
+            }
         }
     }
     else
     {
-        decltype(onKeyDown(VK_RETURN))nextState;
-
-        if (input.isKeyDown(VK_RETURN)) nextState = onKeyDown(VK_RETURN);
-        if (input.isKeyDown('0')) nextState = onKeyDown('0');
-        if (input.isKeyDown('1')) nextState = onKeyDown('1');
-        if (input.isKeyDown('2')) nextState = onKeyDown('2');
-        if (input.isKeyDown('3')) nextState = onKeyDown('3');
-        if (input.isKeyDown('4')) nextState = onKeyDown('4');
-        if (input.isKeyDown('5')) nextState = onKeyDown('5');
-        if (input.isKeyDown('6')) nextState = onKeyDown('6');
-        if (input.isKeyDown('7')) nextState = onKeyDown('7');
-        if (input.isKeyDown('8')) nextState = onKeyDown('8');
-        if (input.isKeyDown('9')) nextState = onKeyDown('9');
-        if (input.isKeyDown(VK_F8)) nextState = onKeyDown(VK_F8);
-        if (input.isKeyDown(VK_F12)) nextState = onKeyDown(VK_F12);
-        if (input.isKeyDown(VK_ESCAPE)) nextState = onKeyDown(VK_ESCAPE);
-
-        switch (nextState)
+        if (input.isKeyDown(VK_RETURN) && (m_Status == GS_CLEAR || m_Status == GS_ALLCLEAR))
         {
-            case CR_TITLEMENU:
-                context.changeState<CMENU>(WINX, WINY);
-                break;
-
-            case CR_BEGINNORMAL:
-            case CR_BEGINMASK1:
-            case CR_BEGINMASK2:
-            case CR_BEGINMASK3:
-            case CR_BEGINMASK4:
-                context.changeState<CSAME>(GAMEX, GAMEY, nextState - CR_BEGINNORMAL);
-                break;
-
-            case CR_ENDGAME:
-                context.finish();
-                break;
+            context.changeState<CSAME>(GAMEX, GAMEY, m_cMaskNum);
+            return;
+        }
+        if (input.isKeyDown('0')) SaveReplay('0');
+        if (input.isKeyDown('1')) SaveReplay('1');
+        if (input.isKeyDown('2')) SaveReplay('2');
+        if (input.isKeyDown('3')) SaveReplay('3');
+        if (input.isKeyDown('4')) SaveReplay('4');
+        if (input.isKeyDown('5')) SaveReplay('5');
+        if (input.isKeyDown('6')) SaveReplay('6');
+        if (input.isKeyDown('7')) SaveReplay('7');
+        if (input.isKeyDown('8')) SaveReplay('8');
+        if (input.isKeyDown('9')) SaveReplay('9');
+        if (input.isKeyDown(VK_F8))
+        {
+            context.changeState<CSAME>(GAMEX, GAMEY, m_cMaskNum);
+            return;
+        }
+        if (input.isKeyDown(VK_F12))
+        {
+            context.changeState<CMENU>(WINX, WINY);
+            return;
+        }
+        if (input.isKeyDown(VK_ESCAPE))
+        {
+            context.finish();
+            return;
         }
     }
 }
@@ -259,8 +268,6 @@ void CSAME::draw(same::ui::Surface& backSurface)
             }
         }
     }
-
-    m_bDraw = true;
 }
 
 // マス目チェック
@@ -356,65 +363,6 @@ void CSAME::Inexplore(unsigned short pos)
         if ((pos % m_Width) < m_Width - 1) Inexplore(pos + 1);
         if ((pos / m_Width) < m_Height - 1) Inexplore(pos + m_Width);
     }
-}
-
-// 駒消去
-unsigned char CSAME::onMouseLButtonUp()
-{
-    if (!m_bDraw) return CR_NOSTATUS;
-
-    if (m_Status == GS_CLEAR || m_Status == GS_ALLCLEAR)
-    {
-        if (m_bReGame) return CR_BEGINNORMAL + m_cMaskNum;
-        return CR_NOSTATUS;
-    }
-
-    if (m_Num < 2) return CR_NOSTATUS;
-    if (m_bx >= m_Width || m_by >= m_Height) return CR_NOSTATUS;
-    if (m_Area[m_by * m_Width + m_bx] == 0) return CR_NOSTATUS;
-
-    Exexplore(m_by * m_Width + m_bx);
-
-    m_Pieces -= m_Num;
-    AddScore(ADDSCORE(m_Num));
-    m_Played.push_back(static_cast<unsigned char>(m_by * m_Width + m_bx));
-
-    Check();
-
-    auto const cRet = EndCheck();
-    switch (cRet)
-    {
-        case CR_NOSTATUS:
-            PlaySound(ERSWAV, nullptr, SND_FILENAME | SND_SYNC);
-            m_Num = 0;
-            Explore(m_by * m_Width + m_bx, m_Area[m_by * m_Width + m_bx]);
-            if (m_Num == 1) Unselect();
-            break;
-
-        case CR_CLEAR:
-            PlaySound(CLRWAV, nullptr, SND_FILENAME | SND_ASYNC);
-            m_Status = GS_CLEAR;
-            break;
-
-        case CR_ALLCLEAR:
-            AddScore(1000000);
-            PlaySound(CLRWAV, nullptr, SND_FILENAME | SND_ASYNC);
-            m_Status = GS_ALLCLEAR;
-            break;
-    }
-
-    if (cRet == CR_CLEAR || cRet == CR_ALLCLEAR)
-    {
-        SaveReplay('\0');
-        if (m_Score >= 10000 && m_Level == m_cMaskNum)
-        {
-            if (++m_Level > MASKMAX + 1) m_Level = MASKMAX + 1;
-        }
-    }
-
-    m_bDraw = false;
-
-    return cRet;
 }
 
 // 駒消去・再帰
@@ -542,41 +490,6 @@ void CSAME::AddScore(unsigned long add)
 {
     m_Score += add;
     if (m_Score > m_HighScore) m_HighScore = m_Score;
-}
-
-unsigned char CSAME::onKeyDown(::WPARAM key)
-{
-    switch (key)
-    {
-        case VK_RETURN:
-            if (m_Status == GS_CLEAR || m_Status == GS_ALLCLEAR)
-                return CR_BEGINNORMAL + m_cMaskNum;
-            break;
-
-        case '0':
-        case '1':
-        case '2':
-        case '3':
-        case '4':
-        case '5':
-        case '6':
-        case '7':
-        case '8':
-        case '9':
-            SaveReplay(static_cast<char>(key));
-            break;
-
-        case VK_F8:
-            return CR_BEGINNORMAL + m_cMaskNum;
-
-        case VK_F12:
-            return CR_TITLEMENU;
-
-        case VK_ESCAPE:
-            return CR_ENDGAME;
-    }
-
-    return CR_NOSTATUS;
 }
 
 CSAME::~CSAME()

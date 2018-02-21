@@ -31,7 +31,6 @@ class CSAME : public same::GameState
     unsigned long m_Score;              // プレイヤースコア
     unsigned long m_GameNum;              // ゲームナンバー（乱数の種）
     RECT m_rcArea;                       // ゲーム盤エリア
-    bool m_bDraw;                       // 連打抑え
     bool m_bReGame;                       // クリックフラグ
     char m_cMaskNum;                       // マスクレベル
 
@@ -57,10 +56,7 @@ public:
     void draw(same::ui::Surface& backSurface) override;
 
 private:
-    void          onMouseMove(::POINT const& point);
-    unsigned char onMouseLButtonUp();
-
-    unsigned char onKeyDown(::WPARAM keyCode);
+    void onMouseMove(::POINT const& point);
 
 public:     // for tests
     CSAME(unsigned short wx, unsigned short wy, char cMaskNum, unsigned long gameNum);
