@@ -34,6 +34,12 @@ namespace same
     public:
         explicit GameContext() = default;
 
+        GameContext(GameContext const&)            = delete;
+        GameContext& operator=(GameContext const&) = delete;
+
+        GameContext(GameContext&&)            = default;
+        GameContext& operator=(GameContext&&) = default;
+
         template <class T, class... Args>
         void changeState(Args&& ... args)
         {
