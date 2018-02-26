@@ -51,6 +51,14 @@ CSAME::CSAME(unsigned short wx, unsigned short wy, char cMaskNum, unsigned long 
     m_Played.clear();
 }
 
+void CSAME::initializeGraphics()
+{
+}
+
+void CSAME::releaseGraphics()
+{
+}
+
 void CSAME::onFrame(same::GameContext& context, same::Input const& input)
 {
     if (input.isMouseMoved())

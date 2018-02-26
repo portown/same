@@ -78,6 +78,7 @@ void ns::Window::onIdle()
 
     if (gameContext_.isFinished())
     {
+        gameContext_.releaseGraphics();
         ::DestroyWindow(hwnd_);
         return;
     }
@@ -138,6 +139,10 @@ void ns::Window::onPaint()
 {
     ::PAINTSTRUCT ps;
     auto const surface = Surface::onPaint(hwnd_, ps);
+    if (!gameContext_.isGraphicsInitialized())
+    {
+        gameContext_.initializeGraphics();
+    }
     backSurface_->paint(RGB(0, 0, 0));
     gameContext_.draw(*backSurface_);
     backSurface_->blitTo(*surface);

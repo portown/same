@@ -52,6 +52,9 @@ public:
     CSAME(unsigned short, unsigned short, char);
     ~CSAME();
 
+    void initializeGraphics() override;
+    void releaseGraphics() override;
+
     void onFrame(same::GameContext& context, same::Input const& input) override;
     void draw(same::ui::Surface& backSurface) override;
 
@@ -86,6 +89,9 @@ class CMENU : public same::GameState
 public:
     CMENU(unsigned short, unsigned short);
     ~CMENU();
+
+    void initializeGraphics() override;
+    void releaseGraphics() override;
 
     void onFrame(same::GameContext& context, same::Input const& input) override;
     void draw(same::ui::Surface& backSurface) override;
@@ -134,6 +140,9 @@ class CREPLAY : public same::GameState
 
 public:
     CREPLAY(unsigned short, unsigned short, char);
+
+    void initializeGraphics() override;
+    void releaseGraphics() override;
 
     void onFrame(same::GameContext& context, same::Input const& input) override;
     void draw(same::ui::Surface& backSurface) override;

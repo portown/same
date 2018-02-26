@@ -17,6 +17,9 @@ namespace same
 
     struct GameState
     {
+        virtual void initializeGraphics() = 0;
+        virtual void releaseGraphics()    = 0;
+
         virtual void onFrame(GameContext& context, Input const& input) = 0;
         virtual void draw(ui::Surface& backSurface) = 0;
 
@@ -53,6 +56,26 @@ namespace same
 
         bool isFinished() const noexcept { return finished_; }
 
+        bool isGraphicsInitialized() const noexcept { return graphicsInitialized_; }
+
+        void initializeGraphics()
+        {
+            if (state_)
+            {
+                state_->initializeGraphics();
+                graphicsInitialized_ = true;
+            }
+        }
+
+        void releaseGraphics()
+        {
+            if (state_)
+            {
+                state_->releaseGraphics();
+                graphicsInitialized_ = false;
+            }
+        }
+
         void onFrame(Input const& input);
 
         void draw(ui::Surface& backSurface)
@@ -65,6 +88,7 @@ namespace same
 
         std::shared_ptr<GameState> state_;
         bool finished_;
+        bool graphicsInitialized_;
     };
 }
 

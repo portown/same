@@ -64,6 +64,14 @@ CREPLAY::CREPLAY(unsigned short wx, unsigned short wy, char cNum)
     previousTime_ = Clock::now();
 }
 
+void CREPLAY::initializeGraphics()
+{
+}
+
+void CREPLAY::releaseGraphics()
+{
+}
+
 void CREPLAY::onFrame(same::GameContext& context, same::Input const& input)
 {
     using namespace std::literals::chrono_literals;

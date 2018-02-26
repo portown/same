@@ -24,6 +24,14 @@ CMENU::CMENU(unsigned short width, unsigned short height)
     menuSurface_ = same::ui::Surface::fromBitmapFile(DATA("menu.bmp"));
 }
 
+void CMENU::initializeGraphics()
+{
+}
+
+void CMENU::releaseGraphics()
+{
+}
+
 void CMENU::onFrame(same::GameContext& context, same::Input const& input)
 {
     if (input.isMouseMoved())
