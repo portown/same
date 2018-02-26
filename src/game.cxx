@@ -19,8 +19,6 @@ CSAME::CSAME(unsigned short wx, unsigned short wy, char cMaskNum)
 
 CSAME::CSAME(unsigned short wx, unsigned short wy, char cMaskNum, unsigned long gameNum)
 {
-    surface_ = same::ui::Surface::fromBitmapFile(DATA(TEXT("system.bmp")));
-
     m_Level     = 0;
     m_HighScore = 0;
 
@@ -53,10 +51,12 @@ CSAME::CSAME(unsigned short wx, unsigned short wy, char cMaskNum, unsigned long 
 
 void CSAME::initializeGraphics()
 {
+    surface_ = same::ui::Surface::fromBitmapFile(DATA(TEXT("system.bmp")));
 }
 
 void CSAME::releaseGraphics()
 {
+    surface_.reset();
 }
 
 void CSAME::onFrame(same::GameContext& context, same::Input const& input)

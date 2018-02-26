@@ -55,21 +55,21 @@ CREPLAY::CREPLAY(unsigned short wx, unsigned short wy, char cNum)
 
     CntGroups();
 
-    surface_ = same::ui::Surface::fromBitmapFile(DATA(TEXT("system.bmp")));
-
-    cursorSurface_ = same::ui::Surface::fromBitmapResource(
-        reinterpret_cast<HINSTANCE>(::GetModuleHandle(nullptr)),
-        IDB_SAMECUR);
-
     previousTime_ = Clock::now();
 }
 
 void CREPLAY::initializeGraphics()
 {
+    surface_       = same::ui::Surface::fromBitmapFile(DATA(TEXT("system.bmp")));
+    cursorSurface_ = same::ui::Surface::fromBitmapResource(
+        reinterpret_cast<HINSTANCE>(::GetModuleHandle(nullptr)),
+        IDB_SAMECUR);
 }
 
 void CREPLAY::releaseGraphics()
 {
+    surface_.reset();
+    cursorSurface_.reset();
 }
 
 void CREPLAY::onFrame(same::GameContext& context, same::Input const& input)
