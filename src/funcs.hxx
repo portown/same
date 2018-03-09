@@ -3,11 +3,11 @@
 #ifndef FUNCS_HXX
 #define FUNCS_HXX
 
+#include <string_view>
+
 #include <windows.h>
 
-#include "tstring_view.hxx"
 
-
-bool PutText(HDC, int, int, int, COLORREF, tch::tstring_view str);
+bool PutText(HDC, int, int, int, COLORREF, std::wstring_view str);
 
 #endif  // FUNCS_HXX

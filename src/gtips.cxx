@@ -4,7 +4,7 @@
 
 
 bool PutText(HDC hDC, int x, int y, int f_size,
-             COLORREF col, tch::tstring_view str)
+             COLORREF col, std::wstring_view str)
 {
     auto const hFont = CreateFont(f_size,
                                   0,
@@ -19,7 +19,7 @@ bool PutText(HDC hDC, int x, int y, int f_size,
                                   CLIP_DEFAULT_PRECIS,
                                   DEFAULT_QUALITY,
                                   DEFAULT_PITCH | FF_DONTCARE,
-                                  TEXT("MS Gothic"));
+                                  L"MS Gothic");
 
     if (!hFont)
         return false;

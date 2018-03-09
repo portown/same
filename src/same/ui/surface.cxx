@@ -108,7 +108,7 @@ auto same::ui::Surface::create(geometry::Size const& size)->SurfacePtr
     return create<SurfaceDDBImpl>(dcHandle, bitmapHandle);
 }
 
-auto same::ui::Surface::fromBitmapFile(tch::tstring_view fileName)->SurfacePtr
+auto same::ui::Surface::fromBitmapFile(std::wstring_view fileName)->SurfacePtr
 {
     auto const bitmapHandle = static_cast<HBITMAP>(LoadImage(nullptr, fileName.data(), IMAGE_BITMAP, 0, 0,
                                                              LR_CREATEDIBSECTION | LR_LOADFROMFILE));

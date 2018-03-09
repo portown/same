@@ -1,18 +1,17 @@
 // main.cpp
 
 #include <windows.h>
-#include <tchar.h>
 
 #include "same/ui/window.hxx"
 
-auto WINAPI _tWinMain(
+auto WINAPI wWinMain(
     ::HINSTANCE const instance,
     ::HINSTANCE,
-    ::LPTSTR,
+    ::LPWSTR,
     int const showCmd)
 ->int
 {
-    ::CreateMutex(nullptr, FALSE, TEXT("jp.portown.same"));
+    ::CreateMutexW(nullptr, FALSE, L"jp.portown.same");
     if (::GetLastError() == ERROR_ALREADY_EXISTS) return 0;
 
     auto window = same::ui::makeWindow(instance);

@@ -27,7 +27,7 @@ auto ns::makeWindow(::HINSTANCE instance)->std::unique_ptr<Window>
                                                   IMAGE_ICON, 0, 0, LR_DEFAULTSIZE | LR_SHARED));
     wc.hInstance     = instance;
     wc.lpfnWndProc   = &Window::windowProcedure;
-    wc.lpszClassName = TEXT("main");
+    wc.lpszClassName = L"main";
     wc.lpszMenuName  = nullptr;
     wc.style         = CS_HREDRAW | CS_VREDRAW;
 

@@ -23,8 +23,8 @@ CMENU::CMENU(unsigned short width, unsigned short height)
 
 void CMENU::initializeGraphics()
 {
-    surface_     = same::ui::Surface::fromBitmapFile(DATA("title.bmp"));
-    menuSurface_ = same::ui::Surface::fromBitmapFile(DATA("menu.bmp"));
+    surface_     = same::ui::Surface::fromBitmapFile(DATA(L"title.bmp"));
+    menuSurface_ = same::ui::Surface::fromBitmapFile(DATA(L"menu.bmp"));
 }
 
 void CMENU::releaseGraphics()

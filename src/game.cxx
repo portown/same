@@ -2,11 +2,11 @@
 
 #include <ctime>
 #include <random>
+#include <sstream>
 
 #include "defines.hxx"
 #include "structs.hxx"
 #include "funcs.hxx"
-#include "tstringstream.hxx"
 #include "win_utils.hxx"
 
 #include "resource.h"
@@ -51,7 +51,7 @@ CSAME::CSAME(unsigned short wx, unsigned short wy, char cMaskNum, unsigned long 
 
 void CSAME::initializeGraphics()
 {
-    surface_ = same::ui::Surface::fromBitmapFile(DATA(TEXT("system.bmp")));
+    surface_ = same::ui::Surface::fromBitmapFile(DATA(L"system.bmp"));
 }
 
 void CSAME::releaseGraphics()
@@ -193,7 +193,7 @@ void CSAME::draw(same::ui::Surface& backSurface)
         }
     }
 
-    tch::tostringstream oss;
+    std::wostringstream oss;
     auto const          instance = ::GetModuleHandle(nullptr);
 
     // その他の描画

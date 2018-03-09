@@ -1,11 +1,11 @@
 // replay.cpp
 
 #include <random>
+#include <sstream>
 
 #include "defines.hxx"
 #include "structs.hxx"
 #include "funcs.hxx"
-#include "tstringstream.hxx"
 #include "win_utils.hxx"
 
 #include "resource.h"
@@ -60,7 +60,7 @@ CREPLAY::CREPLAY(unsigned short wx, unsigned short wy, char cNum)
 
 void CREPLAY::initializeGraphics()
 {
-    surface_       = same::ui::Surface::fromBitmapFile(DATA(TEXT("system.bmp")));
+    surface_       = same::ui::Surface::fromBitmapFile(DATA(L"system.bmp"));
     cursorSurface_ = same::ui::Surface::fromBitmapResource(
         reinterpret_cast<HINSTANCE>(::GetModuleHandle(nullptr)),
         IDB_SAMECUR);
@@ -167,7 +167,7 @@ void CREPLAY::draw(same::ui::Surface& backSurface)
     }
 
     // その他の描画
-    tch::tostringstream oss;
+    std::wostringstream oss;
     oss.str({});
     oss << win::loadString(instance, IDS_SCORE).value() << m_Score;
     PutText(backSurface.getDC(), m_rcArea.right, 0, 20, RGB(255, 255, 255), oss.str());

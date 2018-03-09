@@ -9,15 +9,13 @@
 
 #include <windows.h>
 
-#include "tstring.hxx"
-
 
 namespace win
 {
     inline auto loadString(::HINSTANCE instance, ::UINT resourceId, std::size_t capacity = 256u)
-    ->std::optional<tch::tstring>
+    ->std::optional<std::wstring>
     {
-        tch::tstring str(capacity, '\0');
+        std::wstring str(capacity, L'\0');
         using size_type = decltype(str)::size_type;
 
         auto length = ::LoadString(instance, resourceId, str.data(), str.size());

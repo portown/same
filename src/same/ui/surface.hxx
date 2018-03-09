@@ -5,12 +5,12 @@
 
 #include <memory>
 #include <string>
+#include <string_view>
 #include <utility>
 
 #include <windows.h>
 
 #include "geometry.hxx"
-#include "../../tstring_view.hxx"
 
 
 namespace same::ui
@@ -30,7 +30,7 @@ namespace same::ui
     {
     public:
         static auto create(geometry::Size const& size)->SurfacePtr;
-        static auto fromBitmapFile(tch::tstring_view fileName)->SurfacePtr;
+        static auto fromBitmapFile(std::wstring_view fileName)->SurfacePtr;
         static auto fromBitmapResource(HINSTANCE instanceHandle, WORD resourceId)->SurfacePtr;
         static auto onPaint(HWND windowHandle, PAINTSTRUCT& paintStruct)->SurfacePtr;
 
@@ -45,7 +45,7 @@ namespace same::ui
         auto view(geometry::Box const& box) const->SurfacePtr;
 
     private:
-        template <class T, class ... Args>
+        template <class T, class... Args>
         static auto create(Args&& ... args)->SurfacePtr
         {
             ImplPtr    impl(new T(std::forward<Args>(args) ...));
