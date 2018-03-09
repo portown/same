@@ -6,7 +6,7 @@
 
 #define MINE_TIMER 1000
 
-#define DATA(fname) L"data\\" fname
+#define DATA(fname) LR"(data\)" fname
 #define CODE(x) (((x) * 7 % 10 * 10) & 0xf0)  \
     | (((static_cast<char>(sizeof(unsigned long)) - (x)) * 77 % 100) & 0x0f)
 
@@ -18,8 +18,8 @@
 #define SELWAV DATA(L"select.wav")
 #define ERSWAV DATA(L"erase.wav")
 #define CLRWAV DATA(L"clear.wav")
-#define DATFILE L".\\same.dat"
-#define REPFILE L".\\replay"
+#define DATFILE LR"(.\same.dat)"
+#define REPFILE LR"(.\replay)"
 
 constexpr auto WINX  = 640;
 constexpr auto WINY  = 480;
